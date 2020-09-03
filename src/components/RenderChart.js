@@ -208,6 +208,7 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
                 arrayMonth = constructHalfsMonthArray(startDayPrevMonth, lastDayPrevMonth, prevMonth, currentYear)
                 arrayMonth = arrayMonth.concat(constructHalfsMonthArray(1, parseInt(currentDay), currentMonth, currentYear))
                 
+                
               }
               
             }
