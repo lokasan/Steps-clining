@@ -97,7 +97,7 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
       resolve(dataArrayForChart)
       })
     }
-    const maxDays = 30
+    const maxDays = 31
     const getChartMonth = (days, month, year) => {
       return new Promise(resolve => {
         
@@ -160,6 +160,7 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
           halfArray.push({day: i.toString(), month: month, year: year})
         }
       }
+      console.log(halfArray);
       return halfArray
     }
 
@@ -173,6 +174,7 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
         const currentYear = lastRDay[2]
         let lastDayPrevMonth = null
         const residue = maxDays - parseInt(lastRDay[0])
+        console.log(residue);
         if (residue) {
           if (currentMonth === '01') {
             let prevYear = (parseInt(currentYear) - 1).toString()
@@ -183,11 +185,17 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
             arrayMonth = constructHalfsMonthArray(startDayPrevMonth, lastDayPrevMonth, prevMonth, prevYear)
             arrayMonth.concat(constructHalfsMonthArray(1, parseInt(currentDay), currentMonth, currentYear))
                 
-          } else {
+          } if (currentMonth === '03') { 
+              prevMonth = '0' + (currentMonth - 1)
+              if ((Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1])[0](parseInt(currentYear)) - residue) < 0)          
+              startDayPrevMonth = null // corrected WARN!!!
+
+
+          } else if (currentMonth !== '01' || currentMonth !== '02' || currentMonth !== '03') {
             if (currentMonth - 1 < 10) {
               prevMonth = '0' + (currentMonth - 1)
             } else {
-                prevMonth = (currentMonth - 1).toString()
+              prevMonth = (currentMonth - 1).toString()
               }
             startDayPrevMonth = Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1])[0] - residue
             lastDayPrevMonth = Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1])[0]
@@ -198,7 +206,9 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
 
             }
               
-        }
+        } else {
+          arrayMonth = constructHalfsMonthArray(1, parseInt(currentDay), currentMonth, currentYear)
+        } 
       resolve(arrayMonth)
       })
     }
