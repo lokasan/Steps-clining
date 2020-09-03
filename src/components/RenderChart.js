@@ -26,10 +26,10 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
                   x: JSON
                   .stringify(rows['_array'])
                   .replace(/(^.*?:|[a-z""[\],{}])/g, "")
-                  .split(':')[2] + '-' + JSON
+                  .split(':')[1] + ' ' + JSON
                   .stringify(rows['_array'])
                   .replace(/(^.*?:|[a-z""[\],{}])/g, "")
-                  .split(':')[1],
+                  .split(':')[2],
                   y: parseInt(
                     JSON
                     .stringify(rows['_array'])
@@ -39,14 +39,7 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
               
             } else {
                 dataForChart.push({
-                x: JSON
-                .stringify(rows['_array'])
-                .replace(/(^.*?:|[a-z""[\],{}])/g, "")
-                .split(':')[2] + '-' + 
-                JSON
-                .stringify(rows['_array'])
-                .replace(/(^.*?:|[a-z""[\],{}])/g, "")
-                .split(':')[1],
+                x: month + ' ' + year.toString(),
                 y: 0,
                 })
             }
@@ -122,7 +115,7 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
                   JSON
                   .stringify(rows['_array'])
                   .replace(/(^.*?:|[a-z""[\],{}])/g, "")
-                  .split(':')[2] + '-' + 
+                  .split(':')[2] + ' ' + 
                   JSON
                   .stringify(rows['_array'])
                   .replace(/(^.*?:|[a-z""[\],{}])/g, "")
@@ -143,7 +136,7 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
                   JSON
                   .stringify(rows['_array'])
                   .replace(/(^.*?:|[a-z""[\],{}])/g, "")
-                  .split(':')[2] + '-' + 
+                  .split(':')[2] + ' ' + 
                   JSON
                   .stringify(rows['_array'])
                   .replace(/(^.*?:|[a-z""[\],{}])/g, "")
@@ -214,7 +207,7 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
       return new Promise(resolve => {
         let lastRDay = 0
         db.transaction(tx => {
-          tx.executeSql("select max(strftime('%d', date_time)) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time where month=? and year=?", [data[data.length - 1], data[0]], (_, { rows }) => {
+          tx.executeSql("select max(strftime('%d', date_time)) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time where month=? and year=?", [data[0], data[data.length - 1]], (_, { rows }) => {
             lastRDay = JSON.stringify(rows['_array'])
             .replace(/(^.*?:|[a-z""[\],{}])/g, "")
             .split(':')
@@ -239,7 +232,7 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
         if (chartChoose) {
           const monthChoose = chartChoose.x
             .replace(/"/)
-            .split('-')
+            .split(' ')
             let lastRDay = await getLastRDay(monthChoose)
             tmpArr = await getMonthArray(lastRDay)
             console.log(dataForChart);
