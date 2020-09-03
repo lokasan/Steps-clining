@@ -245,6 +245,25 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
             
           
           
+        } else {
+          let currentDate = new Date()
+          const currentMonthOfChart = []
+          
+          if ((currentDate.getMonth() + 1) < 10) {
+            currentMonthOfChart.push(('0' + (currentDate.getMonth() + 1)).toString())
+        } else {
+          currentMonthOfChart.push((currentDate.getMonth() + 1).toString())
+        }
+          currentMonthOfChart.push((currentDate.getFullYear()).toString())
+          console.log(currentMonthOfChart);
+          let lastRDay = await getLastRDay(currentMonthOfChart)
+          tmpArr = await getMonthArray(lastRDay)
+            console.log(dataForChart);
+            for (let key of tmpArr) {
+              dataArrayForChart = await getChartMonth(key['day'], key['month'], key['year']) 
+            }
+            onSubmit(dataArrayForChart, statMem)
+
         }
       }
       if (statMem === 'day') {
