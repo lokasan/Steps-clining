@@ -50,12 +50,12 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
                 y: 0,
                 })
             }
-          
+            resolve(dataForChart)
           }
           )
           // console.log(dataForChart)
           
-          resolve(dataForChart)
+          
         })
       
     })
@@ -104,7 +104,7 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
       resolve(dataArrayForChart)
       })
     }
-    const maxDays = 31
+    const maxDays = 30
     const getChartMonth = (days, month, year) => {
       return new Promise(resolve => {
         
@@ -118,10 +118,12 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
                   x: JSON
                   .stringify(rows['_array'])
                   .replace(/(^.*?:|[a-z""[\],{}])/g, "")
-                  .split(':')[1] + ' ' + JSON
+                  .split(':')[1] + ' ' + 
+                  JSON
                   .stringify(rows['_array'])
                   .replace(/(^.*?:|[a-z""[\],{}])/g, "")
-                  .split(':')[2] + '-' + JSON
+                  .split(':')[2] + '-' + 
+                  JSON
                   .stringify(rows['_array'])
                   .replace(/(^.*?:|[a-z""[\],{}])/g, "")
                   .split(':')[3],
@@ -137,23 +139,22 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
                 x: JSON
                   .stringify(rows['_array'])
                   .replace(/(^.*?:|[a-z""[\],{}])/g, "")
-                  .split(':')[1] + '' + JSON
+                  .split(':')[1] + '' + 
+                  JSON
                   .stringify(rows['_array'])
                   .replace(/(^.*?:|[a-z""[\],{}])/g, "")
-                  .split(':')[2] + '-' + JSON
+                  .split(':')[2] + '-' + 
+                  JSON
                   .stringify(rows['_array'])
                   .replace(/(^.*?:|[a-z""[\],{}])/g, "")
                   .split(':')[3],
                 y: 0,
                 })
             }
-          
-          
-           
-           
+            resolve(dataForChart)
           })
           
-          resolve(dataForChart)
+          
         })
       })
     }
@@ -169,73 +170,64 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
       return halfArray
     }
 
-    const getMonthArray = (data) => {
+    const getMonthArray = (lastRDay) => {
       return new Promise(resolve => {
-        let lastRDay = 0
+        let arrayMonth = []
         let prevMonth = 0
         let startDayPrevMonth = 0
-        let dataArrayForChart = []
-        let arrayMonth = []
+        const currentDay = lastRDay[0]
+        const currentMonth = lastRDay[1]
+        const currentYear = lastRDay[2]
+        let lastDayPrevMonth = null
+        const residue = maxDays - parseInt(lastRDay[0])
+        if (residue) {
+          if (currentMonth === '01') {
+            let prevYear = (parseInt(currentYear) - 1).toString()
+            prevMonth = '12'
+            startDayPrevMonth = Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1])[0] - residue
+            lastDayPrevMonth = Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1])[0]
+
+            arrayMonth = constructHalfsMonthArray(startDayPrevMonth, lastDayPrevMonth, prevMonth, prevYear)
+            arrayMonth.concat(constructHalfsMonthArray(1, parseInt(currentDay), currentMonth, currentYear))
+                
+          } else {
+            if (currentMonth - 1 < 10) {
+              prevMonth = '0' + (currentMonth - 1)
+            } else {
+                prevMonth = (currentMonth - 1).toString()
+              }
+            startDayPrevMonth = Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1])[0] - residue
+            lastDayPrevMonth = Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1])[0]
+
+            arrayMonth = constructHalfsMonthArray(startDayPrevMonth, lastDayPrevMonth, prevMonth, currentYear)
+            arrayMonth = arrayMonth.concat(constructHalfsMonthArray(1, parseInt(currentDay), currentMonth, currentYear))
+                
+
+            }
+              
+        }
+      resolve(arrayMonth)
+      })
+    }
+
+    const getLastRDay = (data) => {
+      return new Promise(resolve => {
+        let lastRDay = 0
         db.transaction(tx => {
           tx.executeSql("select max(strftime('%d', date_time)) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time where month=? and year=?", [data[data.length - 1], data[0]], (_, { rows }) => {
             lastRDay = JSON.stringify(rows['_array'])
             .replace(/(^.*?:|[a-z""[\],{}])/g, "")
             .split(':')
-            const currentDay = lastRDay[0]
-            const currentMonth = lastRDay[1]
-            const currentYear = lastRDay[2]
-            let lastDayPrevMonth = null
-            const residue = maxDays - parseInt(lastRDay[0])
-            if (residue) {
-              if (data[data.length - 1] === '01') {
-                let prevYear = (parseInt(currentYear) - 1).toString()
-                prevMonth = '12'
-                startDayPrevMonth = Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1])[0] - residue
-                lastDayPrevMonth = Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1])[0]
-
-                arrayMonth = constructHalfsMonthArray(startDayPrevMonth, lastDayPrevMonth, prevMonth, prevYear)
-                arrayMonth.concat(constructHalfsMonthArray(1, parseInt(currentDay), currentMonth, currentYear))
-                
-              } else {
-                if (currentMonth - 1 < 10) {
-                  prevMonth = '0' + (currentMonth - 1)
-                } else {
-                  prevMonth = (currentMonth - 1).toString()
-                }
-                startDayPrevMonth = Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1])[0] - residue
-                lastDayPrevMonth = Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1])[0]
-
-                arrayMonth = constructHalfsMonthArray(startDayPrevMonth, lastDayPrevMonth, prevMonth, currentYear)
-                arrayMonth = arrayMonth.concat(constructHalfsMonthArray(1, parseInt(currentDay), currentMonth, currentYear))
-                
-                
-              }
-              
-            }
-            
-
-            
-
-            for (let key of arrayMonth) {
-              dataArrayForChart = getChartMonth(key['day'], key['month'], key['year'])
-            }
-            
-            resolve(dataArrayForChart)
+            resolve(lastRDay)
           })
           
         })
-        
-        
-        
-        // for (let i = )
       })
     }
-    // getYearArray.then((dataArrayForChart) => {
-    //   console.log(dataArrayForChart)
-    // })
     async function printData(statMem, chartChoose = null) {
       dataForChart = []
       let dataArrayForChart = null
+      let tmpArr = []
       if (statMem === 'year') {
         let countYear = await getMinAndCountYear
         dataArrayForChart = await getYearArray(countYear)
@@ -248,23 +240,24 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
           const monthChoose = chartChoose.x
             .replace(/"/)
             .split('-')
-          dataArrayForChart = await getMonthArray(monthChoose)
-          onSubmit(dataArrayForChart, statMem)
+            let lastRDay = await getLastRDay(monthChoose)
+            tmpArr = await getMonthArray(lastRDay)
+            console.log(dataForChart);
+            for (let key of tmpArr) {
+              dataArrayForChart = await getChartMonth(key['day'], key['month'], key['year']) 
+            }
+            onSubmit(dataArrayForChart, statMem)
+            
+            
+            
+          
           
         }
       }
       if (statMem === 'day') {
         // onSubmit(dataArrayForChart, statMem)
       }
-      
-      
-     
-      
-      
-      
-    }
-    
-    // printData().then(() => onSubmit(dataForChart))
+    } 
     
     let sampleDataMonth = [
         {
