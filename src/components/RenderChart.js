@@ -187,10 +187,24 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
                 
           } if (currentMonth === '03') { 
               prevMonth = '0' + (currentMonth - 1)
-              if ((Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1])[0](parseInt(currentYear)) - residue) < 0)          
-              startDayPrevMonth = null // corrected WARN!!!
+              let resNP = Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1])[0](parseInt(currentYear)) - residue
+              if (resNP < 0) {
+                let prevPrevMonth = '0 ' + (prevMonth - 1)
+                let lastDayTMonth = Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1])[0](parseInt(currentYear))
+                startDayPrevMonth = Object.values(lastDayForMonth.monthList[parseInt(prevPrevMonth) -1][0]) - Math.abs(residue)
+                lastDayPrevMonth = Object.values(lastDayForMonth.monthList[parseInt(prevPrevMonth) - 1][0])
+                arrayMonth = constructHalfsMonthArray(startDayPrevMonth, lastDayPrevMonth, prevPrevMonth, currentYear)
+                arrayMonth = arrayMonth.concat(constructHalfsMonthArray(1, lastDayTMonth, prevMonth, currentYear))
+                arrayMonth = arrayMonth.concat(constructHalfsMonthArray(1, parseInt(currentDay), currentMonth, currentYear))
+            } else {
+                startDayPrevMonth = Object.values(lastDayForMonth.monthList[parseInt(prevMonth) -1][0])(parseInt(currentYear)) - residue
+                lastDayPrevMonth = Object.values(lastDayForMonth.monthList[parseInt(prevMonth) - 1][0])(parseInt(currentYear))
+                arrayMonth = constructHalfsMonthArray(startDayPrevMonth ? startDayPrevMonth : 1, lastDayPrevMonth, prevMonth, currentYear)
+                arrayMonth = arrayMonth.concat(constructHalfsMonthArray(1, parseInt(currentDay), currentMonth, currentYear))
+            }
 
-
+          } else if(currentMonth === '02') {
+            
           } else if (currentMonth !== '01' || currentMonth !== '02' || currentMonth !== '03') {
             if (currentMonth - 1 < 10) {
               prevMonth = '0' + (currentMonth - 1)
