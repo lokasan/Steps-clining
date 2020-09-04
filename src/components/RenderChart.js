@@ -160,7 +160,6 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
           halfArray.push({day: i.toString(), month: month, year: year})
         }
       }
-      console.log(halfArray);
       return halfArray
     }
 
@@ -174,7 +173,6 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
         const currentYear = lastRDay[2]
         let lastDayPrevMonth = null
         const residue = maxDays - parseInt(lastRDay[0])
-        console.log(residue);
         if (residue) {
           if (currentMonth === '01') {
             let prevYear = (parseInt(currentYear) - 1).toString()
@@ -232,10 +230,8 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
 
         db.transaction(tx => {
           if (monthChoose.length === 3) {
-            console.log(monthChoose);
             for (let i = 0; i < 24; i ++) {
             tx.executeSql("select sum(count_step) as step, strftime('%H', date_time) as hours, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time where hours=? and day=? and month=? and year=?", [(i < 10 ? '0' + i : i.toString()), ...monthChoose], (_, { rows }) => {
-              console.log("Мой вывод", JSON.stringify(rows['_array']));
               if (!isNaN(parseInt(JSON
               .stringify(rows['_array'])
               .replace(/(^.*?:|[a-z""[\],{}])/g, "")
@@ -286,9 +282,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
                 })
             }
             resolve(dataForChart)})
-          }}
-          console.log(dataForChart);
-          
+          }}      
         })
       })
     }
@@ -303,7 +297,6 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
             .split(':')
             resolve(lastRDay)
           })
-          
         })
       })
     }
@@ -320,7 +313,6 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
       if (statMem === 'month') {
 
         if (chartChoose) {
-          console.log('вывод месяца', chartChoose);
           let monthChoose = chartChoose.x
             .replace(/"/)
             .split(' ')
@@ -329,7 +321,6 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
             }
             let lastRDay = await getLastRDay(monthChoose)
             tmpArr = await getMonthArray(lastRDay)
-            console.log(dataForChart);
             for (let key of tmpArr) {
               dataArrayForChart = await getChartMonth(key['day'], key['month'], key['year']) 
             }
@@ -345,15 +336,12 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
           currentMonthOfChart.push((currentDate.getMonth() + 1).toString())
         }
           currentMonthOfChart.push((currentDate.getFullYear()).toString())
-          console.log(currentMonthOfChart);
           let lastRDay = await getLastRDay(currentMonthOfChart)
           tmpArr = await getMonthArray(lastRDay)
-            console.log(dataForChart);
             for (let key of tmpArr) {
               dataArrayForChart = await getChartMonth(key['day'], key['month'], key['year']) 
             }
             onSubmit(dataArrayForChart, statMem)
-
         }
       }
       if (statMem === 'day') {
@@ -420,6 +408,8 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     type='bar' 
     width={'100%'} 
     height={250} 
+    defaultColumnWidth={dataGraph[0].statMem === 'year' ? 22 : dataGraph[0].statMem === 'day' ? 11.7 : 10}
+    defaultColumnMargin={dataGraph[0].statMem === 'year' ? 10 : dataGraph[0].statMem === 'day' ? 4 : 1.7}
     onPress={(a) => {
         chartChoose = sampleDataMonth[0]['data'][a]
         console.log('onPress', chartChoose)
