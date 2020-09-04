@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, TouchableHighlight } from 're
 import PureChart from 'react-native-pure-chart'
 import * as SQLite from 'expo-sqlite'
 import {lastDayForMonth} from '../lastDayForMonth'
-export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => {
+export const RenderChart = ({ dataGraph, onSubmit}) => {
     let chartChoose = null
     let dataForChart = dataGraph[0].dataForChart ? dataGraph[0].dataForChart : dataGraph
     
@@ -203,9 +203,7 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
                 arrayMonth = arrayMonth.concat(constructHalfsMonthArray(1, parseInt(currentDay), currentMonth, currentYear))
             }
 
-          } else if(currentMonth === '02') {
-            
-          } else if (currentMonth !== '01' || currentMonth !== '02' || currentMonth !== '03') {
+          } else if (currentMonth !== '01' || currentMonth !== '03') {
             if (currentMonth - 1 < 10) {
               prevMonth = '0' + (currentMonth - 1)
             } else {
@@ -224,6 +222,74 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
           arrayMonth = constructHalfsMonthArray(1, parseInt(currentDay), currentMonth, currentYear)
         } 
       resolve(arrayMonth)
+      })
+    }
+    const parserChartDay = (data) => {
+      
+    }
+    const getChartDay = (monthChoose) => {
+      return new Promise(resolve => {
+
+        db.transaction(tx => {
+          if (monthChoose.length === 3) {
+            console.log(monthChoose);
+            for (let i = 0; i < 24; i ++) {
+            tx.executeSql("select sum(count_step) as step, strftime('%H', date_time) as hours, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time where hours=? and day=? and month=? and year=?", [(i < 10 ? '0' + i : i.toString()), ...monthChoose], (_, { rows }) => {
+              console.log("Мой вывод", JSON.stringify(rows['_array']));
+              if (!isNaN(parseInt(JSON
+              .stringify(rows['_array'])
+              .replace(/(^.*?:|[a-z""[\],{}])/g, "")
+              .split(':')[0]))) {
+                dataForChart.push({
+                  x: JSON
+                  .stringify(rows['_array'])
+                  .replace(/(^.*?:|[a-z""[\],{}])/g, "")
+                  .split(':')[1] + ' ' + 
+                  JSON
+                  .stringify(rows['_array'])
+                  .replace(/(^.*?:|[a-z""[\],{}])/g, "")
+                  .split(':')[2] + ' ' + 
+                  JSON
+                  .stringify(rows['_array'])
+                  .replace(/(^.*?:|[a-z""[\],{}])/g, "")
+                  .split(':')[3] + ' ' +
+                  JSON
+                  .stringify(rows['_array'])
+                  .replace(/(^.*?:|[a-z""[\],{}])/g, "")
+                  .split(':')[4],
+                  y: parseInt(
+                    JSON
+                    .stringify(rows['_array'])
+                    .replace(/(^.*?:|[a-z""[\],{}])/g, "")
+                    .split(':')[0]),
+                })
+              
+            } else {
+                dataForChart.push({
+                x: JSON
+                  .stringify(rows['_array'])
+                  .replace(/(^.*?:|[a-z""[\],{}])/g, "")
+                  .split(':')[1] + '' + 
+                  JSON
+                  .stringify(rows['_array'])
+                  .replace(/(^.*?:|[a-z""[\],{}])/g, "")
+                  .split(':')[2] + ' ' + 
+                  JSON
+                  .stringify(rows['_array'])
+                  .replace(/(^.*?:|[a-z""[\],{}])/g, "")
+                  .split(':')[3] + ' ' +
+                  JSON
+                  .stringify(rows['_array'])
+                  .replace(/(^.*?:|[a-z""[\],{}])/g, "")
+                  .split(':')[4],
+                y: 0,
+                })
+            }
+            resolve(dataForChart)})
+          }}
+          console.log(dataForChart);
+          
+        })
       })
     }
 
@@ -254,9 +320,13 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
       if (statMem === 'month') {
 
         if (chartChoose) {
-          const monthChoose = chartChoose.x
+          console.log('вывод месяца', chartChoose);
+          let monthChoose = chartChoose.x
             .replace(/"/)
             .split(' ')
+            if (monthChoose.length === 4) {
+              monthChoose = [monthChoose[2], monthChoose[3]]
+            }
             let lastRDay = await getLastRDay(monthChoose)
             tmpArr = await getMonthArray(lastRDay)
             console.log(dataForChart);
@@ -264,11 +334,7 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
               dataArrayForChart = await getChartMonth(key['day'], key['month'], key['year']) 
             }
             onSubmit(dataArrayForChart, statMem)
-            
-            
-            
-          
-          
+
         } else {
           let currentDate = new Date()
           const currentMonthOfChart = []
@@ -291,7 +357,18 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
         }
       }
       if (statMem === 'day') {
-        // onSubmit(dataArrayForChart, statMem)
+        if (chartChoose) {
+          const monthChoose = chartChoose.x
+          .replace(/"/)
+          .split(' ')
+          dataArrayForChart = await getChartDay(monthChoose)
+        } else {
+          dataArrayForChart = await getChartDay([new Date().getDate() < 10 ? '0' + new Date().getDate() : new Date().getDate().toString(), 
+          (new Date().getMonth()) + 1 < 10 ? '0' + (new Date().getMonth() + 1) : (new Date().getMonth() + 1).toString(), new Date().getFullYear().toString()])
+        }
+        // console.log(monthChoose);
+        onSubmit(dataArrayForChart, statMem)
+        
       }
     } 
     
@@ -308,8 +385,8 @@ export const RenderChart = ({ dataGraph, onSubmit, statusPress, subButton }) => 
     
     <TouchableOpacity disabled={dataGraph[0].statMem === 'day' ? true : false} style={dataGraph[0].statMem === 'day' ? styles.activeButton : styles.button} onPress={() => {
       myStatusPress = 'day'
-          
-      printData(myStatusPress)
+      printData(myStatusPress, chartChoose)
+      
     }}><Text>День</Text></TouchableOpacity>
     <TouchableOpacity  disabled={dataGraph[0].statMem === 'month' ? true : false} style={dataGraph[0].statMem === 'month' ? styles.activeButton : styles.button} onPress={() => {
       myStatusPress = 'month'
