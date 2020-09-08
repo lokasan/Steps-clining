@@ -1,22 +1,34 @@
 import React, {useState, useReducer} from 'react';
 import {StyleSheet, View, FlatList, Image, ScrollView, Text, TouchableOpacity} from 'react-native'
-import {EmploeeContext} from './EmploeeContext'
+import {EmploeeContext} from './emploeeContext'
 import {emploeeReducer} from './emploeeReducer'
+import { ADD_TODO, REMOVE_TODO } from '../../components/types';
 
 
 export const EmploeeState = ({ children }) => {
     const initialState = {
-        
+        todos: [],
         emploeeAndSteps: [],
         loading: false,
         error: null
     }
     const [state, dispatch] = useReducer(emploeeReducer, initialState)
     
-    // const [state, dispatch] = useReducer(emploeeReducer, initialState)
-    return <EmploeeContext.Provider value={{initialState}}>{children}</EmploeeContext.Provider>
-        
+   
+
+    const addTodo = (title, pas) => dispatch({type: ADD_TODO, title, pas})
+    const removeTodo = id => dispatch({type: REMOVE_TODO, id})
     
+    return (
+    <EmploeeContext.Provider 
+        value={{
+            todos: state.todos,
+            addTodo, 
+            removeTodo
+        }}>
+        {children}
+    </EmploeeContext.Provider>
+    )
 }
 const styles = StyleSheet.create({
     mainView: {

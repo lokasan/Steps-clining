@@ -1,17 +1,18 @@
-import React, {useState, useCallback, useEffect, useContext, Alert} from 'react'
-import {View, Image, StyleSheet} from 'react-native'
+import React, {useState, useCallback, useEffect, useContext} from 'react'
+import {View, Image, StyleSheet, Alert} from 'react-native'
 import {Navbar} from './components/Navbar'
 import { MainScreen } from './screens/mainsreen'
-import { EmploeeContext } from './context/emploee/EmploeeContext'
+import { EmploeeContext } from './context/emploee/emploeeContext'
 import { GraphPed} from './components/GraphPed'
 import * as SQLite from 'expo-sqlite'
 import {QRCode} from './screens/qrcode'
+import { ScreenContext } from './context/screen/screenContext'
 
 export const MainLayout = () => {
-    const emploeeContext = useContext(EmploeeContext)
-    console.log(emploeeContext)
-    const [TodoId, setTodoId] = useState(null)
-    const [todos, setTodos] = useState([])
+    const {todos, addTodo, removeTodo} = useContext(EmploeeContext)
+    const {todoId, changeScreen} = useContext(ScreenContext)
+    // const [TodoId, setTodoId] = useState(null)
+    // const [todos, setTodos] = useState(emploeeContext.todos)
 
     const myKey = {
         key_auth: null
@@ -44,61 +45,40 @@ export const MainLayout = () => {
         console.log('start')
         await buildQ()
         if (myKey.key_auth) {
-          setTodoId(1)
+          changeScreen(1)
         }
       }
-      // }, [])
-      // setTimeout(()=> console.log(myKey.key_auth, 2), 400)
       getAsyncData()
-    
-    const addTodo = (title, pas) => {
-        const newTodo = {
-          id: Date.now().toString(),
-          title: title,
-          pas: pas
-        }
-        setTodos(prev => [
-          ...prev, 
-          {
-          id: Date.now().toString(),
-          title: title,
-          pas: pas
-        }
-      ])
-        
-      }
-      // console.log(todos)
-    
       // var content = <QRCode/>
-      const removeTodo = id => {
-        const todo = todos.find(t => t.id === id)
-        Alert.alert(
-          "Удаление элемента",
-          `Вы уверены, что хотите удалить "${todo.title}"?`,
-          [
-            {
-              text: "Отмена",
-              style: "cancel"
-            },
-            { 
-              text: "Удалить", 
-              style: 'destructive',
-              onPress: () => {
-                setTodos(prev => prev.filter(todo => todo.id !== id))
-            } }
-          ],
-          { cancelable: false }
-        );
+    //   const removeTodo = id => {
+    //     const todo = emploeeContext.todos.find(t => t.id === id)
+    //     Alert.alert(
+    //       "Удаление элемента",
+    //       `Вы уверены, что хотите удалить "${todo.title}"?`,
+    //       [
+    //         {
+    //           text: "Отмена",
+    //           style: "cancel"
+    //         },
+    //         { 
+    //           text: "Удалить", 
+    //           style: 'destructive',
+    //           onPress: () => {
+    //             setTodos(prev => prev.filter(todo => todo.id !== id))
+    //         } }
+    //       ],
+    //       { cancelable: false }
+    //     );
         
-      }
+    //   }
     let content = (
         <MainScreen 
         todos={todos} 
         addTodo={addTodo} 
         removeTodo={removeTodo} 
-        openQR={setTodoId}/>
+        openQR={changeScreen}/>
     )
-    if (TodoId) {
+    if (todoId) {
         content = <GraphPed/>
       }
 
