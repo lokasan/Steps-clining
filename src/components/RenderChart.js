@@ -408,8 +408,8 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     type='bar' 
     width={'100%'} 
     height={250} 
-    defaultColumnWidth={dataGraph[0].statMem === 'year' ? 22 : dataGraph[0].statMem === 'day' ? 11.7 : 10}
-    defaultColumnMargin={dataGraph[0].statMem === 'year' ? 10 : dataGraph[0].statMem === 'day' ? 4 : 1.7}
+    defaultColumnWidth={dataGraph[0].statMem === 'year' ? 22 : dataGraph[0].statMem === 'day' ? 11.7 : 8.6}
+    defaultColumnMargin={dataGraph[0].statMem === 'year' ? 10 : dataGraph[0].statMem === 'day' ? 4 : 3.2}
     onPress={(a) => {
         chartChoose = sampleDataMonth[0]['data'][a]
         console.log('onPress', chartChoose)
@@ -424,6 +424,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     }
     }
     />
+    
     </View>)
 }
 const styles = StyleSheet.create({
