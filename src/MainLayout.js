@@ -13,7 +13,7 @@ export const MainLayout = () => {
     const {todoId, changeScreen} = useContext(ScreenContext)
     // const [TodoId, setTodoId] = useState(null)
     // const [todos, setTodos] = useState(emploeeContext.todos)
-
+  const userStatus = null
     const myKey = {
         key_auth: null
       }
@@ -25,6 +25,7 @@ export const MainLayout = () => {
            db.transaction((tx) => { 
             tx.executeSql('select * from user_local', [], (_, { rows }) => {
               myKey.key_auth = JSON.stringify(rows['_array'][0]['key_auth'])
+              console.log(rows['_array'])
              resolve()                
            }                                
             )                               
@@ -79,7 +80,7 @@ export const MainLayout = () => {
         <MainScreen/>
     )
     if (todoId) {
-        content = <GraphPed/>
+        content = <GraphPed userStatus={userStatus} myKey={myKey.key_auth}/>
       }
 
     return (

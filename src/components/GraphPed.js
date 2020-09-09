@@ -13,7 +13,7 @@ GoogleFit.checkIsAuthorized()
 // }
 // GoogleFit.checkIsAuthorized()
 // setInterval(sayHi, 10000);
-let dataForChart = [
+let dataForChart = [{ 'dataForChart': [
   {x: '2018-02-01', y: 3000},
   {x: '2018-02-02', y: 4203},
   {x: '2018-02-03', y: 3706},
@@ -84,9 +84,16 @@ let dataForChart = [
   {x: '2018-02-28', y: 13546},
   {x: '2018-02-29', y: 7852},
   {x: '2018-02-30', y: 500},
-]
+], 'statMem': 'day'}]
 const db = SQLite.openDatabase('db.db')
 export const GraphPed = () => {
+
+    const initialState = {
+      dataFirstLoad: [],
+      loading: false,
+      error: null
+    }
+
     const [dataGraph, setDataGraph] = useState(dataForChart)
     const addDataGraph = (dataForChart, statMem) => {
       const newDataGraph = {
