@@ -2,14 +2,14 @@ import React, {useState, useCallback, useEffect, useContext} from 'react'
 import {View, Image, StyleSheet, Alert} from 'react-native'
 import {Navbar} from './components/Navbar'
 import { MainScreen } from './screens/mainsreen'
-import { EmploeeContext } from './context/emploee/emploeeContext'
+import { EmploeeContext } from './context/emploee/authorizationContext'
 import { GraphPed} from './components/GraphPed'
 import * as SQLite from 'expo-sqlite'
 import {QRCode} from './screens/qrcode'
 import { ScreenContext } from './context/screen/screenContext'
 
 export const MainLayout = () => {
-    const {todos, addTodo, removeTodo} = useContext(EmploeeContext)
+    // const {todos, addTodo, removeTodo} = useContext(EmploeeContext)
     const {todoId, changeScreen} = useContext(ScreenContext)
     // const [TodoId, setTodoId] = useState(null)
     // const [todos, setTodos] = useState(emploeeContext.todos)
@@ -71,12 +71,12 @@ export const MainLayout = () => {
     //     );
         
     //   }
+    // todos={todos} 
+    //     addTodo={addTodo} 
+    //     removeTodo={removeTodo} 
+    //     openQR={changeScreen}
     let content = (
-        <MainScreen 
-        todos={todos} 
-        addTodo={addTodo} 
-        removeTodo={removeTodo} 
-        openQR={changeScreen}/>
+        <MainScreen/>
     )
     if (todoId) {
         content = <GraphPed/>

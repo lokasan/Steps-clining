@@ -1,7 +1,7 @@
 import React, {useState, useReducer} from 'react';
 import {StyleSheet, View, FlatList, Image, ScrollView, Text, TouchableOpacity} from 'react-native'
-import {EmploeeContext} from './emploeeContext'
-import {emploeeReducer} from './emploeeReducer'
+import {EmploeeContext} from './authorizationContext'
+import {emploeeReducer} from './authorizationReducer'
 import { ADD_TODO, REMOVE_TODO } from '../../components/types';
 
 
