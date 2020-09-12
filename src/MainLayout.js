@@ -47,6 +47,7 @@ export const MainLayout = () => {
         await buildQ()
         if (myKey.key_auth) {
           changeScreen(1)
+          
         }
       }
       getAsyncData()
@@ -76,11 +77,10 @@ export const MainLayout = () => {
     //     addTodo={addTodo} 
     //     removeTodo={removeTodo} 
     //     openQR={changeScreen}
-    let content = (
-        <MainScreen/>
-    )
+    let content = <MainScreen/>
+    
     if (todoId) {
-        content = <GraphPed userStatus={userStatus} myKey={myKey.key_auth}/>
+        content = <GraphPed/>
       }
 
     return (

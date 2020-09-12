@@ -6,88 +6,30 @@ import GoogleFit, { Scopes } from 'react-native-google-fit'
 import * as SQLite from 'expo-sqlite'
 import {lastDayForMonth} from '../lastDayForMonth'
 import { RenderChart } from '../components/RenderChart'
-GoogleFit.checkIsAuthorized()
 
+GoogleFit.checkIsAuthorized()
+const db = SQLite.openDatabase('db.db')
 // function sayHi() {
 //   alert('Привет');
 // }
 // GoogleFit.checkIsAuthorized()
 // setInterval(sayHi, 10000);
-let dataForChart = [{ 'dataForChart': [
-  {x: '2018-02-01', y: 3000},
-  {x: '2018-02-02', y: 4203},
-  {x: '2018-02-03', y: 3706},
-  {x: '2018-02-04', y: 188},
-  {x: '2018-02-05', y: 5003},
-  {x: '2018-02-06', y: 22478},
-  {x: '2018-02-07', y: 11217},
-  {x: '2018-02-08', y: 13546},
-  {x: '2018-02-09', y: 7852},
-  {x: '2018-02-10', y: 500},
-  {x: '2018-02-11', y: 3000},
-  {x: '2018-02-12', y: 4203},
-  {x: '2018-02-13', y: 3706},
-  {x: '2018-02-14', y: 188},
-  {x: '2018-02-15', y: 5003},
-  {x: '2018-02-16', y: 22478},
-  {x: '2018-02-17', y: 11217},
-  {x: '2018-02-18', y: 13546},
-  {x: '2018-02-19', y: 7852},
-  {x: '2018-02-20', y: 500},
-  {x: '2018-02-21', y: 3000},
-  {x: '2018-02-22', y: 4203},
-  {x: '2018-02-23', y: 3706},
-  {x: '2018-02-24', y: 188},
-  {x: '2018-02-25', y: 5003},
-  {x: '2018-02-26', y: 22478},
-  {x: '2018-02-27', y: 11217},
-  {x: '2018-02-28', y: 13546},
-  {x: '2018-02-29', y: 7852},
-  {x: '2018-02-30', y: 500},
-  {x: '2018-02-11', y: 3000},
-  {x: '2018-02-12', y: 4203},
-  {x: '2018-02-13', y: 3706},
-  {x: '2018-02-14', y: 188},
-  {x: '2018-02-15', y: 5003},
-  {x: '2018-02-16', y: 22478},
-  {x: '2018-02-17', y: 11217},
-  {x: '2018-02-18', y: 13546},
-  {x: '2018-02-19', y: 7852},
-  {x: '2018-02-20', y: 500},
-  {x: '2018-02-21', y: 3000},
-  {x: '2018-02-22', y: 4203},
-  {x: '2018-02-23', y: 3706},
-  {x: '2018-02-24', y: 188},
-  {x: '2018-02-25', y: 5003},
-  {x: '2018-02-26', y: 22478},
-  {x: '2018-02-27', y: 11217},
-  {x: '2018-02-28', y: 13546},
-  {x: '2018-02-29', y: 7852},
-  {x: '2018-02-30', y: 500},
-  {x: '2018-02-11', y: 3000},
-  {x: '2018-02-12', y: 4203},
-  {x: '2018-02-13', y: 3706},
-  {x: '2018-02-14', y: 188},
-  {x: '2018-02-15', y: 5003},
-  {x: '2018-02-16', y: 22478},
-  {x: '2018-02-17', y: 11217},
-  {x: '2018-02-18', y: 13546},
-  {x: '2018-02-19', y: 7852},
-  {x: '2018-02-20', y: 500},
-  {x: '2018-02-21', y: 3000},
-  {x: '2018-02-22', y: 4203},
-  {x: '2018-02-23', y: 3706},
-  {x: '2018-02-24', y: 188},
-  {x: '2018-02-25', y: 5003},
-  {x: '2018-02-26', y: 22478},
-  {x: '2018-02-27', y: 11217},
-  {x: '2018-02-28', y: 13546},
-  {x: '2018-02-29', y: 7852},
-  {x: '2018-02-30', y: 500},
-], 'statMem': 'day'}]
-const db = SQLite.openDatabase('db.db')
+let sampleDataYear = [
+  {x: 'Январь', y: 4520},
+  {x: 'Февраль', y: 4520},
+  {x: 'Март', y: 4520},
+  {x: 'Апрель', y: 4520},
+  {x: 'Май', y: 4520},
+  {x: 'Июнь', y: 4520},
+  {x: 'Июль', y: 4520},
+  {x: 'Август', y: 4520},
+]
+
+
 export const GraphPed = () => {
 
+  let dataForChart = [{ 'dataForChart': [], 
+                        'statMem': 'day'}]
     const initialState = {
       dataFirstLoad: [],
       loading: false,
@@ -106,19 +48,18 @@ export const GraphPed = () => {
       }]
       )
     }
-    
-    let sampleDataYear = [
-          {x: 'Январь', y: 4520},
-          {x: 'Февраль', y: 4520},
-          {x: 'Март', y: 4520},
-          {x: 'Апрель', y: 4520},
-          {x: 'Май', y: 4520},
-          {x: 'Июнь', y: 4520},
-          {x: 'Июль', y: 4520},
-          {x: 'Август', y: 4520},
-    ]
+   
+  
     
     
+    const sendDataToFireBase = () => {
+      db.transaction(tx => {
+        tx.executeSql("select * from step_time left join user_local", [], (_, { rows }) => {
+          console.log(JSON.stringify(rows['_array']))
+        })
+      })
+    }
+
     const setDataToBase = () => {
       let tmp 
       let tempP
@@ -164,6 +105,7 @@ export const GraphPed = () => {
           <View style={styles.container}>
             <TouchableOpacity style={styles.buttonD} onPress={setDataToBase}><Text>Загрузить тестовые данные</Text></TouchableOpacity>
             <TouchableOpacity style={styles.buttonD}><Text>Год</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.buttonD} onPress={sendDataToFireBase}><Text>Загрузить в firebase</Text></TouchableOpacity>
           </View>
         </View>
       </ScrollView>

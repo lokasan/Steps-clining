@@ -1,11 +1,12 @@
 import React from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, TouchableHighlight } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, TouchableHighlight, Alert } from 'react-native'
 import PureChart from 'react-native-pure-chart'
 import * as SQLite from 'expo-sqlite'
 import {lastDayForMonth} from '../lastDayForMonth'
 export const RenderChart = ({ dataGraph, onSubmit}) => {
     let chartChoose = null
-    let dataForChart = dataGraph[0].dataForChart ? dataGraph[0].dataForChart : dataGraph
+    let dataForChart = dataGraph[0].dataForChart
+    
     
     let myStatusPress = dataGraph.statMem
     
@@ -16,7 +17,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
       
       return new Promise(resolve => {
         db.transaction(tx => {
-          tx.executeSql("select sum(count_step)/? as step, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time where month=? and year=?", [days, month, year.toString()], (_, { rows }) => {
+          tx.executeSql("select sum(count_step)/? as step, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time left join user_local where step_time.user_id = user_local.id and month=? and year=?", [days, month, year.toString()], (_, { rows }) => {
               // console.log(parseInt(JSON.stringify(rows['_array']).replace(/(^.*?:|[a-z""[\],{}])/g, "").split(':')[0]))
             if (!isNaN(parseInt(JSON
               .stringify(rows['_array'])
@@ -225,13 +226,17 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     const parserChartDay = (data) => {
       
     }
-    const getChartDay = (monthChoose) => {
+    const getChartDay = (monthChoose, userStatus, key_auth) => {
       return new Promise(resolve => {
-
+        console.log('Transaction: ', userStatus)
+        let requestDB = "select sum(count_step) as step, strftime('%H', date_time) as hours, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time where hours=? and day=? and month=? and year=?"
+        if (userStatus === 'null') {
+          requestDB = `select sum(count_step) as step, strftime('%H', date_time) as hours, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time left join user_local where hours=? and day=? and month=? and year=? and key_auth='${key_auth}'`
+        }
         db.transaction(tx => {
           if (monthChoose.length === 3) {
             for (let i = 0; i < 24; i ++) {
-            tx.executeSql("select sum(count_step) as step, strftime('%H', date_time) as hours, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time where hours=? and day=? and month=? and year=?", [(i < 10 ? '0' + i : i.toString()), ...monthChoose], (_, { rows }) => {
+            tx.executeSql(requestDB, [(i < 10 ? '0' + i : i.toString()), ...monthChoose], (_, { rows }) => {
               if (!isNaN(parseInt(JSON
               .stringify(rows['_array'])
               .replace(/(^.*?:|[a-z""[\],{}])/g, "")
@@ -300,10 +305,31 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
         })
       })
     }
+
+    const getUserStatus = new Promise((resolve, reject) => {
+      let userStatus = null
+        db.transaction(tx => {
+          tx.executeSql('select status, key_auth from user_local where id=1', [], (_, { rows }) => {
+
+            userStatus = JSON.stringify(rows['_array'])
+            .replace(/("status":|"key_auth"|[""[\],{}])/g, "")
+            .split(':')
+            resolve(userStatus)
+          })
+          
+        })
+    }) 
+      
+        
+        
+  
+
     async function printData(statMem, chartChoose = null) {
       dataForChart = []
       let dataArrayForChart = null
       let tmpArr = []
+      const userStatus = await getUserStatus
+      console.log(typeof(userStatus[0]))
       if (statMem === 'year') {
         let countYear = await getMinAndCountYear
         dataArrayForChart = await getYearArray(countYear)
@@ -349,10 +375,10 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
           const monthChoose = chartChoose.x
           .replace(/"/)
           .split(' ')
-          dataArrayForChart = await getChartDay(monthChoose)
+          dataArrayForChart = await getChartDay(monthChoose, userStatus[0], userStatus[1])
         } else {
           dataArrayForChart = await getChartDay([new Date().getDate() < 10 ? '0' + new Date().getDate() : new Date().getDate().toString(), 
-          (new Date().getMonth()) + 1 < 10 ? '0' + (new Date().getMonth() + 1) : (new Date().getMonth() + 1).toString(), new Date().getFullYear().toString()])
+          (new Date().getMonth()) + 1 < 10 ? '0' + (new Date().getMonth() + 1) : (new Date().getMonth() + 1).toString(), new Date().getFullYear().toString()], userStatus[0, userStatus[1]])
         }
         // console.log(monthChoose);
         onSubmit(dataArrayForChart, statMem)
@@ -367,6 +393,13 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
           color: '#3949ab'
         }, 
       ]
+    try {
+      if (dataGraph[0].dataForChart.length === 0 && dataGraph[0].statMem === 'day' ) {
+        printData(dataGraph[0].statMem, chartChoose)
+      }
+    } catch(e) {
+      console.log('Осуществлен переход по 0')
+    }
    return (
        <View>
     <View style={styles.container}>

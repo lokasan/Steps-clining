@@ -17,6 +17,7 @@ export const ScreenState = ({ children }) => {
         todoId: state
     }}
     >
-        {children}</ScreenContext.Provider>
+        {children}
+        </ScreenContext.Provider>
     )
 }
