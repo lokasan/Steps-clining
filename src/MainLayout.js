@@ -7,10 +7,13 @@ import { GraphPed} from './components/GraphPed'
 import * as SQLite from 'expo-sqlite'
 import {QRCode} from './screens/qrcode'
 import { ScreenContext } from './context/screen/screenContext'
+import { GraphContext } from './context/graph/graphContext'
+import { EmploeeList } from './screens/EmploeeList'
 
 export const MainLayout = () => {
     // const {todos, addTodo, removeTodo} = useContext(EmploeeContext)
     const {todoId, changeScreen} = useContext(ScreenContext)
+    
     // const [TodoId, setTodoId] = useState(null)
     // const [todos, setTodos] = useState(emploeeContext.todos)
   const userStatus = null
@@ -82,7 +85,7 @@ export const MainLayout = () => {
     if (todoId) {
         content = <GraphPed/>
       }
-
+    
     return (
         <View style={{flex: 1}}>
       
@@ -94,6 +97,7 @@ export const MainLayout = () => {
       </View>
       <View style={{backgroundColor: '#B9B8B8', justifyContent: 'center', alignItems: 'center'}}>
       {/* <TouchableHighlight onPress={() => setTodoId(1)}> */}
+      {/* {emploee} */}
       <Image onPress style={{height: 40, width: 40}} source={require('./images/3.png')} />
       {/* </TouchableHighlight> */}
       </View>
