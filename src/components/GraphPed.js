@@ -66,7 +66,7 @@ export const GraphPed = () => {
       let tempP
       let saveDataReq = []
       let count = 0
-      for (let i = 0; i < 6000; i++) {
+      for (let i = 0; i < 7000; i++) {
         tempP = new Date(2020, 7, 1, 0, count+=10)
         tempP = tempP.getFullYear() + '-' + (tempP.getMonth() + 1) + '-' +tempP.getDate() + ' ' + tempP.getHours() + ':' + tempP.getMinutes()
         tmp = tempP.split(/\-|\ |\:/)
@@ -81,7 +81,7 @@ export const GraphPed = () => {
         console.log('Out Cycle: ', tempP)
         saveDataReq.push(tempP)
         db.transaction(tx => {
-        tx.executeSql("insert into step_time (user_id, count_step, date_time, current_time) values (?, ?, ?, ?);", [1, Math.floor(Math.random() * 500), saveDataReq[i], Date.now()])
+        tx.executeSql("insert into step_time (user_id, count_step, date_time, current_time) values (?, ?, ?, ?);", [2, Math.floor(Math.random() * 500), saveDataReq[i], Date.now()])
         
         })
                 
@@ -102,7 +102,7 @@ export const GraphPed = () => {
             {console.log(`GraphPed:====>>> , ${JSON.stringify(dataGraph)}`)}
           </View>
         {/* <reservChart/> */}
-        <EmploeeList/>
+        <EmploeeList/> 
           <MyPedometer/>
           <View style={styles.container}>
             <TouchableOpacity style={styles.buttonD} onPress={setDataToBase}><Text>Загрузить тестовые данные</Text></TouchableOpacity>
