@@ -60,13 +60,17 @@ export const GraphPed = () => {
         })
       })
     }
-
+    const pragmaEdit = () => {
+      db.exec([{ sql: 'PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;', args: [] }], false, () =>
+      console.log('Journal_Mode and synchronous off')
+);
+    } 
     const setDataToBase = () => {
       let tmp 
       let tempP
       let saveDataReq = []
       let count = 0
-      for (let i = 0; i < 7000; i++) {
+      for (let i = 0; i < 8000; i++) {
         tempP = new Date(2020, 7, 1, 0, count+=10)
         tempP = tempP.getFullYear() + '-' + (tempP.getMonth() + 1) + '-' +tempP.getDate() + ' ' + tempP.getHours() + ':' + tempP.getMinutes()
         tmp = tempP.split(/\-|\ |\:/)
@@ -81,7 +85,7 @@ export const GraphPed = () => {
         console.log('Out Cycle: ', tempP)
         saveDataReq.push(tempP)
         db.transaction(tx => {
-        tx.executeSql("insert into step_time (user_id, count_step, date_time, current_time) values (?, ?, ?, ?);", [2, Math.floor(Math.random() * 500), saveDataReq[i], Date.now()])
+        tx.executeSql("insert into step_time (user_id, count_step, date_time, current_time) values (?, ?, ?, ?);", [3, Math.floor(Math.random() * 500), saveDataReq[i], Date.now()])
         
         })
                 
@@ -106,7 +110,7 @@ export const GraphPed = () => {
           <MyPedometer/>
           <View style={styles.container}>
             <TouchableOpacity style={styles.buttonD} onPress={setDataToBase}><Text>Загрузить тестовые данные</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.buttonD}><Text>Год</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.buttonD} onPress={pragmaEdit}><Text>Год</Text></TouchableOpacity>
             <TouchableOpacity style={styles.buttonD} onPress={sendDataToFireBase}><Text>Загрузить в firebase</Text></TouchableOpacity>
           </View>
         </View>
