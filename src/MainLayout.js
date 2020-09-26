@@ -10,7 +10,9 @@ import { ScreenContext } from './context/screen/screenContext'
 import { GraphContext } from './context/graph/graphContext'
 import { EmploeeList } from './screens/EmploeeList'
 
+
 export const MainLayout = () => {
+    const {loadEmploee, emploee, fetchEmploees} = useContext(GraphContext)
     // const {todos, addTodo, removeTodo} = useContext(EmploeeContext)
     const {todoId, changeScreen} = useContext(ScreenContext)
     
@@ -53,7 +55,7 @@ export const MainLayout = () => {
           
         }
       }
-      getAsyncData()
+      // getAsyncData()
       // var content = <QRCode/>
     //   const removeTodo = id => {
     //     const todo = emploeeContext.todos.find(t => t.id === id)
@@ -83,6 +85,7 @@ export const MainLayout = () => {
     let content = <MainScreen/>
     
     if (todoId) {
+        
         content = <GraphPed/>
       }
     

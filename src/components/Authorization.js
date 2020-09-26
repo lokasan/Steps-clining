@@ -1,10 +1,12 @@
-import React , {useState} from 'react'
+import React , {useState, useContext} from 'react'
 import {StyleSheet, View, Text, TextInput, TouchableOpacity, InputBox, ALert, Alert} from 'react-native'
 import QRCode from '../screens/qrcode'
 import { AppCard } from './ui/AppCard'
 import * as SQLite from 'expo-sqlite'
+import { GraphContext } from '../context/graph/graphContext'
 // import {VictoryChart, VictoryGroup, VictoryBar} from 'victory-native'
 export const Authorization = ({onSubmit, onOpen}) => {
+    const {loadEmploee, emploee, fetchEmploees} = useContext(GraphContext)
     const [value, onChangeText] = useState('')
     // const [valueP, onChangeP] = useState('')
     const privileg = value.toString() === 'root-klining-steps' ? 'admin' : null
@@ -26,6 +28,7 @@ export const Authorization = ({onSubmit, onOpen}) => {
                                     )
                 
               })
+              
               onOpen(1)
               
             // onChangeP('')

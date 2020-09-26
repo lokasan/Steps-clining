@@ -8,7 +8,7 @@ export const RenderEL = ({ emp }) => {
             console.log('Pressed', emp.key_auth)
            }}>
         <View style={styles.emp}>
-            <Text style={{color: 'red'}}>{emp.userName} {emp.key_auth}</Text>
+            <Text style={{color: 'red'}}>{emp.userName} steps: {emp.steps}</Text>
         </View>
         </TouchableOpacity>
     )

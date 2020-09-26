@@ -1,54 +1,83 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, TouchableHighlight, Alert } from 'react-native'
 import PureChart from 'react-native-pure-chart'
 import * as SQLite from 'expo-sqlite'
 import {lastDayForMonth} from '../lastDayForMonth'
+import { GraphContext } from '../context/graph/graphContext'
 export const RenderChart = ({ dataGraph, onSubmit}) => {
     let chartChoose = null
     let dataForChart = dataGraph[0].dataForChart
-    
+    const {loadEmploee, emploee, fetchEmploees} = useContext(GraphContext)
     
     let myStatusPress = dataGraph.statMem
     
     let deactivateButton = true
     const db = SQLite.openDatabase('db.db')
     
-    const getChartYear = (days, month, year, userStatus, key_auth, countUser) => {
-     
+    const getChartYear = (userStatus, key_auth, countUser) => {
+      
       return new Promise(resolve => {
+        // fetchEmploees()
+        // loadEmploee('Bor', 0, '45', 'adm') //ПОСМОТРЕТЬ
         db.transaction(tx => {
-          let requestDB = `select sum(count_step)/${days*countUser} as step, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time left join user_local where step_time.user_id = user_local.id and month=? and year=?`
+          let RDB = `select sum(count_step)/${countUser} as step, max(strftime('%d', date_time)) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time group by month, year order by year desc, month desc limit 12;`
+          let requestDB = `select sum(count_step)/ as step, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time left join user_local where step_time.user_id = user_local.id and month=? and year=?`
           if (userStatus === 'null') {
-            requestDB = `select sum(count_step)/${days} as step, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time left join user_local where step_time.user_id = user_local.id and month=? and year=? and key_auth=${key_auth}`
+            requestDB = `select sum(count_step) as step, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time left join user_local where step_time.user_id = user_local.id and month=? and year=? and key_auth=${key_auth}`
           }
           {/* добавить разделение на админа и простого юзера */}
-          tx.executeSql(requestDB, [month, year.toString()], (_, { rows }) => {
-              // console.log(parseInt(JSON.stringify(rows['_array']).replace(/(^.*?:|[a-z""[\],{}])/g, "").split(':')[0]))
-            if (!isNaN(parseInt(JSON
-              .stringify(rows['_array'])
-              .replace(/(^.*?:|[a-z""[\],{}])/g, "")
-              .split(':')[0]))) {
-                dataForChart.push({
-                  x: JSON
-                  .stringify(rows['_array'])
-                  .replace(/(^.*?:|[a-z""[\],{}])/g, "")
-                  .split(':')[1] + ' ' + JSON
-                  .stringify(rows['_array'])
-                  .replace(/(^.*?:|[a-z""[\],{}])/g, "")
-                  .split(':')[2],
-                  y: parseInt(
-                    JSON
-                    .stringify(rows['_array'])
-                    .replace(/(^.*?:|[a-z""[\],{}])/g, "")
-                    .split(':')[0]),
-                })
-              
-            } else {
-                dataForChart.push({
-                x: month + ' ' + year.toString(),
-                y: 0,
-                })
+          tx.executeSql(RDB, [], (_, { rows }) => {
+            let yerObj = JSON.parse(JSON.stringify(rows['_array']))
+            for (key of yerObj) {
+              dataForChart.unshift({
+                x: key['month'] + ' ' + key['year'],
+                y: Math.floor(key['step']/key['day'])
+              })
+              // console.log(key);
             }
+            if (yerObj.length !== 12) {
+
+              let month = parseInt(yerObj[yerObj.length - 1].month)
+              let year = parseInt(yerObj[yerObj.length - 1].year)
+              console.log(month, 'Месяц');
+              for(let i=1; i<=12-yerObj.length; i++) {
+                month = month - 1
+                if (!month) {
+                  month = 12
+                  year -= 1
+                }
+                dataForChart.unshift({
+                  x: month < 10 ? '0' + month + ' ' + year : month.toString() + ' ' + year,
+                  y: 0
+                })
+              }
+            }
+              // console.log(parseInt(JSON.stringify(rows['_array']).replace(/(^.*?:|[a-z""[\],{}])/g, "").split(':')[0]))
+            // if (!isNaN(parseInt(JSON
+            //   .stringify(rows['_array'])
+            //   .replace(/(^.*?:|[a-z""[\],{}])/g, "")
+            //   .split(':')[0]))) {
+            //     dataForChart.push({
+            //       x: JSON
+            //       .stringify(rows['_array'])
+            //       .replace(/(^.*?:|[a-z""[\],{}])/g, "")
+            //       .split(':')[1] + ' ' + JSON
+            //       .stringify(rows['_array'])
+            //       .replace(/(^.*?:|[a-z""[\],{}])/g, "")
+            //       .split(':')[2],
+            //       y: parseInt(
+            //         JSON
+            //         .stringify(rows['_array'])
+            //         .replace(/(^.*?:|[a-z""[\],{}])/g, "")
+            //         .split(':')[0]),
+            //     })
+              
+            // } else {
+            //     dataForChart.push({
+            //     x: 'month' + ' ' + 'year',
+            //     y: 0,
+            //     })
+            // }
             resolve(dataForChart)
           }
           )
@@ -73,36 +102,36 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     })  
   })
 
-    const getYearArray = (countYear, userStatus, key_auth, countUser) => {
-      return new Promise(resolve => {
-        let dataArrayForChart = []
-        for (let i = countYear[0]; i <= countYear[countYear.length - 1]; i++) {
-          console.log(`Проход по году ${i}`)
-          for (let key of lastDayForMonth.monthList) {
-            if (Object.keys(key)[0] === '02') {
-              // console.log(`${lastDayForMonth.monthList[1][Object.keys(key)[0]](i)} ${Object.keys(key)[0]} ${i}`)
-              // console.log(`[Month: ${Object.keys(key)[0] } Days: ${lastDayForMonth.monthList[1][Object.keys(key)[0]](i)}]`)
-              dataArrayForChart = getChartYear(lastDayForMonth.monthList[1][Object.keys(key)[0]](i), Object.keys(key)[0], i, userStatus, key_auth, countUser)
+    // const getYearArray = (countYear, userStatus, key_auth, countUser) => {
+    //   return new Promise(resolve => {
+    //     let dataArrayForChart = []
+    //     for (let i = countYear[0]; i <= countYear[countYear.length - 1]; i++) {
+    //       console.log(`Проход по году ${i}`)
+    //       for (let key of lastDayForMonth.monthList) {
+    //         if (Object.keys(key)[0] === '02') {
+    //           // console.log(`${lastDayForMonth.monthList[1][Object.keys(key)[0]](i)} ${Object.keys(key)[0]} ${i}`)
+    //           // console.log(`[Month: ${Object.keys(key)[0] } Days: ${lastDayForMonth.monthList[1][Object.keys(key)[0]](i)}]`)
+    //           dataArrayForChart = getChartYear(lastDayForMonth.monthList[1][Object.keys(key)[0]](i), Object.keys(key)[0], i, userStatus, key_auth, countUser)
               
-                // console.log('Внутри цикла:', dataArrayForChart)
+    //             // console.log('Внутри цикла:', dataArrayForChart)
               
-            }
-            else {
-              dataArrayForChart = getChartYear(Object.values(key)[0], Object.keys(key)[0], i, userStatus, key_auth, countUser)
+    //         }
+    //         else {
+    //           dataArrayForChart = getChartYear(Object.values(key)[0], Object.keys(key)[0], i, userStatus, key_auth, countUser)
               
-              // {console.log(`[Month: ${Object.keys(key)[0]} Days: ${Object.values(key)}]`)}
-           } // найти способ вывода номера месяца по порядку [найден]
-           // перенести в отдельные функции все циклы
-        }
+    //           // {console.log(`[Month: ${Object.keys(key)[0]} Days: ${Object.values(key)}]`)}
+    //        } // найти способ вывода номера месяца по порядку [найден]
+    //        // перенести в отдельные функции все циклы
+    //     }
        
-      }
+    //   }
       
-        // console.log('buuuugs', dataArrayForChart)
+    //     // console.log('buuuugs', dataArrayForChart)
       
       
-      resolve(dataArrayForChart)
-      })
-    }
+    //   resolve(dataArrayForChart)
+    //   })
+    // }
     const maxDays = 31
     const getChartMonth = (days, month, year, userStatus, key_auth, userCount) => {
       return new Promise(resolve => {
@@ -369,8 +398,35 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
         
         
   
+    getChartMonthReserve = (month = null, year = null) => {
+      return new Promise( (resolve) => {
+        db.transaction(tx => {
+          let reqDB = null
+          if (month && year) {
+            console.log(month, year);
+            reqDB = `select sum(count_step) steps, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id and month <='${month}' and year <='${year}' group by year, month, day order by year desc, month desc, day desc limit 31;`
+          }
+          else {
+            reqDB = `select sum(count_step) steps, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id group by year, month, day order by year desc, month desc, day desc limit 31;`
+          }
+         
+          tx.executeSql(reqDB, [], (_, { rows }) => {
+            let monthObj = JSON.parse(JSON.stringify(rows['_array']))
+            console.log(JSON.stringify(rows['_array']));
+            for(let key of monthObj) {
+              dataForChart.unshift({
+                x: key['day'] + ' ' + key['month'] + ' ' + key['year'],
+                y: parseInt(key['steps']/key['users_count'])
+              })
+            }
+            resolve(dataForChart)
+          })
+        })
+      })
+    }
 
     async function printData(statMem, chartChoose = null) {
+      
       // reservMonth = "select sum(count_step), strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time group by month;"
       dataForChart = []
       let dataArrayForChart = null
@@ -379,8 +435,8 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
       const userStatus = await getUserStatus
       console.log(typeof(userStatus[0]))
       if (statMem === 'year') {
-        let countYear = await getMinAndCountYear
-        dataArrayForChart = await getYearArray(countYear, ...userStatus)
+        // let countYear = await getMinAndCountYear
+        dataArrayForChart = await getChartYear(...userStatus)
         onSubmit(dataArrayForChart, statMem)
       }
 
@@ -393,34 +449,36 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
             if (monthChoose.length === 4) {
               monthChoose = [monthChoose[2], monthChoose[3]]
             }
-            let lastRDay = await getLastRDay(monthChoose)
-            tmpArr = await getMonthArray(lastRDay)
-            for (let key of tmpArr) {
-              countUser = await getCountUsers(statMem, key['day'], key['month'], key['year'])
-              // console.log(countUser, 'Количетво пользователей');
-              userStatus[userStatus.length - 1] = countUser
-              dataArrayForChart = await getChartMonth(key['day'], key['month'], key['year'], ...userStatus) 
-            }
+            dataArrayForChart = await getChartMonthReserve(...monthChoose)
+            // let lastRDay = await getLastRDay(monthChoose)
+            // tmpArr = await getMonthArray(lastRDay)
+            // for (let key of tmpArr) {
+            //   countUser = await getCountUsers(statMem, key['day'], key['month'], key['year'])
+            //   // console.log(countUser, 'Количетво пользователей');
+            //   userStatus[userStatus.length - 1] = countUser
+            //   dataArrayForChart = await getChartMonth(key['day'], key['month'], key['year'], ...userStatus) 
+            // }
             onSubmit(dataArrayForChart, statMem)
 
         } else {
-          let currentDate = new Date()
-          const currentMonthOfChart = []
+        //   let currentDate = new Date()
+        //   const currentMonthOfChart = []
           
-          if ((currentDate.getMonth() + 1) < 10) {
-            currentMonthOfChart.push(('0' + (currentDate.getMonth() + 1)).toString())
-        } else {
-          currentMonthOfChart.push((currentDate.getMonth() + 1).toString())
-        }
-          currentMonthOfChart.push((currentDate.getFullYear()).toString())
-          let lastRDay = await getLastRDay(currentMonthOfChart)
-          tmpArr = await getMonthArray(lastRDay)
-            for (let key of tmpArr) {
-              countUser = await getCountUsers(statMem, key['day'], key['month'], key['year'])
-              userStatus[userStatus.length - 1] = countUser
-              // console.log(countUser, 'Количетво пользователей');
-              dataArrayForChart = await getChartMonth(key['day'], key['month'], key['year'], ...userStatus) 
-            }
+        //   if ((currentDate.getMonth() + 1) < 10) {
+        //     currentMonthOfChart.push(('0' + (currentDate.getMonth() + 1)).toString())
+        // } else {
+        //   currentMonthOfChart.push((currentDate.getMonth() + 1).toString())
+        // }
+        //   currentMonthOfChart.push((currentDate.getFullYear()).toString())
+        //   let lastRDay = await getLastRDay(currentMonthOfChart)
+        //   tmpArr = await getMonthArray(lastRDay)
+        //     for (let key of tmpArr) {
+        //       countUser = await getCountUsers(statMem, key['day'], key['month'], key['year'])
+        //       userStatus[userStatus.length - 1] = countUser
+        //       // console.log(countUser, 'Количетво пользователей');
+        //       dataArrayForChart = await getChartMonth(key['day'], key['month'], key['year'], ...userStatus) 
+        //     }
+          dataArrayForChart = await getChartMonthReserve()
             onSubmit(dataArrayForChart, statMem)
         }
       }
