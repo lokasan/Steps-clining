@@ -6,7 +6,7 @@ import GoogleFit, { Scopes } from 'react-native-google-fit'
 import * as SQLite from 'expo-sqlite'
 import {lastDayForMonth} from '../lastDayForMonth'
 import { RenderChart } from '../components/RenderChart'
-import { EmploeeList } from '../screens/EmploeeList';
+import { EmploeeList } from '../screens/EmploeeList'
 
 GoogleFit.checkIsAuthorized()
 const db = SQLite.openDatabase('db.db')
@@ -106,7 +106,7 @@ export const GraphPed = () => {
             {console.log(`GraphPed:====>>> , ${JSON.stringify(dataGraph)}`)}
           </View>
         {/* <reservChart/> */}
-        <EmploeeList/> 
+        
           <MyPedometer/>
           <View style={styles.container}>
             <TouchableOpacity style={styles.buttonD} onPress={setDataToBase}><Text>Загрузить тестовые данные</Text></TouchableOpacity>

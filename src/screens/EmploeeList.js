@@ -3,9 +3,10 @@ import {StyleSheet, View, FlatList, Image, ScrollView, Text} from 'react-native'
 import { GraphContext } from '../context/graph/graphContext'
 import { RenderEL } from '../components/renderEmploeeList'
 
-export const EmploeeList = ({}) => {
+export const EmploeeList = ({emploeeMy}) => {
     const {loadEmploee, emploee, fetchEmploees} = useContext(GraphContext)
     const loadingEmp = useCallback(async () => await fetchEmploees(), [fetchEmploees])
+    
     useEffect(() => {
         loadingEmp()
     }, [])
@@ -15,7 +16,7 @@ export const EmploeeList = ({}) => {
             keyExtractor={item => item.id.toString()}
             data={emploee}
             renderItem={
-                ({ item }) => <RenderEL emp={item}/>
+                ({ item }) => <RenderEL emp={item} emploeeMy={emploeeMy}/>
             }
             />
         </View>

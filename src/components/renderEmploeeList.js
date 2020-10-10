@@ -1,14 +1,17 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {Text, View, StyleSheet, TouchableOpacity} from 'react-native'
 import { ScreenContext } from '../context/screen/screenContext'
-export const RenderEL = ({ emp }) => {
+export const RenderEL = ({ emp, emploeeMy }) => {
     const { todoId, changeScreen } = useContext(ScreenContext)
+    const [myIsCo, setMyIsCo] = useState(0)
+    console.log(emploeeMy, "");
     return (
         <TouchableOpacity onPress={() => {
-            console.log('Pressed', emp.key_auth)
+            setMyIsCo(myIsCo + 1)
+            // console.log('Pressed', emp.key_auth, '   ', myIsCo)
            }}>
         <View style={styles.emp}>
-            <Text style={{color: 'red'}}>{emp.userName} steps: {emp.steps}</Text>
+        <Text style={{color: 'red'}}>{emp.userName} steps: {emp.steps}  {myIsCo} {emploeeMy}</Text>
         </View>
         </TouchableOpacity>
     )
