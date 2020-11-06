@@ -1,4 +1,10 @@
+
 import { CLEAR_ERROR, FETCH_USERS, HIDE_LOADER, LOAD_EMPLOEE, SHOW_ERROR, SHOW_LOADER, UPDATE_EMPLOEE } from "../../components/types"
+const initialState = {
+    emploee: [],
+    loading: false,
+    error: null
+}
 const handlers = {
     [LOAD_EMPLOEE]: (state, {id, userName, steps, key_auth, status}) => ({...state,
     emploee: [
@@ -26,8 +32,7 @@ const handlers = {
     }),
     DEFAULT: state => state
 }
-export const graphReducer = (state, action) => {
+export const empListReducer = (state = initialState, action) => {
     const handler = handlers[action.type] || handlers.DEFAULT
-
     return handler(state, action)
-}
+} 

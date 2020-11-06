@@ -8,4 +8,5 @@ export const CLEAR_ERROR = 'CLEAR_ERROR'
 export const CHANGE_SCREEN = 'CHANGE_SCREEN'
 export const LOAD_EMPLOEE = 'LOAD_EMPLOEE'
 export const REMOVE_EMPLOEE = 'REMOVE_EMPLOEE'
+export const UPDATE_EMPLOEE = 'UPDATE_EMPLOEE'
 

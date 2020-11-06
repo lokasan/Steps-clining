@@ -1,4 +1,4 @@
-import React, {useContext, useCallback, useEffect, useState} from 'react'
+import React, {useContext, useCallback, useEffect, useState, useRef} from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, TouchableHighlight, Alert } from 'react-native'
 import PureChart from 'react-native-pure-chart'
 import * as SQLite from 'expo-sqlite'
@@ -7,26 +7,56 @@ import { GraphContext } from '../context/graph/graphContext'
 import { EmploeeList } from '../screens/EmploeeList'
 export const RenderChart = ({ dataGraph, onSubmit}) => {
     let chartChoose = null
+    const savedChartTouch = useRef(null)
     let dataForChart = dataGraph[0].dataForChart
-    const {loadEmploee, emploee, fetchEmploees} = useContext(GraphContext)
+    const {loadEmploee, emploee, fetchEmploees, updateEmploee} = useContext(GraphContext)
     const loadingEmp = useCallback(async () => await fetchEmploees(), [fetchEmploees])
     const [myIsCo, setMyIsCo] = useState(0)
     let myStatusPress = dataGraph.statMem
-    
+    const storeChoise = useRef(null)
     let deactivateButton = true
     const db = SQLite.openDatabase('db.db')
     
+    const renderChartForEmploee = (my_key, status) => {
+      let tempSlice = null
+      if (storeChoise.current === my_key) {
+        storeChoise.current = null
+      } else {
+        storeChoise.current = my_key
+      }
+      my_key = storeChoise.current
+      if ((status === 'month' || status === 'day') && savedChartTouch.current) {
+        console.log(savedChartTouch.current);
+        tempSlice = {x: savedChartTouch.current.x, y: savedChartTouch.current.y}
+        if (status === 'day') {
+          tempSlice.x = tempSlice.x.split(' ').length === 4 ? tempSlice.x.slice(3) : tempSlice.x
+        } else 
+        {
+          tempSlice.x = tempSlice.x.split(' ').length === 4 ? tempSlice.x.slice(6) : tempSlice.x.slice(3)
+        }
+        // баги - нажать на месяц -> выбрать свечу, нажать на день -> нажать на пользователя - выбрать свечу и нажать на пользователя
+        // баги - посмотреть слайс для дня 
+        // баги - нажать на год без выбора пользователя, нажать на месяц без выбора пользователя, выбрать пользователя
+        // Нужно сделать - добавить  
+      }
+      console.log(`Я твое значение`, tempSlice);
+      printData(status, tempSlice, my_key)
+    }
   // if (chartChoose) {
   //   setMyIsCo(chartChoose.x) //Работа была в файлах emploeelist, renderEmploeeList
   // }
-
-    const getChartYear = (userStatus, key_auth, countUser) => {
+    
+    const getChartYear = (userStatus, key_auth, countUser, key_my) => {
       
       return new Promise(resolve => {
         // fetchEmploees()
-        // loadEmploee('Bor', 0, '45', 'adm') //ПОСМОТРЕТЬ
+        
+        // loadEmploee(5555, 'Bor', 0, '45', 'adm') //ПОСМОТРЕТЬ
         db.transaction(tx => {
           let RDB = `select sum(count_step)/${countUser} as step, max(strftime('%d', date_time)) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time group by month, year order by year desc, month desc limit 12;`
+          if (storeChoise.current) {
+            RDB = `select sum(count_step)  as step, max(strftime('%d', date_time)) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time left join user_local where user_local.id=user_id and key_auth='${storeChoise.current}' group by month, year order by year desc, month desc limit 12;`
+          }
           let requestDB = `select sum(count_step)/ as step, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time left join user_local where step_time.user_id = user_local.id and month=? and year=?`
           if (userStatus === 'null') {
             requestDB = `select sum(count_step) as step, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time left join user_local where step_time.user_id = user_local.id and month=? and year=? and key_auth=${key_auth}`
@@ -44,7 +74,6 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
 
               let month = parseInt(yerObj[yerObj.length - 1].month)
               let year = parseInt(yerObj[yerObj.length - 1].year)
-              console.log(month, 'Месяц');
               for(let i=1; i<=12-yerObj.length; i++) {
                 month = month - 1
                 if (!month) {
@@ -78,13 +107,25 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
   })
   // Разобраться в функции дня!!!
     const getChartDay = (monthChoose, userStatus, key_auth, userCount) => {
+      console.log('getChartDay():', storeChoise.current)
       return new Promise(resolve => {
-        console.log(monthChoose, 'Вывоооооод!!')
         {/* Вынести в отдельный промис */}
+        console.log(monthChoose, "LUNA");
         db.transaction(tx => {
           let RDB = `select sum(count_step) as steps, strftime('%H', date_time) as hour, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id and hour<='23' and day=? and month=? and year=? group by year, month, day, hour order by year desc, month desc, day desc, hour desc limit 24;`
+          if (storeChoise.current) {
+            console.log(storeChoise.current, 'MyStore');
+            
+            RDB =  `select sum(count_step) as steps, strftime('%H', date_time) as hour, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id and hour<='23' and day=? and month=? and year=? and key_auth='${storeChoise.current}' group by year, month, day, hour order by year desc, month desc, day desc, hour desc limit 24;`
+          }
           if (monthChoose.length === 2) {
-            RDB = `select sum(count_step) as steps, strftime('%H', date_time) as hour, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id and hour<='23' and day>='21' and month=? and year=? group by year, month, day, hour order by year desc, month desc, day desc, hour desc limit 24;`
+            console.log(monthChoose, 'PRIVET');
+            if (storeChoise.current) {
+              RDB = `select sum(count_step) as steps, strftime('%H', date_time) as hour, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id and day IN (select max(strftime('%d', date_time)) as day from step_time where strftime('%m', date_time) is '${monthChoose[0]}') and month=? and year=? and key_auth='${storeChoise.current}' group by year, month, day, hour order by year desc, month desc, day desc, hour desc limit 24;`
+            }
+            else {
+              RDB = `select sum(count_step) as steps, strftime('%H', date_time) as hour, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id and day IN (select max(strftime('%d', date_time)) as day from step_time where strftime('%m', date_time) is '${monthChoose[0]}') and month=? and year=? group by year, month, day, hour order by year desc, month desc, day desc, hour desc limit 24;`
+            }
           }
             tx.executeSql(RDB, [...monthChoose], (_, { rows }) => {
               let chartDayObj = JSON.parse(JSON.stringify(rows['_array']))
@@ -124,56 +165,65 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
             .replace(/("countUsers":|[""[\],{}])/g, "")
             .split(':'))
             userStatus.push(...countUsers)
-            console.log(userStatus);
             resolve(userStatus)
           })
         })
     }) 
       
-    const getChartMonthReserve = (month = null, year = null, ) => {
+    const getChartMonthReserve = (month = null, year = null, key_auth = null) => {
       return new Promise( (resolve) => {
+        // updateEmploee(1, '1599678906428', 52)
         db.transaction(tx => {
           let reqDB = null
           if (month && year) {
-            console.log(month, year);
-            reqDB = `select sum(count_step) steps, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id and month <='${month}' and year <='${year}' group by year, month, day order by year desc, month desc, day desc limit 31;`
+            if (storeChoise.current) {
+              reqDB = `select sum(count_step) steps, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id and month <='${month}' and year <='${year}' and key_auth='${storeChoise.current}' group by year, month, day order by year desc, month desc, day desc limit 31;`
+            } else {
+              reqDB = `select sum(count_step) steps, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id and month <='${month}' and year <='${year}' group by year, month, day order by year desc, month desc, day desc limit 31;`
+          }
+          }
+          else if (!(month && year) && storeChoise.current) {
+            console.log("Success");
+            reqDB = `select sum(count_step) steps, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id and user_local.key_auth='${storeChoise.current}' group by year, month, day order by year desc, month desc, day desc limit 31;`
           }
           else {
-            reqDB = `select sum(count_step) steps, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id group by year, month, day order by year desc, month desc, day desc limit 31;`
+            reqDB = `select sum(count_step) steps, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id${storeChoise.current ?  " and key_auth=" + storeChoise.current + ' ' : ' '}group by year, month, day order by year desc, month desc, day desc limit 31;`
           }
          
           tx.executeSql(reqDB, [], (_, { rows }) => {
             let monthObj = JSON.parse(JSON.stringify(rows['_array']))
-            console.log(JSON.stringify(rows['_array']));
+            
             for(let key of monthObj) {
               dataForChart.unshift({
                 x: key['day'] + ' ' + key['month'] + ' ' + key['year'],
                 y: parseInt(key['steps']/key['users_count'])
               })
             }
+            console.log(dataForChart, key_auth)
             resolve(dataForChart)
           })
         })
       })
     }
 
-    async function printData(statMem, chartChoose = null) {
+    async function printData(statMem, chartChoose = null, key_auth = null) {
       // reservMonth = "select sum(count_step), strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time group by month;"
       dataForChart = []
       let dataArrayForChart = null
       let tmpArr = []
       let countUser = null
       const userStatus = await getUserStatus
-      console.log(typeof(userStatus[0]))
+      console.log('я проделал долгий путь и попал сюда', key_auth);
+      // updateEmploee('1602577396305', 666)
       if (statMem === 'year') {
         // let countYear = await getMinAndCountYear
-        dataArrayForChart = await getChartYear(...userStatus)
+        dataArrayForChart = await getChartYear(...userStatus, key_auth)
         onSubmit(dataArrayForChart, statMem)
       }
       
       // double refresh
       if (statMem === 'month') {
-        
+        console.log('hiii');
         if (chartChoose) {
           let monthChoose = chartChoose.x
             .replace(/"/)
@@ -181,11 +231,11 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
             if (monthChoose.length === 4) {
               monthChoose = [monthChoose[2], monthChoose[3]]
             }
-            dataArrayForChart = await getChartMonthReserve(...monthChoose)
+            dataArrayForChart = await getChartMonthReserve(...monthChoose, key_auth)
             onSubmit(dataArrayForChart, statMem)
 
         } else {
-          dataArrayForChart = await getChartMonthReserve()
+          dataArrayForChart = await getChartMonthReserve(null, null, key_auth)
             onSubmit(dataArrayForChart, statMem)
         }
       }
@@ -259,14 +309,18 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     data={sampleDataMonth} 
     type='bar' 
     width={'100%'} 
-    height={250} 
+    height={200} 
     defaultColumnWidth={dataGraph[0].statMem === 'year' ? 22 : dataGraph[0].statMem === 'day' ? 11.7 : 8.6}
     defaultColumnMargin={dataGraph[0].statMem === 'year' ? 10 : dataGraph[0].statMem === 'day' ? 4 : 3.2}
     onPress={(a) => {
         chartChoose = sampleDataMonth[0]['data'][a]
-        
+        savedChartTouch.current = chartChoose
         console.log('onPress', chartChoose.x.split(' '))
+        // updateEmploee(storeChoise.current, '50')
+        // let avram = updateEmploee('1599678906428', 666)
+        // console.log(avram, "AVRAM")
         // console.log(setMyIsCo(myIsCo + 1));
+        // сделать связь между свечами и пользователями
         }
     } 
 
@@ -279,7 +333,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     }
     />
     <Text>{}</Text>
-    <EmploeeList emploeeMy={myIsCo} onPress={(a) => console.log('ABraKaDaBrA', a)}/>
+    <EmploeeList emploeeMy={myIsCo} renderChartForEmploee={renderChartForEmploee} status={dataGraph[0].statMem} userActive={storeChoise.current}/>
     
     </View>)
 }

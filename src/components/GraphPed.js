@@ -1,14 +1,13 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, FlatList, Image, ScrollView, Text, TouchableOpacity} from 'react-native'
-import PureChart from 'react-native-pure-chart'
 import { MyPedometer }from './MyPedometer'
-import GoogleFit, { Scopes } from 'react-native-google-fit'
+// import GoogleFit, { Scopes } from 'react-native-google-fit'
 import * as SQLite from 'expo-sqlite'
 import {lastDayForMonth} from '../lastDayForMonth'
 import { RenderChart } from '../components/RenderChart'
 import { EmploeeList } from '../screens/EmploeeList'
 
-GoogleFit.checkIsAuthorized()
+// GoogleFit.checkIsAuthorized()
 const db = SQLite.openDatabase('db.db')
 // function sayHi() {
 //   alert('Привет');
@@ -38,14 +37,16 @@ export const GraphPed = () => {
     }
 
     const [dataGraph, setDataGraph] = useState(dataForChart)
-    const addDataGraph = (dataForChart, statMem) => {
+    const addDataGraph = (dataForChart, statMem, key_auth) => {
       const newDataGraph = {
         dataForChart,
-        statMem
+        statMem,
+        key_auth
       }
       setDataGraph(() => [{
           dataForChart,
-          statMem
+          statMem,
+          key_auth
       }]
       )
     }
@@ -61,8 +62,10 @@ export const GraphPed = () => {
       })
     }
     const pragmaEdit = () => {
-      db.exec([{ sql: 'PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;', args: [] }], false, () =>
+      db.exec([{ sql: 'insert into user_local (name, key_auth) values (?, ?);', args: ['Boris', Date.now().toString()] }], false, () =>
       console.log('Journal_Mode and synchronous off')
+      // db.exec([{ sql: 'PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;', args: [] }], false, () =>
+      // console.log('Journal_Mode and synchronous off')
 );
     } 
     const setDataToBase = () => {
@@ -85,7 +88,7 @@ export const GraphPed = () => {
         console.log('Out Cycle: ', tempP)
         saveDataReq.push(tempP)
         db.transaction(tx => {
-        tx.executeSql("insert into step_time (user_id, count_step, date_time, current_time) values (?, ?, ?, ?);", [3, Math.floor(Math.random() * 500), saveDataReq[i], Date.now()])
+        tx.executeSql("insert into step_time (user_id, count_step, date_time, current_time) values (?, ?, ?, ?);", [1, Math.floor(Math.random() * 500), saveDataReq[i], Date.now()])
         
         })
                 
@@ -108,11 +111,11 @@ export const GraphPed = () => {
         {/* <reservChart/> */}
         
           <MyPedometer/>
-          <View style={styles.container}>
+          {/* <View style={styles.container}>
             <TouchableOpacity style={styles.buttonD} onPress={setDataToBase}><Text>Загрузить тестовые данные</Text></TouchableOpacity>
             <TouchableOpacity style={styles.buttonD} onPress={pragmaEdit}><Text>Год</Text></TouchableOpacity>
             <TouchableOpacity style={styles.buttonD} onPress={sendDataToFireBase}><Text>Загрузить в firebase</Text></TouchableOpacity>
-          </View>
+          </View> */}
         </View>
       </ScrollView>
       )

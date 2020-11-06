@@ -1,5 +1,5 @@
 import React, {useReducer} from 'react'
-import { CLEAR_ERROR, FETCH_USERS, LOAD_EMPLOEE, SHOW_LOADER } from '../../components/types'
+import { CLEAR_ERROR, FETCH_USERS, LOAD_EMPLOEE, SHOW_LOADER, UPDATE_EMPLOEE } from '../../components/types'
 import {GraphContext} from './graphContext'
 import { graphReducer } from './graphReducer'
 import * as SQLite from 'expo-sqlite'
@@ -48,11 +48,12 @@ export const GraphState = ({ children }) => {
     }
     
     
-    
-    const loadEmploee = (userName, steps, key_auth, status) => dispatch({type: LOAD_EMPLOEE, userName, steps, key_auth, status})
+    const updateEmploee = (key_auth, steps) => dispatch({type: UPDATE_EMPLOEE, key_auth, steps})
+    const loadEmploee = (id, userName, steps, key_auth, status) => dispatch({type: LOAD_EMPLOEE, id, userName, steps, key_auth, status})
     return <GraphContext.Provider value={{
         emploee: state.emploee,
         loadEmploee,
-        fetchEmploees 
+        fetchEmploees,
+        updateEmploee
     }}>{children}</GraphContext.Provider>
 }
