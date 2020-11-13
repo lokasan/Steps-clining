@@ -1,17 +1,19 @@
 import React, {useState, useEffect} from 'react';
 import { Pedometer } from 'expo-sensors';
 import { StyleSheet, Text, View } from 'react-native';
+import { LocalDB } from './LocalAndServerBaseSaveData'
 function savePedData(data) {
   
 }
 
 
-export const MyPedometer = () => {
+export const MyPedometer = (key_auth) => {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState('ckecking')
   const [pastStepCount, setPastStepCount] = useState(0)
   const [currentStepCount, setCurrentStepCount] = useState(0)
   const [subscriptionStatus, setSubscriptionStatus] = useState()
-  
+
+  console.log(key_auth, 'user');
   // state = {
   //   isPedometerAvailable: 'checking',
   //   pastStepCount: 0,
@@ -72,7 +74,8 @@ export const MyPedometer = () => {
     subscriptionStatus && subscriptionStatus.remove();
     setSubscriptionStatus(null)
   };
-  
+  LocalDB(key_auth = null, currentStepCount)
+
   console.log(currentStepCount)
     return (
       <View style={styles.container}>

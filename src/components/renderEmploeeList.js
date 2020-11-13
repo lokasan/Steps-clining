@@ -53,7 +53,7 @@ export const RenderEL = ({ emp, emploeeMy, renderChartForEmploee, status, userAc
                 <View style={{opacity: 0, position: 'absolute'}}>
                     {StepsIcon()}
                     </View>
-                    <Text style={{color: 'white', position: 'relative'}}>{emp.steps}</Text>
+                    <Text style={{color: 'white', position: 'relative'}}>{emp.steps} {emploeeMy}</Text>
                 </View>
             </View>
         {/* <Image source={require('../images/clock.png')}></Image> */}

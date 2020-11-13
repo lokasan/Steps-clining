@@ -19,6 +19,7 @@ const dataEmp = (period, person) => {
         db.transaction(tx => {
             tx.executeSql(sql, [], (_, { rows }) => {
            response = JSON.parse(JSON.stringify(rows['_array']))
+        //    console.log("LoadListEmp", response);
            resolve(response)
        })
        
@@ -28,4 +29,12 @@ const dataEmp = (period, person) => {
 const fetchEmp = async (period = null, person = null) => {
     const emploee = await dataEmp(period, person)
     return emploee
+}
+
+export const updateEmploeers = (key_auth, steps) => {
+    return {
+        type: UPDATE_EMPLOEE,
+        key_auth,
+        steps
+    }
 }

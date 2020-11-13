@@ -1,13 +1,16 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, FlatList, Image, ScrollView, Text, TouchableOpacity} from 'react-native'
 import { MyPedometer }from './MyPedometer'
-// import GoogleFit, { Scopes } from 'react-native-google-fit'
+import GoogleFit, { Scopes } from 'react-native-google-fit'
+import * as Google from 'expo-google-app-auth'
 import * as SQLite from 'expo-sqlite'
 import {lastDayForMonth} from '../lastDayForMonth'
-import { RenderChart } from '../components/RenderChart'
+import {RenderChart} from '../components/RenderChart'
 import { EmploeeList } from '../screens/EmploeeList'
 
-// GoogleFit.checkIsAuthorized()
+GoogleFit.checkIsAuthorized().then(() => {
+  console.log(GoogleFit.isAuthorized, 'BOOOLEAN')
+})
 const db = SQLite.openDatabase('db.db')
 // function sayHi() {
 //   alert('Привет');
@@ -110,7 +113,7 @@ export const GraphPed = () => {
           </View>
         {/* <reservChart/> */}
         
-          <MyPedometer/>
+          <MyPedometer key_auth={dataGraph}/>
           {/* <View style={styles.container}>
             <TouchableOpacity style={styles.buttonD} onPress={setDataToBase}><Text>Загрузить тестовые данные</Text></TouchableOpacity>
             <TouchableOpacity style={styles.buttonD} onPress={pragmaEdit}><Text>Год</Text></TouchableOpacity>

@@ -5,7 +5,12 @@ import * as SQLite from 'expo-sqlite'
 import {lastDayForMonth} from '../lastDayForMonth'
 import { GraphContext } from '../context/graph/graphContext'
 import { EmploeeList } from '../screens/EmploeeList'
+import { updateEmploeers } from '../store/actions/emp'
+import {connect, useSelector, useDispatch} from 'react-redux'
+import {changeEmploeeListParameters} from './changeEmploeeListParameters'
 export const RenderChart = ({ dataGraph, onSubmit}) => {
+   let createTemplateEmp = null
+   const dispatch = useDispatch()
     let chartChoose = null
     const savedChartTouch = useRef(null)
     let dataForChart = dataGraph[0].dataForChart
@@ -16,6 +21,8 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     const storeChoise = useRef(null)
     let deactivateButton = true
     const db = SQLite.openDatabase('db.db')
+    const origami = useSelector((state) => {console.log(state, 'statelog');
+      return state.empList.emploee})
     
     const renderChartForEmploee = (my_key, status) => {
       let tempSlice = null
@@ -26,7 +33,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
       }
       my_key = storeChoise.current
       if ((status === 'month' || status === 'day') && savedChartTouch.current) {
-        console.log(savedChartTouch.current);
+        // console.log(savedChartTouch.current);
         tempSlice = {x: savedChartTouch.current.x, y: savedChartTouch.current.y}
         if (status === 'day') {
           tempSlice.x = tempSlice.x.split(' ').length === 4 ? tempSlice.x.slice(3) : tempSlice.x
@@ -199,7 +206,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
                 y: parseInt(key['steps']/key['users_count'])
               })
             }
-            console.log(dataForChart, key_auth)
+            // console.log(dataForChart, key_auth)
             resolve(dataForChart)
           })
         })
@@ -213,7 +220,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
       let tmpArr = []
       let countUser = null
       const userStatus = await getUserStatus
-      console.log('я проделал долгий путь и попал сюда', key_auth);
+      // console.log('я проделал долгий путь и попал сюда', key_auth);
       // updateEmploee('1602577396305', 666)
       if (statMem === 'year') {
         // let countYear = await getMinAndCountYear
@@ -315,8 +322,28 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     onPress={(a) => {
         chartChoose = sampleDataMonth[0]['data'][a]
         savedChartTouch.current = chartChoose
-        console.log('onPress', chartChoose.x.split(' '))
+        console.log(chartChoose.x);
+        
+        Promise.all([origami, changeEmploeeListParameters(chartChoose.x)]).then((r) => {
+          const current = r[0]
+          const now = r[1]
+          console.log(r, 'hi');
+          createTemplateEmp = <EmploeeList emploeeMy={570} renderChartForEmploee={renderChartForEmploee} status={dataGraph[0].statMem} userActive={storeChoise.current}/>
+          // console.log(r[1](chartChoose.x), 'tot samiy');
+          // console.log(`Cначала ${JSON.parse(JSON.parse(current))}, а затем ${JSON.parse(JSON.parse(now))}`)
+        })
+        origami.then((res) => console.log(res, 'res'))
+        changeEmploeeListParameters(chartChoose.x).then((result) => {
+          
+          
+          console.log(result, 'baah')
+        })
+       
+        // console.log('onPress', chartChoose.x.split(' '))
         // updateEmploee(storeChoise.current, '50')
+        // updateEmploeers(storeChoise.current, '50')
+        // let basicP = changeEmploeeListParameters()
+        // console.log(storeChoise.current, 'leg', 'chartChoose', chartChoose.x)
         // let avram = updateEmploee('1599678906428', 666)
         // console.log(avram, "AVRAM")
         // console.log(setMyIsCo(myIsCo + 1));
@@ -334,6 +361,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     />
     <Text>{}</Text>
     <EmploeeList emploeeMy={myIsCo} renderChartForEmploee={renderChartForEmploee} status={dataGraph[0].statMem} userActive={storeChoise.current}/>
+    {createTemplateEmp}
     
     </View>)
 }

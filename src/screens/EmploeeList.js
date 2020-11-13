@@ -3,19 +3,25 @@ import {StyleSheet, View, FlatList, Image, ScrollView, Text} from 'react-native'
 import { GraphContext } from '../context/graph/graphContext'
 import { RenderEL } from '../components/renderEmploeeList'
 import { useDispatch, useSelector } from 'react-redux'
-import { loadListEmp } from '../store/actions/emp'
+import { loadListEmp, updateEmploeers } from '../store/actions/emp'
 import {Cycle, Clock, Rank, QRIcon, StepsIcon} from '../components/ui/imageSVG/circle'
+import {connect} from 'react-redux'
 
 export const EmploeeList = ({emploeeMy, renderChartForEmploee, status, userActive}) => {
     const {loadEmploee, emploee, fetchEmploees} = useContext(GraphContext)
     const loadingEmp = useCallback(async () => await fetchEmploees(), [fetchEmploees])
     const dispatch = useDispatch()
-    const allEmps = useSelector(state => state.emploee)
-    console.log("MOY NOVIY ", allEmps);
+    const allEmps = useSelector((state) => state.empList.emploee._55)
+    
+    // console.log("MOY NOVIY ", allEmps);
     useEffect(() => {
-        loadingEmp()
+        // loadingEmp()
         dispatch(loadListEmp())
-        console.log('RENDER EMPLOEELIST')
+        // console.log('RENDER EMPLOEELIST')
+        // console.log(emploeeMy);
+        //остановился здесь
+        // dispatch(updateEmploeers())
+        
     }, [dispatch])
     
     return (
@@ -60,7 +66,7 @@ export const EmploeeList = ({emploeeMy, renderChartForEmploee, status, userActiv
             </View>
             <FlatList style={StyleSheet.frame}
             keyExtractor={item => item.id.toString()}
-            data={emploee}
+            data={allEmps}
             renderItem={
                 ({ item }) => <RenderEL emp={item} emploeeMy={emploeeMy} renderChartForEmploee={renderChartForEmploee} status={status} userActive={userActive}/>
             }
@@ -99,3 +105,4 @@ const styles = StyleSheet.create({
         
     },
 })
+
