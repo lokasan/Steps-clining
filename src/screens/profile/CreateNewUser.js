@@ -18,8 +18,8 @@ export const CreateNewUser = ( {navigation} ) => {
   const dispatch = useDispatch()
     const [privileg, setPrivileg] = useState(0)
     const [name, setName] = useState('')
-    const [surName, setSurName] = useState('')
-    const [lastName, setlastName] = useState('')
+    const [surname, setSurName] = useState('')
+    const [lastname, setLastName] = useState('')
     const [position, setPosition] = useState('')
     const [email, setEmail] = useState('')
     const imgRef = useRef()
@@ -28,14 +28,16 @@ export const CreateNewUser = ( {navigation} ) => {
     }
     const createUserHandler = () => {
       const emploee = {
+        surname,
         name,
-        surName,
-        lastName,
-        email,
+        lastname,
         position,
         email,
         privileg,
-        img: imgRef.current
+        key_auth: 1,
+        status: 1,
+        img: imgRef.current,
+        createdUserDate: 5
       }
       dispatch(addEmploee(emploee))
       navigation.navigate('Emploees')
@@ -48,7 +50,7 @@ export const CreateNewUser = ( {navigation} ) => {
         <TextInput
         style={styles.textarea}
         placeholder='Фамилия'
-        value={surName}
+        value={surname}
         onChangeText={setSurName}/>
         
         <TextInput
@@ -59,8 +61,8 @@ export const CreateNewUser = ( {navigation} ) => {
         <TextInput
         style={styles.textarea}
         placeholder='Отчество'
-        value={lastName}
-        onChangeText={setlastName}/>
+        value={lastname}
+        onChangeText={setLastName}/>
         <TextInput
         style={styles.textarea}
         placeholder='Должность'
@@ -113,7 +115,7 @@ export const CreateNewUser = ( {navigation} ) => {
      title='Создать пользователя' 
      onPress={createUserHandler} 
      color={HEADER_FOOTER.MAIN_COLOR}
-     disabled={!name || !surName || !lastName || !email || !position}/>
+     disabled={!name || !surname || !lastname || !email || !position}/>
       </View>
       </TouchableWithoutFeedback>
     </ScrollView>

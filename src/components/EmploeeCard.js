@@ -7,7 +7,7 @@ export const EmploeeCard = ({emploee, onOpen}) => {
     <View style={styles.actionMenu}>
     
         <Image style={styles.image} source={{uri: emploee.img}}/>
-        <Text style={{color: '#fff'}}>{emploee.name}</Text>
+<Text style={{color: '#fff'}}>{emploee.surname} {emploee.name} {emploee.lastname}</Text>
         
         
         <ArrowRight/>

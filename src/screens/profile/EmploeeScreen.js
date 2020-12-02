@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import {View, Text, StyleSheet, Image, Button, ScrollView, Alert} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import { DATA } from '../../testData'
 import { Footer } from '../../components/ui/Footer'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import { HEADER_FOOTER } from '../../theme'
-import { removeEmploee } from '../../store/actions/empDouble'
+import { removeEmploee, updateUserPrivileg } from '../../store/actions/empDouble'
 var radio_props = [
     {label: 'Без прав', value: 0 },
     {label: 'Только чтение', value: 1 },
@@ -32,13 +32,18 @@ const removeHandler = (emploee, dispatch, navigation) => {
       )
       
 }
+
 export const EmploeeScreen = ({navigation}) => {
   const dispatch = useDispatch()
   
     
     const emploeeId = navigation.getParam('emploeeId')
     const emploee = useSelector(state => state.empDouble.empAll.find(e => e.id === emploeeId))
-    const [selectedValue, setSelectedValue] = useState(emploee.privileg)
+    const [selectedValue, setSelectedValue] = useState(emploee ? emploee.privileg : 0)
+    console.log(emploee);
+    const updatedUserPrivileg =  useCallback(() => {
+      dispatch(updateUserPrivileg(emploee))
+    }, [dispatch, emploee])
     if (!emploee) {
       return null
     }
@@ -51,7 +56,7 @@ export const EmploeeScreen = ({navigation}) => {
     </View>
     <View style={styles.privateData}>
         <View style={styles.textStyle}>
-  <Text style={styles.textStyleLine}>{emploee.surName} {emploee.name} {emploee.lastName}</Text>
+  <Text style={styles.textStyleLine}>{emploee.surname} {emploee.name} {emploee.lastname}</Text>
         </View>
         <View style={styles.textStyle}>
   <Text style={styles.textStyleLine}>{emploee.email}</Text>
@@ -76,7 +81,11 @@ export const EmploeeScreen = ({navigation}) => {
           obj={obj}
           index={i}
           isSelected={selectedValue === i}
-          onPress={(value) => {setSelectedValue(value)}}
+          onPress={(value) => {
+            emploee.privileg = value
+            updatedUserPrivileg(emploee)
+            setSelectedValue(value)
+          }}
           borderWidth={1}
           buttonInnerColor={'#303f9f'}
           buttonOuterColor={selectedValue === i ? 'red' : '#fff'}
@@ -89,7 +98,11 @@ export const EmploeeScreen = ({navigation}) => {
           obj={obj}
           index={i}
           labelHorizontal={true}
-          onPress={(value) => {setSelectedValue(value)}}
+          onPress={(value) => {
+            emploee.privileg = value
+            updatedUserPrivileg(emploee)
+            setSelectedValue(value)
+          }}
           labelStyle={{fontSize: 12, color: '#2ecc71'}}
           labelWrapStyle={{}}
         />

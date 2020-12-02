@@ -64,7 +64,7 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
                 .catch(err => console.log(typeof(err)))
             // console.log(userInfoResponse);
            Alert.alert(result.user.email)
-            CreateUserInLocalBase(result.user.name, 'null', result.user.photoUrl)
+            // CreateUserInLocalBase(result.user.name, 'null', result.user.photoUrl)
             navigation.navigate('AutentifGraph')
             
             return result.accessToken;

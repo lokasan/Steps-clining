@@ -27,7 +27,7 @@ export const MainScreen = ({navigation}) => {
      return new Promise(resolve => {
        db.transaction((tx) => { 
         tx.executeSql('select * from user_local', [], (_, { rows }) => {
-          myKey.key_auth = JSON.stringify(rows['_array'][0]['key_auth'])
+          myKey.key_auth = JSON.stringify(rows['_array'][0]['email'])
           console.log(rows['_array'])
          resolve()                
        }                                
