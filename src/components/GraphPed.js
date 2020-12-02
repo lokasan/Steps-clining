@@ -1,16 +1,18 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, FlatList, Image, ScrollView, Text, TouchableOpacity} from 'react-native'
+import {HeaderButtons, Item} from 'react-navigation-header-buttons'
+import {StyleSheet, View, FlatList, Image, ScrollView, Text, TouchableOpacity, Button} from 'react-native'
 import { MyPedometer }from './MyPedometer'
-import GoogleFit, { Scopes } from 'react-native-google-fit'
-import * as Google from 'expo-google-app-auth'
+// import GoogleFit, { Scopes } from 'react-native-google-fit'
 import * as SQLite from 'expo-sqlite'
 import {lastDayForMonth} from '../lastDayForMonth'
 import {RenderChart} from '../components/RenderChart'
 import { EmploeeList } from '../screens/EmploeeList'
-
-GoogleFit.checkIsAuthorized().then(() => {
-  console.log(GoogleFit.isAuthorized, 'BOOOLEAN')
-})
+import { signInWithGoogleAsync } from './GoogleAuth';
+import { Footer } from '../components/ui/Footer'
+import {AppHeaderIcon} from '../components/AppHeaderIcon'
+// GoogleFit.checkIsAuthorized().then(() => {
+//   console.log(GoogleFit.isAuthorized, 'BOOOLEAN')
+// })
 const db = SQLite.openDatabase('db.db')
 // function sayHi() {
 //   alert('Привет');
@@ -29,7 +31,7 @@ let sampleDataYear = [
 ]
 
 
-export const GraphPed = () => {
+export const GraphPed = ( {} ) => {
 
   let dataForChart = [{ 'dataForChart': [], 
                         'statMem': 'day'}]
@@ -38,7 +40,7 @@ export const GraphPed = () => {
       loading: false,
       error: null
     }
-
+    
     const [dataGraph, setDataGraph] = useState(dataForChart)
     const addDataGraph = (dataForChart, statMem, key_auth) => {
       const newDataGraph = {
@@ -104,6 +106,8 @@ export const GraphPed = () => {
               })
     } 
       return (
+        <View style={{flex: 1}}>
+      <View style={styles.containerMain}>
       <ScrollView style={{backgroundColor: 'black'}}>
         <View>
           
@@ -114,15 +118,44 @@ export const GraphPed = () => {
         {/* <reservChart/> */}
         
           <MyPedometer key_auth={dataGraph}/>
-          {/* <View style={styles.container}>
-            <TouchableOpacity style={styles.buttonD} onPress={setDataToBase}><Text>Загрузить тестовые данные</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.buttonD} onPress={pragmaEdit}><Text>Год</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.buttonD} onPress={sendDataToFireBase}><Text>Загрузить в firebase</Text></TouchableOpacity>
-          </View> */}
+          <View style={styles.container}>
+            {/* <TouchableOpacity style={styles.buttonD} onPress={setDataToBase}><Text>Загрузить тестовые данные</Text></TouchableOpacity> */}
+            {/* <TouchableOpacity style={styles.buttonD} onPress={pragmaEdit}><Text>Год</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.buttonD} onPress={sendDataToFireBase}><Text>Загрузить в firebase</Text></TouchableOpacity> */}
+            {/* <TouchableOpacity style={styles.buttonD} onPress={() => signInWithGoogleAsync()}><Text>Google</Text></TouchableOpacity> */}
+            
+          </View>
         </View>
       </ScrollView>
+      
+       
+      
+      </View>
+      {/* <Footer/> */}
+      
+      
+    </View>
       )
 }
+GraphPed.navigationOptions = ({navigation}) => ({
+  headerTitle: 'Шагомер',
+  headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+    <Item 
+    title='Private Account'
+    iconName='ios-person'
+    onPress={() => navigation.navigate('MainProfile')}
+    />
+  </HeaderButtons>,
+  headerLeft: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+  <Item 
+  title='toogle'
+  iconName='ios-menu'
+  onPress={() => navigation.toggleDrawer()}
+  />
+</HeaderButtons>
+  
+  
+})
 const styles = StyleSheet.create({
   button: {
     alignItems: "center",
@@ -135,26 +168,31 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     shadowColor: '#000',
-  shadowRadius: 1,
-  shadowOpacity: 0.18,
-  shadowOffset: { width: 0, height: 1 },
-  backgroundColor: '#ccc',
-  borderRadius: 10,
-  elevation: 1
+    shadowRadius: 1,
+    shadowOpacity: 0.18,
+    shadowOffset: { width: 0, height: 1 },
+    backgroundColor: '#ccc',
+    borderRadius: 10,
+    elevation: 1
     // width: '40%'
 }, container: {
-  flexDirection: 'row',
-  justifyContent: 'space-around',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   
   
 }, buttonD: {
-  flexDirection: 'row',
-  height: 50,
-  backgroundColor: '#ccc',
-  alignItems: 'center',
-  height: 40,
-  width: '50%',
-  alignContent: 'center',
-  justifyContent: 'center'
-}
+    flexDirection: 'row',
+    height: 50,
+    backgroundColor: '#ccc',
+    alignItems: 'center',
+    height: 40,
+    width: '50%',
+    alignContent: 'center',
+    justifyContent: 'center'
+},
+containerMain: {
+  // paddingHorizontal: '18%',
+  flex: 1,
+  height: '89%'
+},
 })

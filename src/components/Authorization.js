@@ -1,11 +1,16 @@
 import React , {useState, useContext} from 'react'
-import {StyleSheet, View, Text, TextInput, TouchableOpacity, InputBox, ALert, Alert} from 'react-native'
+import {StyleSheet, View, Text, TextInput, TouchableOpacity, InputBox, Alert, Image} from 'react-native'
 import QRCode from '../screens/qrcode'
 import { AppCard } from './ui/AppCard'
 import * as SQLite from 'expo-sqlite'
 import { GraphContext } from '../context/graph/graphContext'
+import * as Google from 'expo-google-app-auth'
+import { CreateUserInLocalBase } from './CreateUserInLocalBase'
+const IOS_CLIENT = '393783114907-tanuhn4qqds9vr7o58ksn58okss0qs5v.apps.googleusercontent.com'
+const ANDROID_CLIENT = '393783114907-jrgn1caq85o8ns7bfe6reorj0vcjg7u4.apps.googleusercontent.com'
+// import GoogleFit, { Scopes } from 'react-native-google-fit'
 // import {VictoryChart, VictoryGroup, VictoryBar} from 'victory-native'
-export const Authorization = ({onSubmit, onOpen}) => {
+export const Authorization = ({navigation, onSubmit, onOpen}) => {
     const {loadEmploee, emploee, fetchEmploees} = useContext(GraphContext)
     const [value, onChangeText] = useState('')
     // const [valueP, onChangeP] = useState('')
@@ -14,28 +19,62 @@ export const Authorization = ({onSubmit, onOpen}) => {
         if (value.trim()) {
             onSubmit(value)
             onChangeText('')
-            const db = SQLite.openDatabase('db.db')
-            db.transaction(tx => { 
-                // console.log('create table')
-                tx.executeSql("create table if not exists user_local (id integer primary key autoincrement not null, name text not null, key_auth text not null unique, status text);")
-                // tx.executeSql("drop table user_local;")
-                // console.log('insert user')
-                tx.executeSql("create table if not exists step_time (id integer primary key autoincrement not null, user_id integer not null, \
-                    count_step integer not null, date_time text not null, current_time text not null, foreign key (user_id) references user_local(id));")
-                tx.executeSql("insert into user_local (name, key_auth, status) values (?, ?, ?);", [value.toString(), Date.now().toString(), privileg])
-                tx.executeSql('select * from user_local', [], (_, { rows }) =>
-                console.log(JSON.stringify(rows['_array']))
-                                    )
-                
-              })
-              
-              onOpen(1)
-              
+            CreateUserInLocalBase(value, privileg)
+            // onOpen(1)
+            navigation.navigate('AutentifGraph')
             // onChangeP('')
         } else {
             Alert.alert('Данные пусты')
         }
     }
+    const signInWithGoogleAsync = async () => {
+        try {
+          const result = await Google.logInAsync({
+            androidClientId: ANDROID_CLIENT,
+            iosClientId: IOS_CLIENT,
+            scopes: [
+              'profile', 
+              'email', 
+              'https://www.googleapis.com/auth/fitness.activity.read', 
+              'https://www.googleapis.com/auth/fitness.body.read', 
+              'https://www.googleapis.com/auth/fitness.activity.write',
+              'https://www.googleapis.com/auth/fitness.body.write'],
+          });
+      
+          if (result.type === 'success') {
+            //   Alert.alert(JSON.stringify(result.user))
+            
+            let userInfoResponse = await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', 
+            {   method: 'POST',
+                headers: 
+                {
+                    Authorization: `Bearer ${result.accessToken}`
+                },
+                body: JSON.stringify({
+                  "aggregateBy": [{
+                    "dataTypeName": "com.google.step_count.delta",
+                    "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:estimated_steps"
+                  }],
+                  "bucketByTime": { "durationMillis": 86400000 },
+                  "startTimeMillis": 1601455822683,
+                  "endTimeMillis": new Date().getTime()
+                })
+            })
+                .then((resp) => resp.json()).then((data) => console.log(data))
+                .catch(err => console.log(typeof(err)))
+            // console.log(userInfoResponse);
+           Alert.alert(result.user.email)
+            CreateUserInLocalBase(result.user.name, 'null', result.user.photoUrl)
+            navigation.navigate('AutentifGraph')
+            
+            return result.accessToken;
+          } else {
+            return { cancelled: true };
+          }
+        } catch (e) {
+          return { error: true };
+        }
+      }
     // const qrOpen = () => {
     //     return (<QRCode/>)
     // }
@@ -60,7 +99,9 @@ export const Authorization = ({onSubmit, onOpen}) => {
         ></TextInput> */}
         </AppCard>
         <View style={styles.buttonsStyle}>
+        <TouchableOpacity style={styles.buttonGoggle} onPress={() => signInWithGoogleAsync()}><Image style={{height: 30, width: 30, opacity: 1}} source={require('../images/Gauth.png')}/></TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={pressHandler}><Text style={styles.textB}>Войти</Text></TouchableOpacity>
+        
         {/* <TouchableOpacity style={styles.button} onPress={() => onOpen('true')}><Text style={styles.textB}>QR Scanner</Text></TouchableOpacity> */}
         </View>
         {/* <View>
@@ -82,14 +123,29 @@ const styles = StyleSheet.create({
         borderColor: 'gray', 
         borderBottomWidth: 1
     },
-   
+    buttonGoggle: {
+        alignItems: 'flex-end',
+        backgroundColor: '#3949ab',
+        padding: 5,
+        borderRadius: 5,
+        borderTopRightRadius: 0,
+        borderBottomRightRadius: 0,
+        borderRightColor: 'gray',
+        borderRightWidth: 1,
+        top:30,
+        height:40,
+        marginBottom: '20%',
+    },
     button: {
         alignItems: "center",
         backgroundColor: '#3949ab',
         padding: 10,
         borderRadius: 5,
+        borderTopLeftRadius: 0,
+        borderBottomLeftRadius: 0,
         top:30,
         height:40,
+        width: '85%',
         marginBottom: '20%',
         // width: '40%'
     },
@@ -101,8 +157,8 @@ const styles = StyleSheet.create({
         marginTop: '30%',
     },
     buttonsStyle: {
-        // flexDirection: 'row',
-        // justifyContent: 'space-between'
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     textA: {
         top: -10,

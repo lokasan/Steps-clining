@@ -25,6 +25,16 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "android": {
+      "package": "host.exp.exponent",
+      "versionCode": 1,
+      "config": {
+        "googleSignIn": {
+          "apiKey": "AIzaSyB0x-lRzEOQMnuHoAbRWSd7q8Wp5lF6gSA",
+          "certificateHash": "74954B67C1E694F1C4FD0B0F82A9E2E1D8806B17"
+        }
+      }
     }
   }
 }

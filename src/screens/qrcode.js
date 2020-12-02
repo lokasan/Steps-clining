@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { Text, View, StyleSheet, Button, Image, TouchableOpacity, Animated } from 'react-native'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 
-export const QRCode = ({goBack}) => {
+export const QRCode = ({goBack, navigaton}) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [dataScan, setDataScan] = useState(null);
@@ -29,6 +29,7 @@ export const QRCode = ({goBack}) => {
   let content = (<Image style={{height: 300, width: 300, marginHorizontal: '15%', marginTop: '30%', opacity: 0.5}} source={require('../images/3.png')} />);
   if (dataScan === 'Пост 1') {
     console.log(dataScan)
+    // setHasPermission('ff')
     return (<View>
       <Text style={{color: 'red', fontSize: 30, textAlign: 'center'}}>Начать обход</Text>
       <Button title={'Назад'} onPress={goBack}/>
@@ -85,4 +86,7 @@ export const QRCode = ({goBack}) => {
     </View>
     
   );
+}
+QRCode.navigationOptions = {
+  headerTitle: 'Сканнер'
 }
