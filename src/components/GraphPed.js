@@ -14,7 +14,7 @@ import {AppHeaderIcon} from '../components/AppHeaderIcon'
 //   console.log(GoogleFit.isAuthorized, 'BOOOLEAN')
 // })
 // const db = SQLite.openDatabase('db.db')
-const db = 1
+// const db = 1
 // function sayHi() {
 //   alert('Привет');
 // }

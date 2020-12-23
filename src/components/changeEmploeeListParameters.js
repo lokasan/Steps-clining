@@ -1,6 +1,6 @@
 
 import * as SQLite from 'expo-sqlite'
-const db = SQLite.openDatabase('db.db')
+// const db = SQLite.openDatabase('db.db')
 const fullDate = 4
 const mediumDate = 3
 const partDate = 2

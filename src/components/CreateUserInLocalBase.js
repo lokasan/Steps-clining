@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite'
 import { CREATE_NEW_USER } from '../txtRequests'
 
-const db = SQLite.openDatabase('db.db')
+// const db = SQLite.openDatabase('db.db')
 export const CreateUserInLocalBase = (value, privileg = 'null', photo = 'null') => {
     db.transaction(tx => { 
         // console.log('create table')
