@@ -71,7 +71,7 @@ export const MainProfileScreen = ({navigation}) => {
                 
             </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Attributes')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Components')}>
             <View style={styles.actionMenu}>
                 <Attributes/>
                 <Text style={{color: '#fff'}}>Компоненты</Text>

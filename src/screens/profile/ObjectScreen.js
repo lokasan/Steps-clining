@@ -9,12 +9,8 @@ import { HEADER_FOOTER } from '../../theme'
 import { removeObject, updateObject } from '../../store/actions/object'
 import {AppHeaderIcon} from '../../components/AppHeaderIcon'
 import { loadPost } from '../../store/actions/post'
-import { ComponentRankCard } from '../../components/ComponentRankCard'
-import { loadComponent, removeComponent, updateComponent } from '../../store/actions/component'
-import { loadComponentRank } from '../../store/actions/componentRank'
+import { PostCard } from '../../components/PostCard'
 
-let countComponentRank = 0
-let listComponentRank = ''
 const removeHandler = (object, dispatch, navigation) => {
     Alert.alert(
         "Удаление польователя",
@@ -27,8 +23,8 @@ const removeHandler = (object, dispatch, navigation) => {
             style: "cancel"
           },
           { text: "Удалить", style: 'destructive', onPress() {
-            navigation.navigate('Components')
-            dispatch(removeComponent(object.id))
+            navigation.navigate('ObjectsBuildings')
+            dispatch(removeObject(object.id))
           } 
         }
         ],
@@ -37,56 +33,55 @@ const removeHandler = (object, dispatch, navigation) => {
       
 }
 
-export const AttributeSingle = ({navigation}) => {
-    const openComponentRankHandler = component => {
-        navigation.navigate('ComponentRankInfo', {componentRankId: component.id, componentRankName: component.name})
+export const ObjectScreen = ({navigation}) => {
+    const openPostHandler = post => {
+        navigation.navigate('PostInfo', {postId: post.id, postName: post.name})
     }
     const dispatch = useDispatch()
   
     
-    const componentId = navigation.getParam('componentId')
-    const component = useSelector(state => state.component.componentAll.find(e => e.id === componentId))
-   
-    console.log(component);
+    const objectId = navigation.getParam('objectId')
+    const object = useSelector(state => state.object.objAll.find(e => e.id === objectId))
+    
+    console.log(object);
     useEffect(() => {
-        dispatch(loadComponentRank(componentId))
+        dispatch(loadPost(objectId))
     }, [dispatch])
-    const componentRankAll = useSelector(state => state.componentRank.componentRankAll)
-    countComponentRank = componentRankAll.length + 1
-    listComponentRank = componentRankAll
-    if (!component) {
+    const postAll = useSelector(state => state.post.postAll)
+    const updatedUserPrivileg =  useCallback(() => {
+      dispatch(updateObject(object))
+    }, [dispatch, object])
+    if (!object) {
       return null
     }
     return <View style={{flex: 1, backgroundColor: '#000'}}>
-       
+        
         <View style={styles.container}>
     <View style={styles.userCard}>
     <View>
-        <Image style={{height: 150, width: 150}} source={{uri: component.img}}/>
+        <Image style={{height: 150, width: 150}} source={{uri: object.img}}/>
     </View>
     <View style={styles.privateData}>
         <View style={styles.textStyle}>
-  <Text style={styles.textStyleLine}>{component.name} </Text>
+  <Text style={styles.textStyleLine}>{object.name}</Text>
         </View>
         <View style={styles.textStyle}>
-  <Text style={styles.textStyleLine}>{component.description}</Text>
+  <Text style={styles.textStyleLine}>{object.description}</Text>
         </View>
     
     </View>
    
 </View>
-
 <View style={styles.menuCard}>
         <FlatList 
-        data={componentRankAll} 
-        keyExtractor={componentRank => componentRank.id.toString()} 
-        renderItem={({item}) => <ComponentRankCard componentRank={item} dispatch={dispatch} componentRankAll={componentRankAll} navigation={navigation}/>}
+        data={postAll} 
+        keyExtractor={post => post.id.toString()} 
+        renderItem={({item}) => <PostCard post={item} navigation={navigation}/>}
                 />
     </View>
-
 </View>
 
-<Button title='Удалить' color={HEADER_FOOTER.DANGER_COLOR} onPress={() => removeHandler(component, dispatch, navigation)}/>
+<Button title='Удалить' color={HEADER_FOOTER.DANGER_COLOR} onPress={() => removeHandler(object, dispatch, navigation)}/>
 {/* <Footer/> */}
 </View>
 }
@@ -122,7 +117,6 @@ const styles = StyleSheet.create({
     },
     center: {
         flex: 1,
-        width: '100%',
         // justifyContent: 'center',
         alignItems: 'center'
     },
@@ -144,16 +138,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#1C1B1B'
     }, 
 })
-AttributeSingle.navigationOptions = ({ navigation }) => {
-    const name = navigation.getParam('componentName')
-    const componentId = navigation.getParam('componentId')
+ObjectScreen.navigationOptions = ({ navigation }) => {
+    const name = navigation.getParam('objectName')
+    const objectId = navigation.getParam('objectId')
     return {
         headerTitle: name,
         headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
         <Item 
         title='AddNewUser'
         iconName='ios-add-circle-outline'
-        onPress={() => navigation.navigate('CreateComponentRank', {componentId, countComponentRank, listComponentRank})}
+        onPress={() => navigation.navigate('CreatePost', {objectId})}
         />
       </HeaderButtons>
     }

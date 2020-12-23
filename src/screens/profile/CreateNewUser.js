@@ -37,7 +37,7 @@ export const CreateNewUser = ( {navigation} ) => {
         key_auth: 1,
         status: 1,
         img: imgRef.current,
-        createdUserDate: 5
+        create_user_date: Date.now().toString()
       }
       dispatch(addEmploee(emploee))
       navigation.navigate('Emploees')

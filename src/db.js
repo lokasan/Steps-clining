@@ -1,5 +1,5 @@
 import * as SQLite from 'expo-sqlite'
-import { CREATE_BUILDING_TABLE, CREATE_BYPASS_RANK_TABLE, CREATE_BYPASS_TABLE, CREATE_COMPONENT_RANK_TABLE, CREATE_COMPONENT_TABLE, CREATE_POST_TABLE, CREATE_STEP_TIME_TABLE, CREATE_USER_LOCAL_TABLE } from './txtRequests'
+import { CREATE_BUILDING_TABLE, CREATE_BYPASS_RANK_TABLE, CREATE_BYPASS_TABLE, CREATE_COMPONENT_RANK_TABLE, CREATE_COMPONENT_TABLE, CREATE_COMPONENT_WITH_POST_TABLE, CREATE_NEW_BUILDING, CREATE_NEW_COMPONENT, CREATE_NEW_USER, CREATE_POST_TABLE, CREATE_STEP_TIME_TABLE, CREATE_USER_LOCAL_TABLE, DELETE_BUILDING, DELETE_COMPONENT, DELETE_USER, CREATE_NEW_POST, CREATE_NEW_COMPONENT_RANK, DELETE_COMPONENT_RANK, UPDATE_COMPONENT_RANK, EDIT_COMPONENT_RANK } from './txtRequests'
 const db = SQLite.openDatabase('db.db')
 
 export class DB {
@@ -15,6 +15,7 @@ export class DB {
                 tx.executeSql(CREATE_BUILDING_TABLE, [], resolve, (_, error) => reject(error))
                 tx.executeSql(CREATE_POST_TABLE, [], resolve, (_, error) => reject(error))
                 tx.executeSql(CREATE_COMPONENT_TABLE, [], resolve, (_, error) => reject(error))
+                tx.executeSql(CREATE_COMPONENT_WITH_POST_TABLE, [], resolve, (_, error) => reject(error))
                 tx.executeSql(CREATE_COMPONENT_RANK_TABLE, [], resolve, (_, error) => reject(error))
                 tx.executeSql(CREATE_BYPASS_RANK_TABLE, [], resolve, (_, error) => reject(error))
             })
@@ -38,7 +39,7 @@ export class DB {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
-                    `INSERT INTO user_local (surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+                    CREATE_NEW_USER,
                     [surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
@@ -62,7 +63,7 @@ export class DB {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
-                    "DELETE FROM user_local WHERE id = ?",
+                    DELETE_USER,
                     [id],
                     resolve,
                     (_, error) => reject(error)
@@ -70,7 +71,174 @@ export class DB {
             })
         })
     }
+    static createObject({name, address, description, img}) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    CREATE_NEW_BUILDING, 
+                    [name, address, description, img],
+                    (_, result) => resolve(result.insertId),
+                    (_, error) => reject(error))
+            })
+        })
+    }
+    static getObjects() {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT * FROM building;",
+                    [],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error))
+            })
+        })
+    }
+    static removeObject(id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(DELETE_BUILDING,
+                    [id],
+                    resolve,
+                    (_, error) => reject(error))
+            })
+        })
+    }
+    static createPost({building_id, name, description, img, qrcode}) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    CREATE_NEW_POST,
+                    [building_id, name, description, img, qrcode],
+                    (_, result) => resolve(result.insertId),
+                    (_, error) => reject(error))
+            })
+        })
+    }
+    static getPosts(building_id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT * FROM post WHERE building_id = ?;",
+                    [building_id],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error))
+            })
+        })
+    }
+    static removePost(id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(DELETE_POST,
+                    [id],
+                    resolve,
+                    (_, error) => reject(error))
+            })
+        })
+    }
+    static createComponent({name, description, img}) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    CREATE_NEW_COMPONENT,
+                    [name, description, img],
+                    (_, result) => resolve(result.insertId),
+                    (_, error) => reject(error))
+            })
+        })
+    }
+    static getComponents() {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT * FROM component;",
+                    [],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error))
+            })
+        })
+    }
+    static removeComponent(id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(DELETE_COMPONENT,
+                    [id],
+                    resolve,
+                    (_, error) => reject(error))
+            })
+        })
+    }
+    static getComponentRank() {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT * FROM component_rank;",
+                    [],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error))
+            })
+        })
+    }
+    static createComponentRank({component_id, name, rank, img}) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    CREATE_NEW_COMPONENT_RANK,
+                    [component_id, name, rank, img],
+                    (_, result) => resolve(result.insertId),
+                    (_, error) => reject(error))
+            })
+        })
+    }
+    static removeComponentRank(id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    DELETE_COMPONENT_RANK,
+                    [id],
+                    resolve,
+                    (_, error) => reject(error))
+            })
+        })
+    }
+    static getComponentRankId(component_id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT * FROM component_rank WHERE component_id=?;",
+                    [component_id],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error))
+            })
+        })
+    }
+    static updateComponentRank(componentRank, componentLength, count) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                const emptyComponentRank = (5 / (componentLength)).toFixed(2)
+                
+                console.log(componentRank, 'приятно познакомиться');
+                for (let el of componentRank) {
+                    if (el.rank !== 5){
+                        tx.executeSql(
+                            UPDATE_COMPONENT_RANK,
+                            [emptyComponentRank * count > 5 ? 5 : emptyComponentRank * count, el.id],
+                            resolve,
+                            (_, error) => reject(error))
+                            count+=1
+                    }
+                }
+            })
+        })
+    }
+    static editComponentRank(componentRank) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    EDIT_COMPONENT_RANK,
+                    [componentRank.name, componentRank.img, componentRank.id],
+                    resolve,
+                    (_, error) => reject(error))
+            })
+        })
+    }
 }
-let a = "CREATE TABLE IF NOT EXISTS user_local (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, \
-    surname TEXT NOT NULL, name TEXT NOT NULL, lastname TEXT NOT NULL, position TEXT NOT NULL, \
-    email TEXT NOT NULL, privileg INTEGER NOT NULL, key_auth TEXT NOT NULL UNIQUE, status TEXT, img TEXT);"

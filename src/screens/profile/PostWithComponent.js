@@ -9,12 +9,10 @@ import { HEADER_FOOTER } from '../../theme'
 import { removeObject, updateObject } from '../../store/actions/object'
 import {AppHeaderIcon} from '../../components/AppHeaderIcon'
 import { loadPost } from '../../store/actions/post'
-import { ComponentRankCard } from '../../components/ComponentRankCard'
+import { ComponentCard } from '../../components/ComponentCard'
 import { loadComponent, removeComponent, updateComponent } from '../../store/actions/component'
-import { loadComponentRank } from '../../store/actions/componentRank'
 
-let countComponentRank = 0
-let listComponentRank = ''
+
 const removeHandler = (object, dispatch, navigation) => {
     Alert.alert(
         "Удаление польователя",
@@ -37,24 +35,22 @@ const removeHandler = (object, dispatch, navigation) => {
       
 }
 
-export const AttributeSingle = ({navigation}) => {
-    const openComponentRankHandler = component => {
+export const PostWithComponent = ({navigation}) => {
+    const openComponentHandler = component => {
         navigation.navigate('ComponentRankInfo', {componentRankId: component.id, componentRankName: component.name})
     }
     const dispatch = useDispatch()
   
     
-    const componentId = navigation.getParam('componentId')
-    const component = useSelector(state => state.component.componentAll.find(e => e.id === componentId))
-   
-    console.log(component);
+    const post = navigation.getParam('post')
+    const postWithComponent = useSelector(state => state.post.postAll.find(e => e.id === post.id))
+    const componentAll = useSelector(state => state.component.componentAll)
+    console.log(postWithComponent);
     useEffect(() => {
-        dispatch(loadComponentRank(componentId))
+        dispatch(loadComponent())
     }, [dispatch])
-    const componentRankAll = useSelector(state => state.componentRank.componentRankAll)
-    countComponentRank = componentRankAll.length + 1
-    listComponentRank = componentRankAll
-    if (!component) {
+    
+    if (!postWithComponent) {
       return null
     }
     return <View style={{flex: 1, backgroundColor: '#000'}}>
@@ -62,14 +58,14 @@ export const AttributeSingle = ({navigation}) => {
         <View style={styles.container}>
     <View style={styles.userCard}>
     <View>
-        <Image style={{height: 150, width: 150}} source={{uri: component.img}}/>
+        <Image style={{height: 150, width: 150}} source={{uri: post.img}}/>
     </View>
     <View style={styles.privateData}>
         <View style={styles.textStyle}>
-  <Text style={styles.textStyleLine}>{component.name} </Text>
+  <Text style={styles.textStyleLine}>{post.name} </Text>
         </View>
         <View style={styles.textStyle}>
-  <Text style={styles.textStyleLine}>{component.description}</Text>
+  <Text style={styles.textStyleLine}>{post.description}</Text>
         </View>
     
     </View>
@@ -78,15 +74,15 @@ export const AttributeSingle = ({navigation}) => {
 
 <View style={styles.menuCard}>
         <FlatList 
-        data={componentRankAll} 
-        keyExtractor={componentRank => componentRank.id.toString()} 
-        renderItem={({item}) => <ComponentRankCard componentRank={item} dispatch={dispatch} componentRankAll={componentRankAll} navigation={navigation}/>}
+        data={componentAll} 
+        keyExtractor={component => component.id.toString()} 
+        renderItem={({item}) => <ComponentCard component={item} onOpen={openComponentHandler}/>}
                 />
     </View>
 
 </View>
 
-<Button title='Удалить' color={HEADER_FOOTER.DANGER_COLOR} onPress={() => removeHandler(component, dispatch, navigation)}/>
+<Button title='Удалить' color={HEADER_FOOTER.DANGER_COLOR} onPress={() => removeHandler(postWithComponent, dispatch, navigation)}/>
 {/* <Footer/> */}
 </View>
 }
@@ -144,16 +140,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#1C1B1B'
     }, 
 })
-AttributeSingle.navigationOptions = ({ navigation }) => {
-    const name = navigation.getParam('componentName')
-    const componentId = navigation.getParam('componentId')
+PostWithComponent.navigationOptions = ({ navigation }) => {
+    const post = navigation.getParam('post')
+    const postId = post.id
+    const postName = post.name
+    
     return {
-        headerTitle: name,
+        headerTitle: postName,
         headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
         <Item 
         title='AddNewUser'
         iconName='ios-add-circle-outline'
-        onPress={() => navigation.navigate('CreateComponentRank', {componentId, countComponentRank, listComponentRank})}
+        onPress={() => navigation.navigate('CreateComponentRank', {postId, postName})}
         />
       </HeaderButtons>
     }

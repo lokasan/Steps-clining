@@ -21,6 +21,14 @@ import { EmploeeScreen } from '../screens/profile/EmploeeScreen'
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs'
 import {createDrawerNavigator} from 'react-navigation-drawer'
 import { CreateNewUser } from '../screens/profile/CreateNewUser'
+import { CreateNewObjects } from '../screens/profile/CreateNewObjects'
+import { ObjectScreen } from '../screens/profile/ObjectScreen'
+import { CreateNewPost } from '../screens/profile/CreateNewPost'
+import { CreateNewComponent } from '../screens/profile/CreateNewAttribute'
+import { AttributeSingle } from '../screens/profile//AttributesSingle'
+import { CreateNewComponentRank } from '../screens/profile/CreateNewComponentRank'
+import { EditComponentRank } from '../screens/profile/EditComponentRank'
+import { PostWithComponent } from '../screens/profile/PostWithComponent'
 
 const navigatorOptions = {
     defaultNavigationOptions: {
@@ -45,9 +53,7 @@ const PostNavigator = createStackNavigator({
     ObjectsBuildings: {
         screen: ObjectsBuilding
     },
-    Attributes: {
-        screen: AttributesList
-    },
+    
     Emploees: {
         screen: EmploeesList
     },
@@ -56,6 +62,33 @@ const PostNavigator = createStackNavigator({
     },
     CreateUser: {
         screen: CreateNewUser
+    },
+    CreateObjects: {
+        screen: CreateNewObjects
+    },
+    ObjectInfo: {
+        screen: ObjectScreen
+    },
+    CreatePost: {
+        screen: CreateNewPost
+    },
+    CreateComponent: {
+        screen: CreateNewComponent
+    },
+    ComponentInfo: {
+        screen: AttributeSingle
+    },
+    Components: {
+        screen: AttributesList
+    },
+    CreateComponentRank: {
+        screen: CreateNewComponentRank
+    },
+    EditComponentRank: {
+        screen: EditComponentRank
+    },
+    PostWithComponent: {
+        screen: PostWithComponent
     }
 }, navigatorOptions)
 
@@ -63,6 +96,9 @@ const FooterNavigator = createStackNavigator({
     qrCode: QRCode
 }, navigatorOptions)
 
+const AnalyticsNavigator = createStackNavigator({
+    Analytics: GraphPed
+}, navigatorOptions)
 const bottomTabsConfig = {
     Main: {
         screen: PostNavigator,
@@ -78,6 +114,13 @@ const bottomTabsConfig = {
         navigationOptions: {
             tabBarIcon: info => <Ionicons name="ios-qr-scanner" size={25} color={info.tintColor}/>,
             tabBarLabel: 'Обход'
+        }
+    },
+    Analytics: {
+        screen: AnalyticsNavigator,
+        navigationOptions: {
+            tabBarIcon: info => <Ionicons name="ios-analytics" size={25} color={info.tintColor}/>,
+            tabBarLabel: 'Аналитика' 
         }
     }
 }
