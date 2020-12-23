@@ -6,6 +6,7 @@ import * as SQLite from 'expo-sqlite'
 import { GraphContext } from '../context/graph/graphContext'
 import * as Google from 'expo-google-app-auth'
 import { CreateUserInLocalBase } from './CreateUserInLocalBase'
+import { DB } from '../db'
 const IOS_CLIENT = '393783114907-tanuhn4qqds9vr7o58ksn58okss0qs5v.apps.googleusercontent.com'
 const ANDROID_CLIENT = '393783114907-jrgn1caq85o8ns7bfe6reorj0vcjg7u4.apps.googleusercontent.com'
 // import GoogleFit, { Scopes } from 'react-native-google-fit'
@@ -19,7 +20,7 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
         if (value.trim()) {
             onSubmit(value)
             onChangeText('')
-            CreateUserInLocalBase(value, privileg)
+            
             // onOpen(1)
             navigation.navigate('AutentifGraph')
             // onChangeP('')
@@ -64,7 +65,20 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
                 .catch(err => console.log(typeof(err)))
             // console.log(userInfoResponse);
            Alert.alert(result.user.email)
-            // CreateUserInLocalBase(result.user.name, 'null', result.user.photoUrl)
+            const userEmp = {
+                surname:result.user.name.toString().split(' ')[0],
+                name:result.user.name.toString().split(' ')[1],
+                lastname: 'Artemovich',
+                position: 'system adm',
+                email: 'log@bk.ru',
+                privileg: '1',
+                key_auth: Date.now().toString(),
+                status: '2',
+                img: 'photo',
+                create_user_date: Date.now().toString()
+            }
+            await DB.createUser(userEmp)
+            
             navigation.navigate('AutentifGraph')
             
             return result.accessToken;

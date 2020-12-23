@@ -13,7 +13,8 @@ import {AppHeaderIcon} from '../components/AppHeaderIcon'
 // GoogleFit.checkIsAuthorized().then(() => {
 //   console.log(GoogleFit.isAuthorized, 'BOOOLEAN')
 // })
-const db = SQLite.openDatabase('db.db')
+// const db = SQLite.openDatabase('db.db')
+const db = 1
 // function sayHi() {
 //   alert('Привет');
 // }
@@ -111,7 +112,7 @@ export const GraphPed = ( {} ) => {
       <ScrollView style={{backgroundColor: 'black'}}>
         <View>
           
-            <RenderChart dataGraph={dataGraph} onSubmit={addDataGraph}/>
+            {/* <RenderChart dataGraph={dataGraph} onSubmit={addDataGraph}/> */}
           <View>
             {console.log(`GraphPed:====>>> , ${JSON.stringify(dataGraph)}`)}
           </View>
