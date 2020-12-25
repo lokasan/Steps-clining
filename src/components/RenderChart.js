@@ -20,7 +20,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     let myStatusPress = dataGraph.statMem
     const storeChoise = useRef(null)
     let deactivateButton = true
-    // const db = SQLite.openDatabase('db.db')
+    const db = SQLite.openDatabase('dba.db')
     const origami = useSelector((state) => {console.log(state, 'statelog');
       return state.empList.emploee})
     

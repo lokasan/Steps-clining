@@ -6,11 +6,12 @@ import { ScreenState } from './src/context/screen/ScreenState'
 import { GraphState } from './src/context/graph/GraphState'
 import { Provider } from 'react-redux'
 import store from './src/store/index'
-import {AppLoading} from 'expo'
+import AppLoading from 'expo-app-loading'
 import { bootstrap } from './src/bootstrap'
 import { AppNavigation } from './src/navigation/AppNavigation'
 // import { myPedometer } from './src/components/myPedometer'
 export default function App() {
+  
   const [isReady, setIsReady] = useState(false)
   if (!isReady) {
     return <AppLoading 

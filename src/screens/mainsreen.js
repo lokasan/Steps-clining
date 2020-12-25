@@ -20,15 +20,15 @@ export const MainScreen = ({navigation}) => {
   const myKey = {
     key_auth: null
   }
-  const db = SQLite.openDatabase('db.db')
+  const db = SQLite.openDatabase('dba.db')
   
   function buildQ ()  {
     
      return new Promise(resolve => {
        db.transaction((tx) => { 
         tx.executeSql('select * from user_local', [], (_, { rows }) => {
+          console.log(JSON.stringify(rows, 'напечатал из бд'));
           myKey.key_auth = JSON.stringify(rows._array[0]['email'])
-          console.log();
           console.log(rows['_array'])
          resolve()                
        }                                
