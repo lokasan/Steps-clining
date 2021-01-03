@@ -1,10 +1,27 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import {View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert} from 'react-native'
 import { Footer } from '../../components/ui/Footer'
+import {useDispatch, useSelector} from 'react-redux'
 import {ProfileQRCode, ObjectsIcon, UserIcon, Attributes, ArrowRight} from '../../components/ui/imageSVG/circle'
 import {AppHeaderIcon} from '../../components/AppHeaderIcon'
+import { loadEmploeeDouble, updateUser } from '../../store/actions/empDouble'
 export const MainProfileScreen = ({navigation}) => {
+    let resultNo = {
+        surname: 'no',
+        name: 'no',
+        lastname: 'no',
+        email: 'no',
+        position: 'no',
+    }
+    dispatch = useDispatch()
+    result = useSelector(state => state.empDouble.empAll.find(e => e.status === 1))
+    if (typeof result !== 'object') {
+        result = resultNo
+    }
+    useEffect(() =>{
+        dispatch(loadEmploeeDouble())
+    }, [dispatch])
     const exitHandler = () => {
         Alert.alert(
             "Выход из системы",
@@ -16,7 +33,12 @@ export const MainProfileScreen = ({navigation}) => {
                 
                 style: "cancel"
               },
-              { text: "Выйти", style: 'destructive', onPress: () => {navigation.popToTop()} }
+              { text: "Выйти", style: 'destructive', onPress: () => {
+                //   Alert.alert(result)
+                dispatch(updateUser(result))
+                  navigation.popToTop()
+                  
+                } }
             ],
             { cancelable: false }
           )
@@ -32,13 +54,13 @@ export const MainProfileScreen = ({navigation}) => {
                 </View>
                 <View style={styles.privateData}>
                     <View style={styles.textStyle}>
-                        <Text style={styles.textStyleLine}>Стив Джобс</Text>
+                        <Text style={styles.textStyleLine}>{`${result.surname} ${result.name} ${result.lastname}`}</Text>
                     </View>
                     <View style={styles.textStyle}>
-                        <Text style={styles.textStyleLine}>SteveJobs@icloud.me</Text>
+                        <Text style={styles.textStyleLine}>{result.email}</Text>
                     </View>
                     <View>
-                        <Text style={{color: '#fff', textAlign:'center'}}>Администратор</Text>
+                        <Text style={{color: '#fff', textAlign:'center'}}>{result.position}</Text>
                     </View>
                 
                 </View>

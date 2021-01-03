@@ -29,17 +29,19 @@ export const empDoubleReducer = (state = initialState, action) => {
             ...state, 
             empAll: [{...action.payload}, ...state.empAll]
         }
-        // case LOAD_IF_EXISTS_USER: return {
-        //     ...state,
-        //     existsUser: action.payload
-        // }
-        // case UPDATE_USER_AUTHORIZE: return {
-        //     ...state,
-        //     existsUser: state.existsUser.map(e => {
-        //         parseInt(e.status) === 0 ? e.status = 1 : e.status = 0
-        //         return e
-        //     })
-        // }
+        case LOAD_IF_EXISTS_USER: return {
+            ...state,
+            existsUser: action.payload
+        }
+        case UPDATE_USER_AUTHORIZE: return {
+            ...state,
+            empAll: state.empAll.map(e => { if (e.id === action.payload.id)
+                {
+                e.status === 0 ? e.status = 1 : e.status = 0
+                }
+                return e
+            })
+        }
         default: return state
     }
 }

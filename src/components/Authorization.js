@@ -1,12 +1,14 @@
-import React , {useState, useContext} from 'react'
+import React , {useState, useContext, useEffect} from 'react'
 import {StyleSheet, View, Text, TextInput, TouchableOpacity, InputBox, Alert, Image} from 'react-native'
 import QRCode from '../screens/qrcode'
+import {useDispatch, useSelector} from 'react-redux'
 import { AppCard } from './ui/AppCard'
 import * as SQLite from 'expo-sqlite'
 import { GraphContext } from '../context/graph/graphContext'
 import * as Google from 'expo-google-app-auth'
 import { CreateUserInLocalBase } from './CreateUserInLocalBase'
 import { DB } from '../db'
+import { addEmploee, loadEmploeeDouble, updateUser } from '../store/actions/empDouble'
 const IOS_CLIENT = '393783114907-tanuhn4qqds9vr7o58ksn58okss0qs5v.apps.googleusercontent.com'
 const ANDROID_CLIENT = '393783114907-jrgn1caq85o8ns7bfe6reorj0vcjg7u4.apps.googleusercontent.com'
 // import GoogleFit, { Scopes } from 'react-native-google-fit'
@@ -14,6 +16,11 @@ const ANDROID_CLIENT = '393783114907-jrgn1caq85o8ns7bfe6reorj0vcjg7u4.apps.googl
 export const Authorization = ({navigation, onSubmit, onOpen}) => {
     const {loadEmploee, emploee, fetchEmploees} = useContext(GraphContext)
     const [value, onChangeText] = useState('')
+    dispatch = useDispatch()
+    users = useSelector(state => state.empDouble.empAll)
+    useEffect(() => {
+        dispatch(loadEmploeeDouble())
+    }, [dispatch])
     // const [valueP, onChangeP] = useState('')
     const privileg = value.toString() === 'root-klining-steps' ? 'admin' : null
     const pressHandler = () => {
@@ -66,18 +73,24 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
             // console.log(userInfoResponse);
            Alert.alert(result.user.email)
             const userEmp = {
-                surname:result.user.name.toString().split(' ')[0],
-                name:result.user.name.toString().split(' ')[1],
+                surname:result.user.name.toString().split(' ')[1],
+                name:result.user.name.toString().split(' ')[0],
                 lastname: 'Artemovich',
                 position: 'system adm',
-                email: 'log@bk.ru',
+                email: result.user.email,
                 privileg: '1',
                 key_auth: Date.now().toString(),
-                status: '2',
+                status: 1,
                 img: 'photo',
                 create_user_date: Date.now().toString()
             }
-            await DB.createUser(userEmp)
+            if ((users.filter(e => e.email === result.user.email)).length) {
+                dispatch(updateUser((users.filter(e => e.email === result.user.email))[0]))
+            } else {
+                dispatch(addEmploee(userEmp))
+            }
+            
+            
             
             navigation.navigate('AutentifGraph')
             

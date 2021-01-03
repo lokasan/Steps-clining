@@ -55,21 +55,21 @@ export const updateUserPrivileg = emploee => async dispatch => {
         payload: emploee.id
     })
 }
-// export const loadUserExists = email => {
-//     return async dispatch => {
-//         const activeUser = await DB.getUser(email)
+export const loadUserExists = email => {
+    return async dispatch => {
+        const activeUser = await DB.getUser(email)
 
-//         dispatch({
-//             type: LOAD_IF_EXISTS_USER,
-//             payload: activeUser
-//         })
-//     }
-// }
+        dispatch({
+            type: LOAD_IF_EXISTS_USER,
+            payload: activeUser
+        })
+    }
+}
 
-// export const updateUser = (user) => async dispatch => {
-//     await DB.updateUserAuthorize(user.status, user.email)
-//     dispatch({
-//         type: UPDATE_USER_AUTHORIZE,
-//         payload: user
-//     })
-// }
+export const updateUser = (user) => async dispatch => {
+    await DB.updateUserAuthorize(user.status === 0 ? 1 : 0, user.email)
+    dispatch({
+        type: UPDATE_USER_AUTHORIZE,
+        payload: user
+    })
+}

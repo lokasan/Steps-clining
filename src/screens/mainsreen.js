@@ -18,7 +18,7 @@ export const MainScreen = ({navigation}) => {
   const {changeScreen} = useContext(ScreenContext)
   // navigationProfile = navigation
   const myKey = {
-    key_auth: null
+    isStatus: null
   }
   const db = SQLite.openDatabase('dba.db')
   
@@ -26,9 +26,9 @@ export const MainScreen = ({navigation}) => {
     
      return new Promise(resolve => {
        db.transaction((tx) => { 
-        tx.executeSql('select * from user_local', [], (_, { rows }) => {
+        tx.executeSql('select * from user_local where status=1', [], (_, { rows }) => {
           console.log(JSON.stringify(rows, 'напечатал из бд'));
-          myKey.key_auth = JSON.stringify(rows._array[0]['email'])
+          myKey.isStatus = JSON.stringify(rows._array[0]['status'])
           console.log(rows['_array'])
          resolve()                
        }                                
@@ -49,7 +49,7 @@ export const MainScreen = ({navigation}) => {
   async function getAsyncData() {
     console.log('start')
     await buildQ()
-    if (myKey.key_auth) {
+    if (myKey.isStatus) {
       navigation.navigate('AutentifGraph')
       
   

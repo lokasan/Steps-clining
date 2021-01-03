@@ -1,6 +1,6 @@
 export const CREATE_USER_LOCAL_TABLE = "CREATE TABLE IF NOT EXISTS user_local (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, \
     surname TEXT NOT NULL, name TEXT NOT NULL, lastname TEXT NOT NULL, position TEXT NOT NULL, \
-    email TEXT NOT NULL, privileg INTEGER NOT NULL, key_auth TEXT NOT NULL, status TEXT, img TEXT, create_user_date TEXT);"
+    email TEXT NOT NULL, privileg INTEGER NOT NULL, key_auth TEXT NOT NULL, status INTEGER, img TEXT, create_user_date TEXT);"
 
 export const CREATE_STEP_TIME_TABLE = "CREATE TABLE IF NOT EXISTS step_time (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, user_id INTEGER NOT NULL, \
     count_step INTEGER NOT NULL, date_time TEXT NOT NULL, current_time TEXT NOT NULL, FOREIGN KEY (user_id) REFERENCES user_local(id));"
