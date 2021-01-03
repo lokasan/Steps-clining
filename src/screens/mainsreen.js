@@ -20,7 +20,7 @@ export const MainScreen = ({navigation}) => {
   const myKey = {
     isStatus: null
   }
-  const db = SQLite.openDatabase('dba.db')
+  const db = SQLite.openDatabase('dbas.db')
   
   function buildQ ()  {
     
@@ -50,7 +50,7 @@ export const MainScreen = ({navigation}) => {
     console.log('start')
     await buildQ()
     if (myKey.isStatus) {
-      navigation.navigate('AutentifGraph')
+      navigation.navigate('MainProfile')
       
   
       

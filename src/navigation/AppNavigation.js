@@ -35,6 +35,7 @@ const navigatorOptions = {
         headerStyle: {
             backgroundColor: Platform.OS === 'android' ? HEADER_FOOTER.MAIN_COLOR : '#fff'
         },
+        
         headerTintColor: Platform.OS === 'android' ? '#fff' : HEADER_FOOTER.MAIN_COLOR
     }
 }
@@ -48,7 +49,8 @@ const PostNavigator = createStackNavigator({
         screen: GraphPed
     },
     MainProfile: {
-        screen: MainProfileScreen
+        screen: MainProfileScreen,
+        
     },
     ObjectsBuildings: {
         screen: ObjectsBuilding
@@ -104,8 +106,9 @@ const bottomTabsConfig = {
         screen: PostNavigator,
         navigationOptions: {
             tabBarIcon: info => <Ionicons name="ios-home" size={25} color={info.tintColor}/>,
-            backBehavior: 'none',
-            tabBarLabel: 'Домой'
+            tabBarLabel: 'Домой',
+            tabBarAccessibilityLabel: false,
+            backBehavior: 'none'
         },
         
     },
@@ -113,7 +116,7 @@ const bottomTabsConfig = {
         screen: FooterNavigator,
         navigationOptions: {
             tabBarIcon: info => <Ionicons name="ios-qr-scanner" size={25} color={info.tintColor}/>,
-            tabBarLabel: 'Обход'
+            tabBarLabel: 'Обход',
         }
     },
     Analytics: {
@@ -133,7 +136,7 @@ const BottomNavigator = Platform.OS === 'android' ? createMaterialBottomTabNavig
     }
 }) : createBottomTabNavigator(bottomTabsConfig, {
     tabBarOptions: {
-        activeTintColor: HEADER_FOOTER.MAIN_COLOR
+        activeTintColor: HEADER_FOOTER.MAIN_COLOR,
     }
 })
 

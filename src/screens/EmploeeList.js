@@ -11,7 +11,7 @@ export const EmploeeList = ({emploeeMy, renderChartForEmploee, status, userActiv
     const {loadEmploee, emploee, fetchEmploees} = useContext(GraphContext)
     const loadingEmp = useCallback(async () => await fetchEmploees(), [fetchEmploees])
     const dispatch = useDispatch()
-    const allEmps = useSelector((state) => state.empList.emploee._55)
+    const allEmps = useSelector((state) => state.empList.emploee._W)
     
     // console.log("MOY NOVIY ", allEmps);
     useEffect(() => {

@@ -1,6 +1,6 @@
 import { CLEAR_ERROR, FETCH_USERS, LOAD_EMPLOEE, SHOW_LOADER, UPDATE_EMPLOEE } from '../../components/types'
 import * as SQLite from 'expo-sqlite'
-const db = SQLite.openDatabase('db.db')
+const db = SQLite.openDatabase('dbas.db')
 export const loadListEmp = () => {
     return {
         type: FETCH_USERS, 

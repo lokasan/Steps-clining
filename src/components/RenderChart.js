@@ -20,7 +20,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     let myStatusPress = dataGraph.statMem
     const storeChoise = useRef(null)
     let deactivateButton = true
-    const db = SQLite.openDatabase('dba.db')
+    const db = SQLite.openDatabase('dbas.db')
     const origami = useSelector((state) => {console.log(state, 'statelog');
       return state.empList.emploee})
     
@@ -333,11 +333,11 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
           // console.log(`Cначала ${JSON.parse(JSON.parse(current))}, а затем ${JSON.parse(JSON.parse(now))}`)
         })
         origami.then((res) => console.log(res, 'res'))
-        changeEmploeeListParameters(chartChoose.x).then((result) => {
+        // changeEmploeeListParameters(chartChoose.x).then((result) => {
           
           
-          console.log(result, 'baah')
-        })
+        //   console.log(result, 'baah')
+        // })
        
         // console.log('onPress', chartChoose.x.split(' '))
         // updateEmploee(storeChoise.current, '50')

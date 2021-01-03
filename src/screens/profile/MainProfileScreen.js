@@ -110,7 +110,9 @@ export const MainProfileScreen = ({navigation}) => {
 }
 
 MainProfileScreen.navigationOptions = {
-    headerTitle: 'Профиль'
+    headerTitle: 'Профиль',
+    gestureEnabled: false,
+    headerLeft: null
 }
 
 const styles = StyleSheet.create({

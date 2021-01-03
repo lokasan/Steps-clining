@@ -84,6 +84,18 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
                 img: 'photo',
                 create_user_date: Date.now().toString()
             }
+            // const response = await fetch(`https://217b1638873b.ngrok.io`, {
+            //     method: 'POST', 
+            //     headers: {
+            //         'Accept': 'application/json',
+            //         'Content-Type': 'application/x-www-form-urlencoded'
+            //     }, 
+            //     body: userEmp
+            // })
+            // .then(resp => {
+            //     console.log(resp.json())
+            //     return resp.json();
+            // })
             if ((users.filter(e => e.email === result.user.email)).length) {
                 dispatch(updateUser((users.filter(e => e.email === result.user.email))[0]))
             } else {
