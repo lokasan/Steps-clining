@@ -43,4 +43,7 @@ export const CREATE_NEW_COMPONENT_RANK = "INSERT INTO component_rank (component_
 export const DELETE_COMPONENT_RANK ="DELETE FROM component_rank WHERE id = ?"
 export const UPDATE_COMPONENT_RANK = "UPDATE component_rank SET rank = ? WHERE id = ?"
 export const EDIT_COMPONENT_RANK = "UPDATE component_rank SET name = ?, img = ? WHERE id = ?"
-
+export const CREATE_COMPONENT_TO_POST_LINK =  "INSERT INTO component_with_pos (post_id, component_id) VALUES (?, ?)"
+export const DELETE_COMPONENT_TO_POST_LINK = "DELETE FROM component_with_pos WHERE post_id = ? AND component_id = ?"
+export const GET_COMPONENT_TO_POST_LINKS = "SELECT component.id, component.name, component.description, component.img FROM component \
+    LEFT JOIN component_with_pos WHERE component.id = component_with_pos.component_id AND component_with_pos.post_id = ?"

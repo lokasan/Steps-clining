@@ -6,17 +6,18 @@ import { DATA } from '../../testData'
 import { Footer } from '../../components/ui/Footer'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import { HEADER_FOOTER } from '../../theme'
-import { removeObject, updateObject } from '../../store/actions/object'
+import { removePost, updateObject } from '../../store/actions/post'
 import {AppHeaderIcon} from '../../components/AppHeaderIcon'
 import { loadPost } from '../../store/actions/post'
-import { ComponentCard } from '../../components/ComponentCard'
+import { ComponentCardToPost } from '../../components/ComponentCardToPost'
 import { loadComponent, removeComponent, updateComponent } from '../../store/actions/component'
+import { loadPostWithComponent } from '../../store/actions/postWithComponent'
 
 
-const removeHandler = (object, dispatch, navigation) => {
+const removeHandler = (post, dispatch, navigation) => {
     Alert.alert(
         "Удаление польователя",
-        "Вы уверены, что хотите удалить объект " + object.name + ' ?',
+        "Вы уверены, что хотите удалить объект " + post.name + ' ?',
         [
           
           {
@@ -25,8 +26,8 @@ const removeHandler = (object, dispatch, navigation) => {
             style: "cancel"
           },
           { text: "Удалить", style: 'destructive', onPress() {
-            navigation.navigate('Components')
-            dispatch(removeComponent(object.id))
+            navigation.navigate('ObjectInfo')
+            dispatch(removePost(post.id))
           } 
         }
         ],
@@ -36,18 +37,18 @@ const removeHandler = (object, dispatch, navigation) => {
 }
 
 export const PostWithComponent = ({navigation}) => {
-    const openComponentHandler = component => {
-        navigation.navigate('ComponentRankInfo', {componentRankId: component.id, componentRankName: component.name})
-    }
+    
     const dispatch = useDispatch()
   
     
     const post = navigation.getParam('post')
     const postWithComponent = useSelector(state => state.post.postAll.find(e => e.id === post.id))
     const componentAll = useSelector(state => state.component.componentAll)
+    const postWithComponentAll = useSelector(state => state.postWithComponent.postWithComponentAll)
     console.log(postWithComponent);
     useEffect(() => {
         dispatch(loadComponent())
+        dispatch(loadPostWithComponent(postWithComponent.id))
     }, [dispatch])
     
     if (!postWithComponent) {
@@ -71,15 +72,15 @@ export const PostWithComponent = ({navigation}) => {
     </View>
    
 </View>
-
+<ScrollView>
 <View style={styles.menuCard}>
         <FlatList 
         data={componentAll} 
         keyExtractor={component => component.id.toString()} 
-        renderItem={({item}) => <ComponentCard component={item} onOpen={openComponentHandler}/>}
+        renderItem={({item}) => <ComponentCardToPost post={postWithComponent} component={item} postWithComponentAll={postWithComponentAll}/>}
                 />
     </View>
-
+    </ScrollView>
 </View>
 
 <Button title='Удалить' color={HEADER_FOOTER.DANGER_COLOR} onPress={() => removeHandler(postWithComponent, dispatch, navigation)}/>
