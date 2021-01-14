@@ -3,10 +3,12 @@ import {View, StyleSheet, Image, Button, Alert} from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
 
+
+
 async function askForPermissions () {
     const {status} = await Permissions.askAsync(
         Permissions.CAMERA,
-        Permissions.CAMERA_ROLL
+        Permissions.MEDIA_LIBRARY
     )
     if (status !== 'granted') {
         Alert.alert('Ошибка, Вы не дали прав на доступ к камере или к фото')
@@ -17,6 +19,21 @@ async function askForPermissions () {
 
 export const PhotoPicker = ({onPick}) => {
     const [image, setImage] = useState(null)
+    const addPhoto = async () => {
+        const hasPermissions = await askForPermissions()
+        if (!hasPermissions) {
+            return
+        } 
+        const img = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 1,
+            allowsEditing: true,
+            aspect: [4, 3]
+
+        })
+        setImage(img.uri)
+        onPick(img.uri)
+    }
     const takePhoto = async () => {
         const hasPermissions = await askForPermissions()
         if (!hasPermissions) {
@@ -33,6 +50,7 @@ export const PhotoPicker = ({onPick}) => {
     }
     return <View style={styles.wrapper}> 
     <Button title='Сделать фото' onPress={takePhoto}/>
+    <Button title='Добавить фото' onPress={addPhoto}/>
     {image && <Image style={styles.img} source={{uri: image}}/> }
     </View>
 }

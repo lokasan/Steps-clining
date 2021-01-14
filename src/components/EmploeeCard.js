@@ -1,9 +1,33 @@
 import React from 'react'
-import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity} from 'react-native'
+import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert} from 'react-native'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
+import {useDispatch} from 'react-redux'
+import { removeEmploee, updateUserPrivileg } from '../store/actions/empDouble'
 
 export const EmploeeCard = ({emploee, onOpen}) => {
-    return <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(emploee)}>
+    const dispatch = useDispatch()
+    const removeHandler = () => {
+        Alert.alert(
+            "Удаление польователя",
+            "Вы уверены, что хотите удалить пользователя " + emploee.name + ' ?',
+            [
+              
+              {
+                text: "Отменить",
+                
+                style: "cancel"
+              },
+              { text: "Удалить", style: 'destructive', onPress() {
+                
+                dispatch(removeEmploee(emploee.id))
+              } 
+            }
+            ],
+            { cancelable: false }
+          )
+          
+    }
+    return <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(emploee)} onLongPress={removeHandler}>
     <View style={styles.actionMenu}>
     
         <Image style={styles.image} source={{uri: emploee.img}}/>

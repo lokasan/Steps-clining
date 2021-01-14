@@ -32,7 +32,7 @@ export const QRCode = ({goBack, navigaton}) => {
     // setHasPermission('ff')
     return (<View>
       <Text style={{color: 'red', fontSize: 30, textAlign: 'center'}}>Начать обход</Text>
-      <Button title={'Назад'} onPress={goBack}/>
+      
       </View>)
   } 
   if (hasPermission === null) {
@@ -79,9 +79,7 @@ export const QRCode = ({goBack, navigaton}) => {
       flexDirection: 'column',
       justifyContent: 'flex-end',
     }}>
-      <Button 
-    title={'Назад'} 
-    onPress={goBack}/>
+      
     </View>
     </View>
     

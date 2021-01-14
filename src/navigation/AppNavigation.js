@@ -1,7 +1,9 @@
 import { Platform } from 'react-native'
 import React from 'react'
 import { BottomTabBar, createBottomTabNavigator } from 'react-navigation-tabs'
-import {createAppContainer} from 'react-navigation'
+import {createAppContainer, createSwitchNavigator} from 'react-navigation'
+import createAnimatedSwitchNavigator from 'react-navigation-animated-switch'
+import { Transition } from 'react-native-reanimated'
 import {createStackNavigator} from 'react-navigation-stack'
 import { MainLayout } from '../MainLayout'
 import { MainProfileEdit } from '../screens/profile/MainProfileEdit'
@@ -29,6 +31,7 @@ import { AttributeSingle } from '../screens/profile//AttributesSingle'
 import { CreateNewComponentRank } from '../screens/profile/CreateNewComponentRank'
 import { EditComponentRank } from '../screens/profile/EditComponentRank'
 import { PostWithComponent } from '../screens/profile/PostWithComponent'
+import { MainEmploeeListScreen } from '../screens/MainEmploeeListScreen'
 
 const navigatorOptions = {
     defaultNavigationOptions: {
@@ -41,21 +44,27 @@ const navigatorOptions = {
 }
 
 const PostNavigator = createStackNavigator({
-    Mainscreen: MainScreen,
+    MainProfile: {
+        screen: MainEmploeeListScreen,  
+    },
+    
+}, navigatorOptions)
+
+const FooterNavigator = createStackNavigator({
+    qrCode: QRCode
+}, navigatorOptions)
+
+const AnalyticsNavigator = createStackNavigator({
+    Analytics: GraphPed,
+    MainProfile: {
+        screen: MainProfileScreen,  
+    },
     Profile: {
         screen: MainProfileEdit
-    },
-    AutentifGraph: {
-        screen: GraphPed
-    },
-    MainProfile: {
-        screen: MainProfileScreen,
-        
     },
     ObjectsBuildings: {
         screen: ObjectsBuilding
     },
-    
     Emploees: {
         screen: EmploeesList
     },
@@ -91,15 +100,8 @@ const PostNavigator = createStackNavigator({
     },
     PostWithComponent: {
         screen: PostWithComponent
-    }
-}, navigatorOptions)
-
-const FooterNavigator = createStackNavigator({
-    qrCode: QRCode
-}, navigatorOptions)
-
-const AnalyticsNavigator = createStackNavigator({
-    Analytics: GraphPed
+    },
+    
 }, navigatorOptions)
 const bottomTabsConfig = {
     Main: {
@@ -107,15 +109,13 @@ const bottomTabsConfig = {
         navigationOptions: {
             tabBarIcon: info => <Ionicons name="ios-home" size={25} color={info.tintColor}/>,
             tabBarLabel: 'Домой',
-            tabBarAccessibilityLabel: false,
-            backBehavior: 'none'
         },
         
     },
     Qrcode: {
         screen: FooterNavigator,
         navigationOptions: {
-            tabBarIcon: info => <Ionicons name="ios-qr-scanner" size={25} color={info.tintColor}/>,
+            tabBarIcon: info => <Ionicons name="ios-qr-code" size={25} color={info.tintColor}/>,
             tabBarLabel: 'Обход',
         }
     },
@@ -177,4 +177,25 @@ const MainNavigator = createDrawerNavigator({
     }
 })
 
-export const AppNavigation = createAppContainer(MainNavigator)
+const AuthStack = createStackNavigator({Mainscreen: MainScreen}, navigatorOptions)
+
+export const AppNavigation = createAppContainer(
+    createAnimatedSwitchNavigator({
+        App: MainNavigator,
+        Auth: AuthStack
+    },
+    {
+        initialRouteName: 'Auth',
+        transition: (
+            <Transition.Together>
+              <Transition.Out
+                type="scale"
+                durationMs={750}
+                interpolation="easeIn"
+              />
+              <Transition.In type="scale" durationMs={800} />
+            </Transition.Together>
+          ),
+    }
+    )
+    )

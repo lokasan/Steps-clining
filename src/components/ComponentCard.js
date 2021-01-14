@@ -1,9 +1,33 @@
 import React from 'react'
-import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity} from 'react-native'
+import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert} from 'react-native'
+import { useDispatch } from 'react-redux'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
+import { removeComponent } from '../store/actions/component'
+
 
 export const ComponentCard = ({component, onOpen}) => {
-    return <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(component)}>
+    const dispatch = useDispatch()
+    const removeHandler = (component) => {
+        Alert.alert(
+            "Удаление компонента",
+            "Вы уверены, что хотите удалить компонент " + component.name + ' ?',
+            [
+              
+              {
+                text: "Отменить",
+                
+                style: "cancel"
+              },
+              { text: "Удалить", style: 'destructive', onPress() {
+                dispatch(removeComponent(component.id))
+              } 
+            }
+            ],
+            { cancelable: false }
+          )
+          
+    }
+    return <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(component)} onLongPress={() => removeHandler(component)}>
     <View style={styles.actionMenu}>
     
         <Image style={styles.image} source={{uri: component.img}}/>

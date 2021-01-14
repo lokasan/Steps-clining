@@ -16,8 +16,8 @@ import { loadPostWithComponent } from '../../store/actions/postWithComponent'
 
 const removeHandler = (post, dispatch, navigation) => {
     Alert.alert(
-        "Удаление польователя",
-        "Вы уверены, что хотите удалить объект " + post.name + ' ?',
+        "Удаление поста",
+        "Вы уверены, что хотите удалить пост " + post.name + ' ?',
         [
           
           {

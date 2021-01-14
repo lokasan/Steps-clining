@@ -13,16 +13,19 @@ export const MainProfileScreen = ({navigation}) => {
         lastname: 'no',
         email: 'no',
         position: 'no',
+        privileg: 0
     }
+    let privileg = resultNo
     dispatch = useDispatch()
     result = useSelector(state => state.empDouble.empAll.find(e => e.status === 1))
     if (typeof result !== 'object') {
         result = resultNo
     }
+    privileg = result.privileg
     useEffect(() =>{
         dispatch(loadEmploeeDouble())
     }, [dispatch])
-    const exitHandler = () => {
+    const exitHandler = async () => {
         Alert.alert(
             "Выход из системы",
             "Вы уверены, что хотите выйти из системы ?",
@@ -36,7 +39,8 @@ export const MainProfileScreen = ({navigation}) => {
               { text: "Выйти", style: 'destructive', onPress: () => {
                 //   Alert.alert(result)
                 dispatch(updateUser(result))
-                  navigation.popToTop()
+
+                  navigation.navigate('Auth')
                   
                 } }
             ],
@@ -67,15 +71,12 @@ export const MainProfileScreen = ({navigation}) => {
                
             </View>
             </TouchableOpacity>
-        <View style={styles.menuCard}>
+        {privileg > 1 && <View style={styles.menuCard}>
         <TouchableOpacity>
             <View style={styles.actionMenu}>
-            
                 <ProfileQRCode/>
                 <Text style={{color: '#fff'}}>QR-код для входа</Text>
-                
-                <ArrowRight/>
-                
+                <ArrowRight/>  
             </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('ObjectsBuildings')}>
@@ -101,6 +102,7 @@ export const MainProfileScreen = ({navigation}) => {
             </View>
             </TouchableOpacity>
         </View>
+        }
         </View>
         {/* </ScrollView> */}
         <TouchableOpacity onPress={exitHandler}><Text style={{color: 'red', textAlign: 'center', paddingBottom: 10}}>Выйти из системы</Text></TouchableOpacity>
@@ -111,8 +113,6 @@ export const MainProfileScreen = ({navigation}) => {
 
 MainProfileScreen.navigationOptions = {
     headerTitle: 'Профиль',
-    gestureEnabled: false,
-    headerLeft: null
 }
 
 const styles = StyleSheet.create({

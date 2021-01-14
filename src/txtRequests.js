@@ -9,7 +9,7 @@ export const CREATE_BUILDING_TABLE = "CREATE TABLE IF NOT EXISTS building (id IN
     address TEXT NOT NULL, description TEXT NOT NULL, img TEXT NOT NULL);"
 
 export const CREATE_POST_TABLE = "CREATE TABLE IF NOT EXISTS post (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, building_id INTEGER NOT NULL, \
-    name TEXT NOT NULL, description TEXT NOT NULL, img TEXT NOT NULL, qrcode TEXT NOT NULL, FOREIGN KEY (building_id) REFERENCES building(id));"
+    name TEXT NOT NULL, description TEXT NOT NULL, img TEXT NOT NULL, qrcode TEXT NOT NULL UNIQUE, FOREIGN KEY (building_id) REFERENCES building(id));"
 
 export const CREATE_COMPONENT_TABLE = "CREATE TABLE IF NOT EXISTS component (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, \
     name TEXT NOT NULL, description TEXT NOT NULL, img TEXT NOT NULL);"
@@ -21,11 +21,13 @@ export const CREATE_COMPONENT_RANK_TABLE = "CREATE TABLE IF NOT EXISTS component
     component_id INTEGER NOT NULL, name TEXT NOT NULL, rank REAL NOT NULL, img TEXT NOT NULL, FOREIGN KEY (component_id) REFERENCES component(id));"
 
 export const CREATE_BYPASS_TABLE = "CREATE TABLE IF NOT EXISTS bypass (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, user_id INTEGER NOT NULL, \
-    start_time TEXT NOT NULL, end_time TEXT NOT NULL, avg_rank REAL NOT NULL, finished NUMERIC NOT NULL, FOREIGN KEY (user_id) REFERENCES user_local(id));"
+    start_time TEXT NOT NULL, end_time TEXT NOT NULL, avg_rank REAL NOT NULL, weather TEXT NOT NULL, temperature INTEGER NOT NULL, cleaner INTEGER NOT NULL, finished NUMERIC NOT NULL, FOREIGN KEY (user_id) REFERENCES user_local(id));"
 
 export const CREATE_BYPASS_RANK_TABLE = "CREATE TABLE IF NOT EXISTS bypass_rank (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, bypass_id INTEGER NOT NULL, \
-    component_rank_id INTEGER NOT NULL, start_time TEXT NOT NULL, end_time TEXT NOT NULL, img TEXT NOT NULL, FOREIGN KEY (bypass_id) REFERENCES bypass(id), \
+    component_rank_id INTEGER NOT NULL, start_time TEXT NOT NULL, end_time TEXT NOT NULL, FOREIGN KEY (bypass_id) REFERENCES bypass(id), \
     FOREIGN KEY (component_rank_id) REFERENCES component_rank(id));"
+export const CREATE_PHOTO_RANK_GALLERY = "CREATE TABLE IF NOT EXISTS photo_rank_gallery (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, bypass_rank_id INTEGER NOT NULL, img TEXT NOT NULL, \
+    FOREIGN KEY (bypass_rank_id) REFERENCES bypass_rank(id));"
 
 export const CREATE_NEW_USER = "INSERT INTO user_local (surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
 export const DELETE_USER = "DELETE FROM user_local WHERE id = ?"

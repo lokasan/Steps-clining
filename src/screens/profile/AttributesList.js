@@ -12,11 +12,13 @@ import {loadComponent} from '../../store/actions/component'
 
 
 export const AttributesList = ( {navigation}) => {
+    
     const openComponentHandler = component => {
         navigation.navigate('ComponentInfo', {componentId: component.id, componentName: component.name})
     }
     
     const dispatch = useDispatch()
+    
     useEffect(() => {
         dispatch(loadComponent())
     }, [dispatch])

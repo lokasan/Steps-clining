@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import { ADD_POST, LOAD_POST, REMOVE_POST, UPDATE_POST } from "../../components/types"
+import { ADD_POST, LOAD_POST, REMOVE_POST, UPDATE_POST, GET_POSTS_ALL } from "../../components/types"
 import { DATA } from '../../testData'
 import { DB } from '../../db'
 
@@ -11,6 +11,18 @@ export const loadPost = building_id => {
 
         dispatch({
             type: LOAD_POST,
+            payload: post 
+        })
+    }
+}
+export const getPostAll = () => {
+   
+    return async dispatch => {
+
+        const post = await DB.getPostAll()
+
+        dispatch({
+            type: GET_POSTS_ALL,
             payload: post 
         })
     }

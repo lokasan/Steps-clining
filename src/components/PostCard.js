@@ -1,9 +1,31 @@
 import React from 'react'
-import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity} from 'react-native'
+import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert} from 'react-native'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
+import { removePost } from '../store/actions/post'
 
 export const PostCard = ({post, navigation}) => {
-    return <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('PostWithComponent', {post})}>
+    const removeHandler = (post) => {
+        Alert.alert(
+            "Удаление поста",
+            "Вы уверены, что хотите удалить пост " + post.name + ' ?',
+            [
+              
+              {
+                text: "Отменить",
+                
+                style: "cancel"
+              },
+              { text: "Удалить", style: 'destructive', onPress() {
+                
+                dispatch(removePost(post.id))
+              } 
+            }
+            ],
+            { cancelable: false }
+          )
+          
+    }
+    return <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('PostWithComponent', {post})} onLongPress={() => removeHandler(post)}>
     <View style={styles.actionMenu}>
     
         <Image style={styles.image} source={{uri: post.img}}/>

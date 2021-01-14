@@ -1,5 +1,9 @@
 import * as SQLite from 'expo-sqlite'
-import { DELETE_POST, CREATE_BUILDING_TABLE, CREATE_BYPASS_RANK_TABLE, CREATE_BYPASS_TABLE, CREATE_COMPONENT_RANK_TABLE, CREATE_COMPONENT_TABLE, CREATE_COMPONENT_WITH_POST_TABLE, CREATE_NEW_BUILDING, CREATE_NEW_COMPONENT, CREATE_NEW_USER, CREATE_POST_TABLE, CREATE_STEP_TIME_TABLE, CREATE_USER_LOCAL_TABLE, DELETE_BUILDING, DELETE_COMPONENT, DELETE_USER, CREATE_NEW_POST, CREATE_NEW_COMPONENT_RANK, DELETE_COMPONENT_RANK, UPDATE_COMPONENT_RANK, EDIT_COMPONENT_RANK, CREATE_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, GET_COMPONENT_TO_POST_LINKS } from './txtRequests'
+import { DELETE_POST, CREATE_BUILDING_TABLE, CREATE_BYPASS_RANK_TABLE, CREATE_BYPASS_TABLE, CREATE_COMPONENT_RANK_TABLE, 
+    CREATE_COMPONENT_TABLE, CREATE_COMPONENT_WITH_POST_TABLE, CREATE_NEW_BUILDING, CREATE_NEW_COMPONENT, CREATE_NEW_USER, 
+    CREATE_POST_TABLE, CREATE_STEP_TIME_TABLE, CREATE_USER_LOCAL_TABLE, DELETE_BUILDING, DELETE_COMPONENT, DELETE_USER, 
+    CREATE_NEW_POST, CREATE_NEW_COMPONENT_RANK, DELETE_COMPONENT_RANK, UPDATE_COMPONENT_RANK, EDIT_COMPONENT_RANK, 
+    CREATE_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, GET_COMPONENT_TO_POST_LINKS, CREATE_PHOTO_RANK_GALLERY } from './txtRequests'
 import { FileSystem } from 'expo-file-system'
 const db = SQLite.openDatabase('dbas.db')
 export class DB {
@@ -19,6 +23,7 @@ export class DB {
                 tx.executeSql(CREATE_COMPONENT_WITH_POST_TABLE, [], resolve, (_, error) => reject(error))
                 tx.executeSql(CREATE_COMPONENT_RANK_TABLE, [], resolve, (_, error) => reject(error))
                 tx.executeSql(CREATE_BYPASS_RANK_TABLE, [], resolve, (_, error) => reject(error))
+                tx.executeSql(CREATE_PHOTO_RANK_GALLERY, [], resolve, (_, error) => reject(error))
             })
         })
         
@@ -161,6 +166,18 @@ export class DB {
                 tx.executeSql(
                     "SELECT * FROM post WHERE building_id = ?;",
                     [building_id],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static getPostAll() {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT * FROM post;",
+                    [],
                     (_, result) => resolve(result.rows._array),
                     (_, error) => reject(error)
                 )

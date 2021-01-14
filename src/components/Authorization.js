@@ -29,7 +29,7 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
             onChangeText('')
             
             // onOpen(1)
-            navigation.navigate('AutentifGraph')
+            navigation.navigate('App')
             // onChangeP('')
         } else {
             Alert.alert('Данные пусты')
@@ -71,7 +71,7 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
                 .then((resp) => resp.json()).then((data) => console.log(data))
                 .catch(err => console.log(typeof(err)))
             // console.log(userInfoResponse);
-           Alert.alert(result.user.email)
+    
             const userEmp = {
                 surname:result.user.name.toString().split(' ')[1],
                 name:result.user.name.toString().split(' ')[0],
@@ -104,7 +104,7 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
             
             
             
-            navigation.navigate('AutentifGraph')
+            navigation.navigate('App')
             
             return result.accessToken;
           } else {

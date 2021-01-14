@@ -10,6 +10,7 @@ import {connect, useSelector, useDispatch} from 'react-redux'
 import {changeEmploeeListParameters} from './changeEmploeeListParameters'
 export const RenderChart = ({ dataGraph, onSubmit}) => {
    let createTemplateEmp = null
+   let easyUser = false
    const dispatch = useDispatch()
     let chartChoose = null
     const savedChartTouch = useRef(null)
@@ -23,6 +24,18 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     const db = SQLite.openDatabase('dbas.db')
     const origami = useSelector((state) => {console.log(state, 'statelog');
       return state.empList.emploee})
+    console.log(origami, 'я здесь');
+    const choiseScreen = useSelector(state => state.empDouble.empAll)
+    console.log(choiseScreen);
+    for (let el of choiseScreen) {
+      console.log(el);
+      if (el.privileg === 0 && el.status === 1) {
+        console.log('лох');
+        easyUser = true
+        storeChoise.current = el.key_auth
+      } 
+    }
+    
     
     const renderChartForEmploee = (my_key, status) => {
       let tempSlice = null
@@ -324,15 +337,15 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
         savedChartTouch.current = chartChoose
         console.log(chartChoose.x);
         
-        Promise.all([origami, changeEmploeeListParameters(chartChoose.x)]).then((r) => {
-          const current = r[0]
-          const now = r[1]
-          console.log(r, 'hi');
-          createTemplateEmp = <EmploeeList emploeeMy={570} renderChartForEmploee={renderChartForEmploee} status={dataGraph[0].statMem} userActive={storeChoise.current}/>
-          // console.log(r[1](chartChoose.x), 'tot samiy');
-          // console.log(`Cначала ${JSON.parse(JSON.parse(current))}, а затем ${JSON.parse(JSON.parse(now))}`)
-        })
-        origami.then((res) => console.log(res, 'res'))
+        // Promise.all([origami, changeEmploeeListParameters(chartChoose.x)]).then((r) => {
+        //   const current = r[0]
+        //   const now = r[1]
+        //   console.log(r, 'hi');
+        //   createTemplateEmp = <EmploeeList emploeeMy={570} renderChartForEmploee={renderChartForEmploee} status={dataGraph[0].statMem} userActive={storeChoise.current}/>
+        //   // console.log(r[1](chartChoose.x), 'tot samiy');
+        //   // console.log(`Cначала ${JSON.parse(JSON.parse(current))}, а затем ${JSON.parse(JSON.parse(now))}`)
+        // })
+        // origami.then((res) => console.log(res, 'res'))
         // changeEmploeeListParameters(chartChoose.x).then((result) => {
           
           
@@ -360,8 +373,8 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     }
     />
     <Text>{}</Text>
-    <EmploeeList emploeeMy={myIsCo} renderChartForEmploee={renderChartForEmploee} status={dataGraph[0].statMem} userActive={storeChoise.current}/>
-    {createTemplateEmp}
+    {!easyUser && <EmploeeList emploeeMy={myIsCo} renderChartForEmploee={renderChartForEmploee} status={dataGraph[0].statMem} userActive={storeChoise.current}/>}
+    {/* {createTemplateEmp} */}
     
     </View>)
 }

@@ -13,7 +13,7 @@ import { PostCard } from '../../components/PostCard'
 
 const removeHandler = (object, dispatch, navigation) => {
     Alert.alert(
-        "Удаление польователя",
+        "Удаление объекта",
         "Вы уверены, что хотите удалить объект " + object.name + ' ?',
         [
           

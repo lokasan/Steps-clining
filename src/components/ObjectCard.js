@@ -1,9 +1,31 @@
 import React from 'react'
-import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity} from 'react-native'
+import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert} from 'react-native'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
+import { removeObject } from '../store/actions/object'
 
 export const ObjectCard = ({object, onOpen}) => {
-    return <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(object)}>
+    const removeHandler = (object) => {
+        Alert.alert(
+            "Удаление объекта",
+            "Вы уверены, что хотите удалить объект " + object.name + ' ?',
+            [
+              
+              {
+                text: "Отменить",
+                
+                style: "cancel"
+              },
+              { text: "Удалить", style: 'destructive', onPress() {
+                
+                dispatch(removeObject(object.id))
+              } 
+            }
+            ],
+            { cancelable: false }
+          )
+          
+    }
+    return <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(object)} onLongPress={() => removeHandler(object)}>
     <View style={styles.actionMenu}>
     
         <Image style={styles.image} source={{uri: object.img}}/>

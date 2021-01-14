@@ -16,6 +16,7 @@ export const CreateNewComponentRank = ({navigation}) => {
     const listComponentRank = navigation.getParam('listComponentRank')
     const [name, setName] = useState('')
     const countComponentRank = navigation.getParam('countComponentRank')
+    
     const currentRankForComponent = (5 / (countComponentRank)).toFixed(2)
     const [rank, setRank] = useState(currentRankForComponent.toString())
     

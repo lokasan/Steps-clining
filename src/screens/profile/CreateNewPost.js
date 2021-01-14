@@ -26,7 +26,7 @@ export const CreateNewPost = ({navigation}) => {
         name,
         description,
         img: imgRef.current,
-        qrcode: 1
+        qrcode: String(Date.now()) + name
         
       }
       dispatch(addPost(post))

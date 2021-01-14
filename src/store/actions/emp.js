@@ -12,9 +12,9 @@ const dataEmp = (period, person) => {
         let response =  null
         let sql = null
         if (period !== null) {
-            sql = `select user_local.id, name as userName, sum(step_time.count_step) as steps, key_auth, status from user_local left join step_time where user_local.id = step_time.user_id and key_auth=0 group by name`
+            sql = `select user_local.id, name as userName, sum(step_time.count_step) as steps, key_auth, status, privileg from user_local left join step_time where user_local.id = step_time.user_id and key_auth=0 group by name`
         } else {
-            sql = 'select user_local.id, name as userName, sum(step_time.count_step) as steps, key_auth, status from user_local left join step_time where user_local.id = step_time.user_id group by name'
+            sql = 'select user_local.id, name as userName, sum(step_time.count_step) as steps, key_auth, status, privileg from user_local left join step_time where user_local.id = step_time.user_id group by name'
         }
         db.transaction(tx => {
             tx.executeSql(sql, [], (_, { rows }) => {

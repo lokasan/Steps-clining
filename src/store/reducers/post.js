@@ -1,4 +1,4 @@
-import { ADD_POST, LOAD_POST, REMOVE_POST } from "../../components/types"
+import { ADD_POST, LOAD_POST, REMOVE_POST, GET_POSTS_ALL } from "../../components/types"
 const initialState = {
     postAll: []
 }
@@ -18,6 +18,7 @@ export const postReducer = (state = initialState, action) => {
     console.log(action.type, 'POST');
     switch (action.type) {
         case LOAD_POST: return {...state, postAll: action.payload}
+        case GET_POSTS_ALL: return {...state, postAlls: action.payload}
         case REMOVE_POST: return {...state, postAll: state.postAll.filter(e => e.id !== action.payload)
 
         }

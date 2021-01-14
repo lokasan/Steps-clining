@@ -17,8 +17,8 @@ let countComponentRank = 0
 let listComponentRank = ''
 const removeHandler = (object, dispatch, navigation) => {
     Alert.alert(
-        "Удаление польователя",
-        "Вы уверены, что хотите удалить объект " + object.name + ' ?',
+        "Удаление компонента",
+        "Вы уверены, что хотите удалить компонент " + object.name + ' ?',
         [
           
           {
@@ -75,7 +75,7 @@ export const AttributeSingle = ({navigation}) => {
     </View>
    
 </View>
-<ScrollView>
+
 <View style={styles.menuCard}>
         <FlatList 
         data={componentRankAll} 
@@ -83,7 +83,7 @@ export const AttributeSingle = ({navigation}) => {
         renderItem={({item}) => <ComponentRankCard componentRank={item} dispatch={dispatch} componentRankAll={componentRankAll} navigation={navigation}/>}
                 />
     </View>
-    </ScrollView>
+    
 </View>
 
 <Button title='Удалить' color={HEADER_FOOTER.DANGER_COLOR} onPress={() => removeHandler(component, dispatch, navigation)}/>

@@ -7,13 +7,13 @@ function savePedData(data) {
 }
 
 
-export const MyPedometer = (key_auth) => {
+export const MyPedometer = () => {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState('ckecking')
   const [pastStepCount, setPastStepCount] = useState(0)
   const [currentStepCount, setCurrentStepCount] = useState(0)
   const [subscriptionStatus, setSubscriptionStatus] = useState()
 
-  console.log(key_auth, 'user');
+  
   // state = {
   //   isPedometerAvailable: 'checking',
   //   pastStepCount: 0,
@@ -74,7 +74,7 @@ export const MyPedometer = (key_auth) => {
     subscriptionStatus && subscriptionStatus.remove();
     setSubscriptionStatus(null)
   };
-  LocalDB(key_auth = null, currentStepCount)
+  
 
   console.log(currentStepCount)
     return (
