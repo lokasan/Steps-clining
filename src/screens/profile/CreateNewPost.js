@@ -8,6 +8,7 @@ import {useDispatch} from 'react-redux'
 import { addEmploee } from '../../store/actions/empDouble'
 import { addPost } from '../../store/actions/post'
 import { PhotoPicker } from '../../components/PhotoPicker'
+import { QRCodePicker } from '../../components/QRCodePicker'
 
 export const CreateNewPost = ({navigation}) => {
     const dispatch = useDispatch()
@@ -17,6 +18,10 @@ export const CreateNewPost = ({navigation}) => {
     const [description, setDescription] = useState('')
     
     const imgRef = useRef()
+    const qrRef = useRef()
+    const qrcodePickHandler = uri => {
+      qrRef.current = uri
+    }
     const photoPickHandler = uri => {
       imgRef.current = uri
     }
@@ -26,7 +31,8 @@ export const CreateNewPost = ({navigation}) => {
         name,
         description,
         img: imgRef.current,
-        qrcode: String(Date.now()) + name
+        qrcode: String(Date.now()) + name,
+        qrcode_img: qrRef.current
         
       }
       dispatch(addPost(post))
@@ -50,12 +56,15 @@ export const CreateNewPost = ({navigation}) => {
         onChangeText={setDescription}/>
         </AppCard>
         <PhotoPicker onPick={photoPickHandler}/>
-        
-     <Button 
+        <Button 
      title='Создать пост' 
      onPress={createPostHandler} 
      color={HEADER_FOOTER.MAIN_COLOR}
      disabled={!name || !description}/>
+        <QRCodePicker value={name} onPick={qrcodePickHandler}/>
+
+        
+     
       </View>
       </TouchableWithoutFeedback>
     </ScrollView>

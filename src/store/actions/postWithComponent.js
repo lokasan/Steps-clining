@@ -15,7 +15,7 @@ export const loadPostWithComponent = postId => {
         })
     }
 }
-export const deleteComponentToPostLink = (postId, component) => async dispatch=> {
+export const deleteComponentToPostLink = (postId, component) => async dispatch => {
     await DB.deleteComponentToPostLink(postId, component.id)
     dispatch({
         type: DELETE_COMPONENT_TO_POST_LINK,

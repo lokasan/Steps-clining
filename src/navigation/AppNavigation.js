@@ -32,7 +32,8 @@ import { CreateNewComponentRank } from '../screens/profile/CreateNewComponentRan
 import { EditComponentRank } from '../screens/profile/EditComponentRank'
 import { PostWithComponent } from '../screens/profile/PostWithComponent'
 import { MainEmploeeListScreen } from '../screens/MainEmploeeListScreen'
-
+import { BypassScreen } from '../screens/BypassScreen'
+import { ComponentsRankScreen } from '../screens/ComponentsRankScreen'
 const navigatorOptions = {
     defaultNavigationOptions: {
         headerStyle: {
@@ -51,7 +52,9 @@ const PostNavigator = createStackNavigator({
 }, navigatorOptions)
 
 const FooterNavigator = createStackNavigator({
-    qrCode: QRCode
+    QRCode,
+    BypassScreen,
+    ComponentsRankScreen
 }, navigatorOptions)
 
 const AnalyticsNavigator = createStackNavigator({
@@ -145,6 +148,7 @@ const AboutNavigator = createStackNavigator({
 }, navigatorOptions)
 
 const ObjectNavigator = createStackNavigator({
+    
     StatusObject: StatusObject
 }, navigatorOptions)
 

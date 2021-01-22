@@ -1,23 +1,71 @@
 'use strict';
-import React, { useState, useEffect } from 'react'
-import { Text, View, StyleSheet, Button, Image, TouchableOpacity, Animated } from 'react-native'
+import React, { useState, useEffect, useRef } from 'react'
+import { Text, View, StyleSheet, Button, Image, TouchableOpacity, Animated, FlatList } from 'react-native'
 import { BarCodeScanner } from 'expo-barcode-scanner'
+import { withNavigationFocus } from 'react-navigation'
+import { useDispatch, useSelector } from 'react-redux'
+import { getPostAll } from '../store/actions/post';
+import { loadPostWithComponent } from '../store/actions/postWithComponent';
+import ActiveComponentsCard from '../components/ActiveComponentsCard';
 
-export const QRCode = ({goBack, navigaton}) => {
+export const QRCode = ({goBack, navigation}) => {
+  const dispatch = useDispatch()
+  const [isFocused, setIsFocused] = useState(true)
+  const result = useSelector(state => state.post.postAlls)
+  const svaaaag = useSelector(state => state.postWithComponent.postWithComponentAll)
+  let didBlurSubscription = navigation.addListener(
+    'didBlur',
+    payload => {
+      setIsFocused(navigation.isFocused())
+      console.debug('didBlur', payload, isFocused);
+
+
+    }
+  );
+  console.log(isFocused, 'hiiii');
+  let didFocusSubscription = navigation.addListener(
+    'didFocus',
+    payload => {
+      setIsFocused(navigation.isFocused())
+      console.debug('didFocus', payload, isFocused);
+
+
+    }
+  );
+ 
+  console.log(didBlurSubscription);
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [dataScan, setDataScan] = useState(null);
+  const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
   const DataOperation = (data) => {
     setDataScan(data)
     console.log(data)
   }
+
+  useEffect(() => {
+    dispatch(getPostAll())
+  }, [dispatch]) 
+
   useEffect(() => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
       setHasPermission(status === 'granted');
     })();
-  }, []);
-
+  }, [dispatch]);
+  useEffect(() => {
+    return function cleanup() {
+      didFocusSubscription.remove()
+      didBlurSubscription.remove()
+    } 
+  })
+  useEffect(() => {
+    for (const element of result) {
+      if (dataScan === element.name) {
+    dispatch(loadPostWithComponent(element.id))
+      }
+    }
+  }, [dataScan])
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
@@ -27,14 +75,44 @@ export const QRCode = ({goBack, navigaton}) => {
   };
 
   let content = (<Image style={{height: 300, width: 300, marginHorizontal: '15%', marginTop: '30%', opacity: 0.5}} source={require('../images/3.png')} />);
-  if (dataScan === 'Пост 1') {
-    console.log(dataScan)
-    // setHasPermission('ff')
-    return (<View>
-      <Text style={{color: 'red', fontSize: 30, textAlign: 'center'}}>Начать обход</Text>
+  for (const element of result){
+    console.log(element);
+    if (dataScan === element.name) {
+      console.log(svaaaag);
       
-      </View>)
-  } 
+      const x = new Animated.Value(0) 
+      const onScroll = Animated.event([{ nativeEvent: { contentOffset: { x } }}], { useNativeDriver: true })
+      return <View style={{flex: 1}}>
+      <View style={styles.imageWrapper}>
+        <TouchableOpacity onPress={() => navigation.navigate('BypassScreen', {svaaaag})}>
+      <Image style={styles.image} source={{uri: element.img}}/>
+      </TouchableOpacity>
+      </View>
+      <TouchableOpacity onPress={() => {
+        setScanned(false)
+        setDataScan(undefined)
+      }}>
+        <Text style={styles.title}>{element.name}</Text>
+        
+      </TouchableOpacity>
+      <AnimatedFlatList
+        scrollEventThrottle={16}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        bounces={false}
+        data={svaaaag}
+        renderItem={({ index, item: item }) => (
+          <ActiveComponentsCard {...{ index, x, item}} />
+        )}
+        keyExtractor={(item) => String(item.id)}
+        {...{onScroll}}
+        />
+        
+      </View>
+      
+      
+    } 
+  }
   if (hasPermission === null) {
     return <Text>Ответ от камеры</Text>;
   }
@@ -49,10 +127,10 @@ export const QRCode = ({goBack, navigaton}) => {
         flexDirection: 'column',
         justifyContent: 'flex-end',
       }}>
-      <BarCodeScanner
+      {isFocused ? <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
-      />
+      /> : <Text>Hi</Text>}
      
       {content}
 
@@ -71,7 +149,7 @@ export const QRCode = ({goBack, navigaton}) => {
           <Text style={{height: 50, 
         borderColor: 'gray', 
         borderBottomWidth: 1,
-        color: 'white'}}>Неверный код. Нажмите для сканирования</Text>
+        color: 'white'}}>Нажмите для сканирования</Text>
         </TouchableOpacity>
       )}
       <View style={{
@@ -84,7 +162,29 @@ export const QRCode = ({goBack, navigaton}) => {
     </View>
     
   );
+  
 }
+
+const styles = StyleSheet.create({
+  imageWrapper: {
+    marginTop:'10%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    
+    width: 250,
+    height: 250,
+    borderRadius: 25
+},
+title: {
+  marginTop: '10%',
+  textAlign: 'center',
+  fontSize: 36
+}
+})
+
 QRCode.navigationOptions = {
-  headerTitle: 'Сканнер'
+  headerTitle: 'Сканер'
 }

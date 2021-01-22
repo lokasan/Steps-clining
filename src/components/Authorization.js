@@ -78,7 +78,7 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
                 lastname: 'Artemovich',
                 position: 'system adm',
                 email: result.user.email,
-                privileg: '1',
+                privileg: '0',
                 key_auth: Date.now().toString(),
                 status: 1,
                 img: 'photo',

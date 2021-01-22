@@ -13,29 +13,6 @@ import { ComponentCardToPost } from '../../components/ComponentCardToPost'
 import { loadComponent, removeComponent, updateComponent } from '../../store/actions/component'
 import { loadPostWithComponent } from '../../store/actions/postWithComponent'
 
-
-const removeHandler = (post, dispatch, navigation) => {
-    Alert.alert(
-        "Удаление поста",
-        "Вы уверены, что хотите удалить пост " + post.name + ' ?',
-        [
-          
-          {
-            text: "Отменить",
-            
-            style: "cancel"
-          },
-          { text: "Удалить", style: 'destructive', onPress() {
-            navigation.navigate('ObjectInfo')
-            dispatch(removePost(post.id))
-          } 
-        }
-        ],
-        { cancelable: false }
-      )
-      
-}
-
 export const PostWithComponent = ({navigation}) => {
     
     const dispatch = useDispatch()
@@ -83,7 +60,7 @@ export const PostWithComponent = ({navigation}) => {
     </ScrollView>
 </View>
 
-<Button title='Удалить' color={HEADER_FOOTER.DANGER_COLOR} onPress={() => removeHandler(postWithComponent, dispatch, navigation)}/>
+
 {/* <Footer/> */}
 </View>
 }

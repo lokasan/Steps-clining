@@ -3,7 +3,7 @@ import { DELETE_POST, CREATE_BUILDING_TABLE, CREATE_BYPASS_RANK_TABLE, CREATE_BY
     CREATE_COMPONENT_TABLE, CREATE_COMPONENT_WITH_POST_TABLE, CREATE_NEW_BUILDING, CREATE_NEW_COMPONENT, CREATE_NEW_USER, 
     CREATE_POST_TABLE, CREATE_STEP_TIME_TABLE, CREATE_USER_LOCAL_TABLE, DELETE_BUILDING, DELETE_COMPONENT, DELETE_USER, 
     CREATE_NEW_POST, CREATE_NEW_COMPONENT_RANK, DELETE_COMPONENT_RANK, UPDATE_COMPONENT_RANK, EDIT_COMPONENT_RANK, 
-    CREATE_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, GET_COMPONENT_TO_POST_LINKS, CREATE_PHOTO_RANK_GALLERY } from './txtRequests'
+    CREATE_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, GET_COMPONENT_TO_POST_LINKS, CREATE_PHOTO_RANK_GALLERY, CREATE_NEW_BYPASS, BYPASS_IS_CLEANER, UPDATE_BYPASS, FINISHED_BYPASS, DELETE_BYPASS, CREATE_NEW_BYPASS_RANK, UPDATE_BYPASS_RANK, CREATE_NEW_PHOTO_RANK_GALLERY, DELETE_PHOTO_RANK_GALLERY } from './txtRequests'
 import { FileSystem } from 'expo-file-system'
 const db = SQLite.openDatabase('dbas.db')
 export class DB {
@@ -148,12 +148,12 @@ export class DB {
             })
         })
     }
-    static createPost({building_id, name, description, img, qrcode}) {
+    static createPost({building_id, name, description, img, qrcode, qrcode_img}) {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_POST,
-                    [building_id, name, description, img, qrcode],
+                    [building_id, name, description, img, qrcode, qrcode_img],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -164,7 +164,7 @@ export class DB {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
-                    "SELECT * FROM post WHERE building_id = ?;",
+                    "SELECT building_id, id, name, description, img, qrcode, qrcode_img FROM post WHERE building_id = ?;",
                     [building_id],
                     (_, result) => resolve(result.rows._array),
                     (_, error) => reject(error)
@@ -340,6 +340,138 @@ export class DB {
                 tx.executeSql(
                     GET_COMPONENT_TO_POST_LINKS,
                     [postId],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static createBypass(userId, postId, weather, temperature) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    CREATE_NEW_BYPASS,
+                    [userId, postId, String(Date.now()), weather, temperature],
+                    (_, result) => resolve(result.insertId),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static isCleanerOnBypass(cleaner, id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    BYPASS_IS_CLEANER,
+                    [cleaner, id],
+                    resolve,
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static updateBypass(avgRank, id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    UPDATE_BYPASS,
+                    [avgRank, id],
+                    resolve,
+                    (_, error) => reject(error) 
+                )
+            })
+        })
+    }
+    static finishedBypass(avgRank, id) {
+        return new promises((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                   FINISHED_BYPASS,
+                   [String(Date.now()), avgRank, id],
+                   resolve,
+                   (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static deleteBypass(id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                   DELETE_BYPASS,
+                   [id],
+                   resolve,
+                   (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static createBypassRank(bypass_id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                CREATE_NEW_BYPASS_RANK,
+                [bypass_id, String(Date.now())],
+                (_, result) => resolve(result.insertId),
+                (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static updateBypassRank(componentRankId, id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                UPDATE_BYPASS_RANK,
+                [componentRankId, String(Date.now()), id],
+                resolve,
+                (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static createPhotoRankGallery({bypassRankId, photo}) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                CREATE_NEW_PHOTO_RANK_GALLERY,
+                [bypassRankId, photo],
+                (_, result) => resolve(result.insertId),
+                (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static deletePhotoRankGallery(id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                DELETE_PHOTO_RANK_GALLERY,
+                [id],
+                resolve,
+                (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static getStatusBypass(post_id, finished) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                "SELECT finished FROM bypass WHERE post_id = ? AND finished = ?",
+                [post_id, finished],
+                (_, result) => resolve(result.rows._array),
+                (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static getComponentRankForId(componentRankId) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT * FROM component_rank WHERE id = ?",
+                    [componentRankId],
                     (_, result) => resolve(result.rows._array),
                     (_, error) => reject(error)
                 )

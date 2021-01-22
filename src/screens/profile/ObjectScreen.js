@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react'
-import {View, Text, StyleSheet, Image, Button, ScrollView, Alert, FlatList} from 'react-native'
+import {View, Text, StyleSheet, Image, Button, ScrollView, Alert, FlatList, SafeAreaView} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import { DATA } from '../../testData'
@@ -11,39 +11,13 @@ import {AppHeaderIcon} from '../../components/AppHeaderIcon'
 import { loadPost } from '../../store/actions/post'
 import { PostCard } from '../../components/PostCard'
 
-const removeHandler = (object, dispatch, navigation) => {
-    Alert.alert(
-        "Удаление объекта",
-        "Вы уверены, что хотите удалить объект " + object.name + ' ?',
-        [
-          
-          {
-            text: "Отменить",
-            
-            style: "cancel"
-          },
-          { text: "Удалить", style: 'destructive', onPress() {
-            navigation.navigate('ObjectsBuildings')
-            dispatch(removeObject(object.id))
-          } 
-        }
-        ],
-        { cancelable: false }
-      )
-      
-}
 
 export const ObjectScreen = ({navigation}) => {
-    const openPostHandler = post => {
-        navigation.navigate('PostInfo', {postId: post.id, postName: post.name})
-    }
+
     const dispatch = useDispatch()
-  
-    
     const objectId = navigation.getParam('objectId')
     const object = useSelector(state => state.object.objAll.find(e => e.id === objectId))
     
-    console.log(object);
     useEffect(() => {
         dispatch(loadPost(objectId))
     }, [dispatch])
@@ -72,20 +46,28 @@ export const ObjectScreen = ({navigation}) => {
     </View>
    
 </View>
-<View style={styles.menuCard}>
+
         <FlatList 
+        style={styles.menuCard}
         data={postAll} 
         keyExtractor={post => post.id.toString()} 
-        renderItem={({item}) => <PostCard post={item} navigation={navigation}/>}
+        renderItem={({item}) => <PostCard post={item} navigation={navigation}
+        horizontal={false}
+        />}
                 />
-    </View>
+    
 </View>
 
-<Button title='Удалить' color={HEADER_FOOTER.DANGER_COLOR} onPress={() => removeHandler(object, dispatch, navigation)}/>
+
 {/* <Footer/> */}
 </View>
 }
 const styles = StyleSheet.create({
+    item: {
+        flex: 1,
+        backgroundColor: '#f9c2ff',
+        
+    },
     image: {
         width: '100%'
     },
@@ -132,6 +114,7 @@ const styles = StyleSheet.create({
         // padding: 4,
         // marginTop: 50,
         // borderBottomWidth: 0.3,
+       
         borderTopWidth: 0,
         borderColor: '#fff',
         width: '100%',

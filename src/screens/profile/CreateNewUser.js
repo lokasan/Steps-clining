@@ -35,7 +35,7 @@ export const CreateNewUser = ( {navigation} ) => {
         email,
         privileg,
         key_auth: 1,
-        status: 1,
+        status: 0,
         img: imgRef.current,
         create_user_date: Date.now().toString()
       }

@@ -45,6 +45,7 @@ export const PhotoPicker = ({onPick}) => {
             aspect: [16, 9]
 
         })
+        console.log(img)
         setImage(img.uri)
         onPick(img.uri)
     }

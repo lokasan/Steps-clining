@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import { Footer } from '../../components/ui/Footer'
-import {View, Text, StyleSheet, FlatList, Alert} from 'react-native'
+import {View, Text, StyleSheet, FlatList, Alert, ScrollView} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import { getEmploeesList } from '../../dataBaseRequests/dataBaseRequests'
 import { EmploeeCard } from '../../components/EmploeeCard'
@@ -19,21 +19,20 @@ export const EmploeesList = ( {navigation}) => {
     // получаю пустой промис исправить ошибку
     console.log(result, 'раскрыл');
     const dispatch = useDispatch()
-    useEffect(() => {
-        dispatch(loadEmploeeDouble())
-    }, [dispatch])
+   
 
     const emploeeAll = useSelector(state => state.empDouble.empAll)
+    console.log(emploeeAll, "ЗЕМЛНЯН")
     console.log(emploeeAll, 'Алл сотрудники');
     return <View style={{flex: 1, backgroundColor: '#000'}}>
     <View style={styles.container, styles.centers}>
-    <View style={styles.menuCard}>
+    <ScrollView style={styles.menuCard}>
         <FlatList 
         data={emploeeAll} 
         keyExtractor={emploee => emploee.id.toString()} 
         renderItem={({item}) => <EmploeeCard emploee={item} onOpen={openEmploeeHandler}/>}
                 />
-    </View>
+    </ScrollView>
     </View>
     {/* <Footer/> */}
     </View>

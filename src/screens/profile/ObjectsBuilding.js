@@ -22,13 +22,13 @@ export const ObjectsBuilding = ({navigation}) => {
     console.log(objectsAll, 'Алл сотрудники');
     return <View style={{flex: 1, backgroundColor: '#000'}}>
     <View style={styles.container, styles.centers}>
-    <View style={styles.menuCard}>
-        <FlatList 
+    
+        <FlatList style={styles.menuCard}
         data={objectsAll} 
         keyExtractor={object => object.id.toString()} 
         renderItem={({item}) => <ObjectCard object={item} onOpen={openObjectsHandler}/>}
                 />
-    </View>
+    
     </View>
     {/* <Footer/> */}
     </View>

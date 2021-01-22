@@ -6,6 +6,9 @@ import {useDispatch, useSelector} from 'react-redux'
 import {ProfileQRCode, ObjectsIcon, UserIcon, Attributes, ArrowRight} from '../../components/ui/imageSVG/circle'
 import {AppHeaderIcon} from '../../components/AppHeaderIcon'
 import { loadEmploeeDouble, updateUser } from '../../store/actions/empDouble'
+import { getPostAll } from '../../store/actions/post';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 export const MainProfileScreen = ({navigation}) => {
     let resultNo = {
         surname: 'no',
@@ -18,13 +21,49 @@ export const MainProfileScreen = ({navigation}) => {
     let privileg = resultNo
     dispatch = useDispatch()
     result = useSelector(state => state.empDouble.empAll.find(e => e.status === 1))
+    const allPostResult = useSelector(state => state.post.postAlls)
     if (typeof result !== 'object') {
         result = resultNo
     }
     privileg = result.privileg
     useEffect(() =>{
         dispatch(loadEmploeeDouble())
+        dispatch(getPostAll())
     }, [dispatch])
+    async function calculate() {
+        let html = ''
+        for (let el of allPostResult) {
+            console.log(el);
+            // const data = await FileSystem.readAsStringAsync(el.img, {
+            //     encoding: FileSystem.EncodingType.Base64,
+            // });
+
+            // const imageData = 'data:image/png;base64,' + data
+            // html += `<h1> ${el.name} </h1>
+            // <div>
+            // <img src="${imageData}" width="100%"/>
+            // </div>`;
+            
+            html += `<head>
+            <meta name="viewport" content ="width=device-width,initial-scale=1,user-scalable=yes" />
+          </head>
+          <body>
+            <div>
+            <img style="display: block; margin: auto" src="${el.qrcode_img}" height='70%'/>
+            </div>
+            <h1 style="text-align: center; margin-bottom: 178px;"> ${el.name} </h1></body>`;
+        }
+        
+        return html
+        
+        
+    }
+    async function execute() {
+        let html = await calculate()
+        
+        const { uri } = await Print.printToFileAsync({ html });
+        Sharing.shareAsync(uri);
+      }
     const exitHandler = async () => {
         Alert.alert(
             "Выход из системы",
@@ -72,10 +111,10 @@ export const MainProfileScreen = ({navigation}) => {
             </View>
             </TouchableOpacity>
         {privileg > 1 && <View style={styles.menuCard}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={execute}>
             <View style={styles.actionMenu}>
                 <ProfileQRCode/>
-                <Text style={{color: '#fff'}}>QR-код для входа</Text>
+                <Text style={{color: '#fff'}}>Отправить список QR-кодов</Text>
                 <ArrowRight/>  
             </View>
             </TouchableOpacity>

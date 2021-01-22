@@ -8,6 +8,7 @@ import { EmploeeCard } from '../components/EmploeeCard'
 import { DATA } from '../testData'
 import {AppHeaderIcon} from '../components/AppHeaderIcon'
 import { MyPedometer }from '../components/MyPedometer'
+import { getPostAll } from '../store/actions/post'
 // import {loadEmploeeDouble} from '../../store/actions/empDouble'
 
 
@@ -17,13 +18,16 @@ export const MainEmploeeListScreen = ( {navigation}) => {
         navigation.navigate('EmploeeInfo', {emploeeId: emploee.id, emploeeName: emploee.name})
     }
     let result = getEmploeesList().then()
+    
     // получаю пустой промис исправить ошибку
     console.log(result, 'раскрыл');
     const dispatch = useDispatch()
     // useEffect(() => {
     //     dispatch(loadEmploeeDouble())
     // }, [dispatch])
-
+    useEffect(() => {
+        dispatch(getPostAll())
+    }, [dispatch])
     const emploeeAll = useSelector(state => state.empDouble.empAll)
     let tempPrivileg = false
     console.log(emploeeAll, 'Алл сотрудники');

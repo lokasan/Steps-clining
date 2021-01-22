@@ -27,13 +27,13 @@ export const AttributesList = ( {navigation}) => {
     console.log(componentAll, 'Алл сотрудники');
     return <View style={{flex: 1, backgroundColor: '#000'}}>
     <View style={styles.container, styles.centers}>
-    <View style={styles.menuCard}>
-        <FlatList 
+    
+        <FlatList style={styles.menuCard}
         data={componentAll} 
         keyExtractor={component => component.id.toString()} 
         renderItem={({item}) => <ComponentCard component={item} onOpen={openComponentHandler}/>}
                 />
-    </View>
+    
     </View>
     {/* <Footer/> */}
     </View>

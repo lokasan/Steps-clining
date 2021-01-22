@@ -94,7 +94,7 @@ export const GraphPed = ( {} ) => {
         console.log('Out Cycle: ', tempP)
         saveDataReq.push(tempP)
         db.transaction(tx => {
-        tx.executeSql("insert into step_time (user_id, count_step, date_time, current_time) values (?, ?, ?, ?);", [1, Math.floor(Math.random() * 500), saveDataReq[i], Date.now()])
+        tx.executeSql("insert into step_time (user_id, count_step, date_time, current_time) values (?, ?, ?, ?);", [2, Math.floor(Math.random() * 500), saveDataReq[i], Date.now()])
         
         })
                 
@@ -120,7 +120,7 @@ export const GraphPed = ( {} ) => {
         
           
           <View style={styles.container}>
-            {/* <TouchableOpacity style={styles.buttonD} onPress={setDataToBase}><Text>Загрузить тестовые данные</Text></TouchableOpacity> */}
+            <TouchableOpacity style={styles.buttonD} onPress={setDataToBase}><Text>Загрузить тестовые данные</Text></TouchableOpacity>
             {/* <TouchableOpacity style={styles.buttonD} onPress={pragmaEdit}><Text>Год</Text></TouchableOpacity>
             <TouchableOpacity style={styles.buttonD} onPress={sendDataToFireBase}><Text>Загрузить в firebase</Text></TouchableOpacity> */}
             {/* <TouchableOpacity style={styles.buttonD} onPress={() => signInWithGoogleAsync()}><Text>Google</Text></TouchableOpacity> */}

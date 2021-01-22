@@ -17,8 +17,12 @@ const initialState = {
 export const postWithComponentReducer = (state = initialState, action) => {
     console.log(action.type, 'POST');
     switch (action.type) {
-        case LOAD_COMPONENT_TO_POST_LINK: return {...state, postWithComponentAll: action.payload}
-        case DELETE_COMPONENT_TO_POST_LINK: return {...state, postWithComponentAll: state.postWithComponentAll.filter(e => e.id !== action.payload)
+        case LOAD_COMPONENT_TO_POST_LINK: return {
+            ...state, 
+            postWithComponentAll: action.payload}
+        case DELETE_COMPONENT_TO_POST_LINK: return {
+            ...state, 
+            postWithComponentAll: state.postWithComponentAll.filter(e => e.id !== action.payload)
 
         }
         case CREATE_COMPONENT_TO_POST_LINK: return {

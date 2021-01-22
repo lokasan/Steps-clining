@@ -7,6 +7,9 @@ import { postReducer } from './reducers/post'
 import { componentReducer } from './reducers/component'
 import { componentRankReducer } from './reducers/componentRank'
 import { postWithComponentReducer } from './reducers/postWithComponent'
+import { bypassReducer } from './reducers/bypass'
+import { bypassRankReducer } from './reducers/bypassRank'
+import { photoRankGalleryReducer } from './reducers/photoRankGallery'
 const rootReducer = combineReducers({
     empList: empListReducer,
     empDouble: empDoubleReducer,
@@ -14,7 +17,10 @@ const rootReducer = combineReducers({
     post: postReducer,
     component: componentReducer,
     componentRank: componentRankReducer,
-    postWithComponent: postWithComponentReducer
+    postWithComponent: postWithComponentReducer,
+    bypass: bypassReducer,
+    bypassRank: bypassRankReducer,
+    photoRanGallery: photoRankGalleryReducer
 })
 
 export default createStore(rootReducer, applyMiddleware(thunk))
