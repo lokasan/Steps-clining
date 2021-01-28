@@ -20,7 +20,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     let result = getEmploeesList().then()
     
     // получаю пустой промис исправить ошибку
-    console.log(result, 'раскрыл');
+    // console.log(result, 'раскрыл');
     const dispatch = useDispatch()
     // useEffect(() => {
     //     dispatch(loadEmploeeDouble())

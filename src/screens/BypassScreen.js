@@ -4,15 +4,57 @@ import {View, Text, StyleSheet, Image, Button, ScrollView, Alert, FlatList, Safe
 import {useDispatch, useSelector} from 'react-redux'
 import { ComponentsBypassCard } from '../components/ComponentsBypassCard'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
+import { loadPostWithComponent } from '../store/actions/postWithComponent'
+import { loadFinishedBypassComponents } from '../store/actions/bypassRank'
+import { loadStartedBypassRank } from '../store/actions/bypassRank'
+import { finishedBypass } from '../store/actions/bypass'
+import { AppLoader } from '../components/ui/AppLoader'
+import { hideLoaderBypassRank, showLoaderBypassRank } from '../store/actions/bypassRank'
 export const BypassScreen = ({navigation}) => {
     const dispatch = useDispatch()
-    const components = navigation.getParam('svaaaag')
-    // useEffect(() => {
-
-    // }, [])
+    const post = navigation.getParam('element')
+    const bypassId = useSelector(state => state.bypass.bypassNumber)
+    let components = useSelector(state => state.postWithComponent.postWithComponentAll)
+    const startedBypassRanks = useSelector(state => state.bypassRank.bypassRankIsStarted)
+    let componentsFinished = useSelector(state => state.bypassRank.bypassComponents)
+    const loading = useSelector(state => state.bypassRank.loading)
+    // console.log(bypassId, 'АЙДИ ОБХОДА');
+    
+    useEffect(() => {
+       
+        dispatch(loadFinishedBypassComponents(bypassId))
+        dispatch(loadStartedBypassRank(bypassId))
+        dispatch(loadPostWithComponent(post.id))
+        
+    }, [bypassId])
+   
+    if (loading) {
+        return <AppLoader/>
+    }
+    let componentsValid = components
+    // console.log(components, 'components');
+    const target = navigation.getParam('goBackQRScreen')
+    // console.log(target, 'target');
+    // console.log(`Components: ${components}\n componentsFinished: ${componentsFinished} \n`)
+    // if (componentsFinished.length === components.length) {
+    //     console.log(bypassId, "я байпас")
+        // dispatch(finishedBypass(1, bypassId))
+    //     navigation.pop()
+    if (componentsFinished.length) {
+            componentsValid = components.filter(e => componentsFinished.findIndex(i => i.id == e.id) === -1)
+            // console.log("PRIVETS", componentsValid)
+                // if (componentsValid.length === 0) {
+                //     console.log('Зашел сюда')
+                //     dispatch(finishedBypass(1, bypassId))
+                    
+                    
+                    
+                // }
+        }
     const existsRank =  useSelector(state => state.componentRank.componentRankAll)
-    console.log(existsRank, 'EXISTS_RANK')
-    console.log(components, 'Мой вывод');
+    // console.log(existsRank, 'EXISTS_RANK')
+    // console.log(components, 'Мой вывод', componentsFinished);
+    
     const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
     const y = new Animated.Value(0) 
     const onScroll = Animated.event([{ nativeEvent: { contentOffset: { y } }}], { useNativeDriver: true })
@@ -24,10 +66,10 @@ export const BypassScreen = ({navigation}) => {
         vertical={true}
         showsVerticalScrollIndicator={false}
         bounces={false}
-        data={components}
+        data={componentsValid}
         numColumns={2}
         renderItem={({ index, item: item }) => (
-          <ComponentsBypassCard {...{ index, y, item}} navigation={navigation}/>
+          <ComponentsBypassCard {...{ index, y, item}} navigation={navigation} post={post} dispatch={dispatch} startedBypassRanks={startedBypassRanks} componentsValid={componentsValid} target={target}/>
         )}
         keyExtractor={(item) => String(item.id)}
         {...{onScroll}}
@@ -99,3 +141,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly'
     },
 })
+
+BypassScreen.navigationOptions = ({ navigation }) => {
+    const post = navigation.getParam('element')
+    return {
+        headerTitle: post.name
+    }
+}

@@ -114,7 +114,7 @@ export const GraphPed = ( {} ) => {
           
             <RenderChart dataGraph={dataGraph} onSubmit={addDataGraph}/>
           <View>
-            {console.log(`GraphPed:====>>> , ${JSON.stringify(dataGraph)}`)}
+            {/* {console.log(`GraphPed:====>>> , ${JSON.stringify(dataGraph)}`)} */}
           </View>
         {/* <reservChart/> */}
         

@@ -1,6 +1,8 @@
-import { ADD_POST, LOAD_COMPONENT_RANK, LOAD_POST, REMOVE_COMPONENT_RANK, REMOVE_POST, ADD_COMPONENT_RANK, UPDATE_COMPONENT, UPDATE_COMPONENT_RANK, EDIT_COMPONENT_RANK } from "../../components/types"
+import { ADD_POST, LOAD_COMPONENT_RANK, LOAD_POST, REMOVE_COMPONENT_RANK, REMOVE_POST, ADD_COMPONENT_RANK, UPDATE_COMPONENT, UPDATE_COMPONENT_RANK, EDIT_COMPONENT_RANK, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
 const initialState = {
-    componentRankAll: []
+    componentRankAll: [],
+    loading: false,
+    error: null
 }
 // const handlers = {
 //     [LOAD_EMPLOEE]: state => ({...state,
@@ -15,7 +17,7 @@ const initialState = {
 // }
 
 export const componentRankReducer = (state = initialState, action) => {
-    console.log(action.type, 'COMPONENT_RANK');
+    // console.log(action.type, 'COMPONENT_RANK');
     let count = 1
     switch (action.type) {
         case LOAD_COMPONENT_RANK: return {...state, componentRankAll: action.payload.sort((prev, next) => prev.rank - next.rank)}
@@ -39,6 +41,14 @@ export const componentRankReducer = (state = initialState, action) => {
                 return item.id === action.payload.id ? action.payload : item;
             })
          }
+         case SHOW_LOADER: return {
+            ...state,
+            loading: true
+        }
+        case HIDE_LOADER: return {
+            ...state,
+            loading: false
+        }
         default: return state
     }
 }

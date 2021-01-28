@@ -5,12 +5,38 @@ import { Extrapolate } from 'react-native-reanimated'
 import {useDispatch, useSelector} from 'react-redux'
 import { loadComponentRank } from '../store/actions/componentRank'
 import { ComponentsRankBypassCard } from '../components/ComponentRankBypassCard'
+import { AppLoader } from '../components/ui/AppLoader'
+import { hideLoaderBypassRank, showLoaderBypassRank } from '../store/actions/bypassRank'
+
 export const ComponentsRankScreen = ({ navigation }) => {
+    
     dispatch = useDispatch()
     useEffect(() => {
+        
         dispatch(loadComponentRank(componentId))
-    }, [dispatch])
+        
+    }, [])
+    
+    //// остановился тут
+    const target = navigation.getParam('target')
+    const createdBypassRank = useSelector(state => state.bypassRank.bypassRankId)
     const component = navigation.getParam('item')
+    // console.log(createdBypassRank, 'СОЗДАННЫЙ РАНК')
+    const bypassId = useSelector(state => state.bypass.bypassNumber)
+    const post = navigation.getParam('post')
+    const bypassDispatch = navigation.getParam('dispatch')
+    // const bypassRankId = navigation.getParam('startedBypassRank')
+    const componentSingle = navigation.getParam('item')
+    const componentsValid = navigation.getParam('componentsValid')
+    const startedBypassRanks = useSelector(state => state.bypassRank.bypassRankIsStarted)
+    const loading = useSelector(state => state.bypassRank.loading)
+    console.log(loading, 'загрузка')
+    if (loading) {
+        return <AppLoader/>
+    }
+    // console.log(startedBypassRanks, 'STATE RANK2')
+    const bypassRank = startedBypassRanks.filter(e => e.component_id === componentSingle.id)
+    const bypassRankId = bypassRank.length ? bypassRank[0].id : null
     const componentId = component.id
     const componentRankAll = useSelector(state => state.componentRank.componentRankAll)
     console.log(componentRankAll, 'FUCK THE');
@@ -28,7 +54,7 @@ export const ComponentsRankScreen = ({ navigation }) => {
                     bounces={false}
                     data={componentRankAll} 
                     renderItem={({ index, item: item }) => (
-                    <ComponentsRankBypassCard {...{ index, y, item}}
+                    <ComponentsRankBypassCard {...{ index, y, item}} navigation={navigation} post={post} dispatch={bypassDispatch} bypassRankId={bypassRankId} componentsValid={componentsValid} target={target}
                     />
                     )}  
                     keyExtractor={(item) => String(item.id)} 
@@ -92,3 +118,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly'
     },
 })
+ComponentsRankScreen.navigationOptions = ({ navigation }) => {
+    const component = navigation.getParam('item')
+    return {
+        headerTitle: component.name
+    }
+}

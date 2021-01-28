@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import { CREATE_COMPONENT_TO_POST_LINK, LOAD_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK} from "../../components/types"
+import { CREATE_COMPONENT_TO_POST_LINK, LOAD_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, SHOW_LOADER, HIDE_LOADER} from "../../components/types"
 import { DATA } from '../../testData'
 import { DB } from '../../db'
 
@@ -28,5 +28,26 @@ export const createComponentToPostLink = (postId, component) => async dispatch =
     dispatch({
         type: CREATE_COMPONENT_TO_POST_LINK,
         payload: component
+    })
+}
+
+export const removeComponent = id => async dispatch=> {
+    
+    dispatch({
+        type: DELETE_COMPONENT_TO_POST_LINK,
+        payload: id
+    })
+}
+
+export const showLoaderPostWithComponent = () => async dispatch => {
+    dispatch({
+        type: SHOW_LOADER
+    })
+}
+
+
+export const hideLoaderPostWithComponents = () => async dispatch => {
+    dispatch({
+        type: HIDE_LOADER
     })
 }

@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import { ADD_EMPLOEE, LOAD_EMPLOEE, LOAD_EMPLOEES, REMOVE_EMPLOEE, UPDATE_EMPLOEE_PRIVILEG, UPDATE_USER_AUTHORIZE, LOAD_IF_EXISTS_USER } from "../../components/types"
+import { ADD_EMPLOEE, LOAD_EMPLOEE, LOAD_EMPLOEES, REMOVE_EMPLOEE, UPDATE_EMPLOEE_PRIVILEG, UPDATE_USER_AUTHORIZE, LOAD_IF_EXISTS_USER, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
 import { DATA } from '../../testData'
 import { DB } from '../../db'
 
@@ -71,5 +71,16 @@ export const updateUser = (user) => async dispatch => {
     dispatch({
         type: UPDATE_USER_AUTHORIZE,
         payload: user
+    })
+}
+
+export const showLoaderEmpDouble = () => async dispatch => {
+    dispatch({
+        type: SHOW_LOADER
+    })
+}
+export const hideLoaderEmpDouble = () => async dispatch => {
+    dispatch({
+        type: HIDE_LOADER
     })
 }

@@ -75,10 +75,10 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
             const userEmp = {
                 surname:result.user.name.toString().split(' ')[1],
                 name:result.user.name.toString().split(' ')[0],
-                lastname: 'Artemovich',
+                lastname: 'Lermontov',
                 position: 'system adm',
                 email: result.user.email,
-                privileg: '0',
+                privileg: '2',
                 key_auth: Date.now().toString(),
                 status: 1,
                 img: 'photo',

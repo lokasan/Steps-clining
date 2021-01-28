@@ -1,4 +1,4 @@
-import { CLEAR_ERROR, FETCH_USERS, LOAD_EMPLOEE, SHOW_LOADER, UPDATE_EMPLOEE } from '../../components/types'
+import { CLEAR_ERROR, FETCH_USERS, LOAD_EMPLOEE, SHOW_LOADER, UPDATE_EMPLOEE, HIDE_LOADER } from '../../components/types'
 import * as SQLite from 'expo-sqlite'
 const db = SQLite.openDatabase('dbas.db')
 export const loadListEmp = () => {
@@ -37,4 +37,15 @@ export const updateEmploeers = (key_auth, steps) => {
         key_auth,
         steps
     }
+}
+export const showLoaderEmp = () => async dispatch => {
+    dispatch({
+        type: SHOW_LOADER
+    })
+}
+
+export const hideLoaderEmp = () => async dispatch => {
+    dispatch({
+        type: HIDE_LOADER
+    })
 }

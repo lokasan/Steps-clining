@@ -1,6 +1,8 @@
-import { ADD_POST, LOAD_POST, REMOVE_POST, GET_POSTS_ALL } from "../../components/types"
+import { ADD_POST, LOAD_POST, REMOVE_POST, GET_POSTS_ALL, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
 const initialState = {
-    postAll: []
+    postAll: [],
+    loading: false,
+    error: null
 }
 // const handlers = {
 //     [LOAD_EMPLOEE]: state => ({...state,
@@ -29,6 +31,14 @@ export const postReducer = (state = initialState, action) => {
             ...state, 
             postAll: [{...action.payload}, ...state.postAll],
             postAlls: [{...action.payload}, ...state.postAlls]
+        }
+        case SHOW_LOADER: return {
+            ...state,
+            loading: true
+        }
+        case HIDE_LOADER: return {
+            ...state,
+            loading: false
         }
         default: return state
     }

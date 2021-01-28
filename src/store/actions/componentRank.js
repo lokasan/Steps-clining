@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import { ADD_COMPONENT_RANK, ADD_POST, EDIT_COMPONENT_RANK, LOAD_COMPONENT_RANK, LOAD_POST, REMOVE_COMPONENT_RANK, REMOVE_POST, UPDATE_COMPONENT_RANK, UPDATE_POST } from "../../components/types"
+import { ADD_COMPONENT_RANK, ADD_POST, EDIT_COMPONENT_RANK, LOAD_COMPONENT_RANK, LOAD_POST, REMOVE_COMPONENT_RANK, REMOVE_POST, UPDATE_COMPONENT_RANK, UPDATE_POST, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
 import { DATA } from '../../testData'
 import { DB } from '../../db'
 
@@ -78,5 +78,17 @@ export const editComponentRank = (componentRank) => async dispatch => {
     dispatch({
         type: EDIT_COMPONENT_RANK,
         payload
+    })
+}
+
+export const showLoaderComponentRank = () => async dispatch => {
+    dispatch({
+        type: SHOW_LOADER
+    })
+}
+
+export const hideLoaderComponentRank = () => async dispatch => {
+    dispatch({
+        type: HIDE_LOADER
     })
 }

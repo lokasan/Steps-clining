@@ -1,6 +1,8 @@
-import { ADD_OBJECT, LOAD_OBJECT, REMOVE_OBJECT } from "../../components/types"
+import { ADD_OBJECT, HIDE_LOADER, LOAD_OBJECT, REMOVE_OBJECT, SHOW_LOADER } from "../../components/types"
 const initialState = {
-    objAll: []
+    objAll: [],
+    loading: false,
+    error: null
 }
 // const handlers = {
 //     [LOAD_EMPLOEE]: state => ({...state,
@@ -24,6 +26,14 @@ export const objectReducer = (state = initialState, action) => {
         case ADD_OBJECT: return {
             ...state, 
             objAll: [{...action.payload}, ...state.objAll]
+        }
+        case SHOW_LOADER: return {
+            ...state,
+            loading: true
+        }
+        case HIDE_LOADER: return {
+            ...state,
+            loading: false
         }
         default: return state
     }

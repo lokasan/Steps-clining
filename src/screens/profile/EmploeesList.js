@@ -17,13 +17,13 @@ export const EmploeesList = ( {navigation}) => {
     }
     let result = getEmploeesList().then()
     // получаю пустой промис исправить ошибку
-    console.log(result, 'раскрыл');
+    // console.log(result, 'раскрыл');
     const dispatch = useDispatch()
    
 
     const emploeeAll = useSelector(state => state.empDouble.empAll)
-    console.log(emploeeAll, "ЗЕМЛНЯН")
-    console.log(emploeeAll, 'Алл сотрудники');
+    // console.log(emploeeAll, "ЗЕМЛНЯН")
+    // console.log(emploeeAll, 'Алл сотрудники');
     return <View style={{flex: 1, backgroundColor: '#000'}}>
     <View style={styles.container, styles.centers}>
     <ScrollView style={styles.menuCard}>

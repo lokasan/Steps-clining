@@ -1,18 +1,25 @@
 'use strict';
 import React, { useState, useEffect, useRef } from 'react'
-import { Text, View, StyleSheet, Button, Image, TouchableOpacity, Animated, FlatList } from 'react-native'
+import { Text, View, StyleSheet, Button, Image, TouchableOpacity, Animated, FlatList, Alert } from 'react-native'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { withNavigationFocus } from 'react-navigation'
 import { useDispatch, useSelector } from 'react-redux'
 import { getPostAll } from '../store/actions/post';
 import { loadPostWithComponent } from '../store/actions/postWithComponent';
 import ActiveComponentsCard from '../components/ActiveComponentsCard';
+import { createBypass, loadBypass } from '../store/actions/bypass';
 
 export const QRCode = ({goBack, navigation}) => {
+
+
   const dispatch = useDispatch()
   const [isFocused, setIsFocused] = useState(true)
   const result = useSelector(state => state.post.postAlls)
   const svaaaag = useSelector(state => state.postWithComponent.postWithComponentAll)
+  const bypassId = useSelector(state => state.bypass.bypassNumber)
+  // console.log('Hello', bypassId)
+  const userId = useSelector(state => state.empDouble.empAll.filter(e => e.status === 1))
+  // console.log(userId[0].id, 'HELLO USER NAMERS');
   let didBlurSubscription = navigation.addListener(
     'didBlur',
     payload => {
@@ -22,12 +29,12 @@ export const QRCode = ({goBack, navigation}) => {
 
     }
   );
-  console.log(isFocused, 'hiiii');
+  // console.log(isFocused, 'hiiii');
   let didFocusSubscription = navigation.addListener(
     'didFocus',
     payload => {
       setIsFocused(navigation.isFocused())
-      console.debug('didFocus', payload, isFocused);
+      // console.debug('didFocus', payload, isFocused);
 
 
     }
@@ -40,7 +47,7 @@ export const QRCode = ({goBack, navigation}) => {
   const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
   const DataOperation = (data) => {
     setDataScan(data)
-    console.log(data)
+    // console.log(data)
   }
 
   useEffect(() => {
@@ -62,7 +69,9 @@ export const QRCode = ({goBack, navigation}) => {
   useEffect(() => {
     for (const element of result) {
       if (dataScan === element.name) {
-    dispatch(loadPostWithComponent(element.id))
+        dispatch(loadBypass(userId[0].id, element.id))
+        dispatch(loadPostWithComponent(element.id))
+        
       }
     }
   }, [dataScan])
@@ -73,25 +82,40 @@ export const QRCode = ({goBack, navigation}) => {
     
     
   };
-
+  const goBackQRScreen = () => {
+    setScanned(false)
+    setDataScan(undefined)
+  }
   let content = (<Image style={{height: 300, width: 300, marginHorizontal: '15%', marginTop: '30%', opacity: 0.5}} source={require('../images/3.png')} />);
   for (const element of result){
-    console.log(element);
+    // console.log(element);
     if (dataScan === element.name) {
-      console.log(svaaaag);
+      // console.log(svaaaag);
       
       const x = new Animated.Value(0) 
       const onScroll = Animated.event([{ nativeEvent: { contentOffset: { x } }}], { useNativeDriver: true })
       return <View style={{flex: 1}}>
       <View style={styles.imageWrapper}>
-        <TouchableOpacity onPress={() => navigation.navigate('BypassScreen', {svaaaag})}>
+        <TouchableOpacity onPress={() => {
+            if (bypassId === -1) {
+              // dispatch(createBypass(userId.id, element.id, gismeteo.weather. gismeteo.temperature))
+              fetch('http://api.openweathermap.org/data/2.5/weather?q=Moscow&appid=1127426f6c715f020198315e1b366cba&lang=ru')
+              .then((res) => res.json())
+              .then(data => {
+                console.log(Math.round(data.main.temp - 272.1), data.weather[0].description)
+                dispatch(createBypass(userId[0].id, element.id, data.weather[0].description, parseInt(Math.round(data.main.temp - 272.1))))
+                navigation.navigate('BypassScreen', {svaaaag, element, goBackQRScreen})
+              }).catch((err) => console.log(err))
+            } else {
+              
+              navigation.navigate('BypassScreen', {svaaaag, element, goBackQRScreen})
+              Alert.alert('Hello')
+            }
+              }}>
       <Image style={styles.image} source={{uri: element.img}}/>
       </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={() => {
-        setScanned(false)
-        setDataScan(undefined)
-      }}>
+      <TouchableOpacity onPress={goBackQRScreen}>
         <Text style={styles.title}>{element.name}</Text>
         
       </TouchableOpacity>

@@ -3,7 +3,7 @@ import { DELETE_POST, CREATE_BUILDING_TABLE, CREATE_BYPASS_RANK_TABLE, CREATE_BY
     CREATE_COMPONENT_TABLE, CREATE_COMPONENT_WITH_POST_TABLE, CREATE_NEW_BUILDING, CREATE_NEW_COMPONENT, CREATE_NEW_USER, 
     CREATE_POST_TABLE, CREATE_STEP_TIME_TABLE, CREATE_USER_LOCAL_TABLE, DELETE_BUILDING, DELETE_COMPONENT, DELETE_USER, 
     CREATE_NEW_POST, CREATE_NEW_COMPONENT_RANK, DELETE_COMPONENT_RANK, UPDATE_COMPONENT_RANK, EDIT_COMPONENT_RANK, 
-    CREATE_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, GET_COMPONENT_TO_POST_LINKS, CREATE_PHOTO_RANK_GALLERY, CREATE_NEW_BYPASS, BYPASS_IS_CLEANER, UPDATE_BYPASS, FINISHED_BYPASS, DELETE_BYPASS, CREATE_NEW_BYPASS_RANK, UPDATE_BYPASS_RANK, CREATE_NEW_PHOTO_RANK_GALLERY, DELETE_PHOTO_RANK_GALLERY } from './txtRequests'
+    CREATE_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, GET_COMPONENT_TO_POST_LINKS, CREATE_PHOTO_RANK_GALLERY, CREATE_NEW_BYPASS, BYPASS_IS_CLEANER, UPDATE_BYPASS, FINISHED_BYPASS, DELETE_BYPASS, CREATE_NEW_BYPASS_RANK, UPDATE_BYPASS_RANK, CREATE_NEW_PHOTO_RANK_GALLERY, DELETE_PHOTO_RANK_GALLERY, LOAD_BYPASS, LOAD_FINISHED_COMPONENTS_FOR_BYPASS, LOAD_STARTED_BYPASS_RANK } from './txtRequests'
 import { FileSystem } from 'expo-file-system'
 const db = SQLite.openDatabase('dbas.db')
 export class DB {
@@ -351,7 +351,7 @@ export class DB {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_BYPASS,
-                    [userId, postId, String(Date.now()), weather, temperature],
+                    [userId, postId, String(Date.now()), weather, temperature, 0],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -383,13 +383,27 @@ export class DB {
         })
     }
     static finishedBypass(avgRank, id) {
-        return new promises((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
                    FINISHED_BYPASS,
                    [String(Date.now()), avgRank, id],
                    resolve,
                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static loadBypass(userId, postId) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    LOAD_BYPASS,
+                    [userId, postId],
+                    (_, result) => {
+                        console.log(result)
+                        resolve(result.rows._array)},
+                    (_, error) => reject(error)
                 )
             })
         })
@@ -406,14 +420,38 @@ export class DB {
             })
         })
     }
-    static createBypassRank(bypass_id) {
+    static createBypassRank(bypass_id, component_id) {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
                 CREATE_NEW_BYPASS_RANK,
-                [bypass_id, String(Date.now())],
+                [bypass_id, component_id, String(Date.now())],
                 (_, result) => resolve(result.insertId),
                 (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static loadFinishedComponentsForBypass(bypassId) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    LOAD_FINISHED_COMPONENTS_FOR_BYPASS,
+                    [bypassId],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static loadStartedBypassRank(bypassId) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    LOAD_STARTED_BYPASS_RANK,
+                    [bypassId],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error)
                 )
             })
         })
@@ -470,7 +508,7 @@ export class DB {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
-                    "SELECT * FROM component_rank WHERE id = ?",
+                    "SELECT component_id as id, rank FROM component_rank WHERE id = ?",
                     [componentRankId],
                     (_, result) => resolve(result.rows._array),
                     (_, error) => reject(error)

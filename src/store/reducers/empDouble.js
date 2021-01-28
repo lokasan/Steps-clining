@@ -1,10 +1,12 @@
-import { ADD_EMPLOEE, LOAD_EMPLOEES, REMOVE_EMPLOEE, UPDATE_USER_AUTHORIZE, LOAD_IF_EXISTS_USER } from "../../components/types"
+import { ADD_EMPLOEE, LOAD_EMPLOEES, REMOVE_EMPLOEE, UPDATE_USER_AUTHORIZE, LOAD_IF_EXISTS_USER, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
 const initialState = {
     empAll: [],
     readAndWriteUser: [],
     readUser: [],
     otherUser: [],
-    existsUser: []
+    existsUser: [],
+    loading: false,
+    error: null
 }
 // const handlers = {
 //     [LOAD_EMPLOEE]: state => ({...state,
@@ -19,7 +21,7 @@ const initialState = {
 // }
 
 export const empDoubleReducer = (state = initialState, action) => {
-    console.log(action.type, 'МММММММММММММММММММММММММММММММММММММ');
+    // console.log(action.type, 'МММММММММММММММММММММММММММММММММММММ');
     switch (action.type) {
         case LOAD_EMPLOEES: return {...state, empAll: action.payload}
         case REMOVE_EMPLOEE: return {...state, empAll: state.empAll.filter(e => e.id !== action.payload)
@@ -41,6 +43,14 @@ export const empDoubleReducer = (state = initialState, action) => {
                 }
                 return e
             })
+        }
+        case SHOW_LOADER: return {
+            ...state,
+            loading: true
+        }
+        case HIDE_LOADER: return {
+            ...state,
+            loading: false
         }
         default: return state
     }

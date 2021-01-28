@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import { ADD_POST, LOAD_POST, REMOVE_POST, UPDATE_POST, GET_POSTS_ALL } from "../../components/types"
+import { ADD_POST, LOAD_POST, REMOVE_POST, UPDATE_POST, GET_POSTS_ALL, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
 import { DATA } from '../../testData'
 import { DB } from '../../db'
 
@@ -65,5 +65,17 @@ export const updatePost = post => async dispatch => {
     dispatch({
         type: UPDATE_POST,
         payload: post.id
+    })
+}
+
+export const showLoaderPost = () => async dispatch => {
+    dispatch({
+        type: SHOW_LOADER
+    })
+}
+
+export const hideLoaderPost = () => async dispatch => {
+    dispatch({
+        type: HIDE_LOADER
     })
 }

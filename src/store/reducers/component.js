@@ -1,6 +1,8 @@
-import { LOAD_COMPONENT, ADD_COMPONENT, REMOVE_COMPONENT, UPDATE_COMPONENT } from "../../components/types"
+import { LOAD_COMPONENT, ADD_COMPONENT, REMOVE_COMPONENT, UPDATE_COMPONENT, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
 const initialState = {
-    componentAll: []
+    componentAll: [],
+    loading: false,
+    error: null
 }
 // const handlers = {
 //     [LOAD_EMPLOEE]: state => ({...state,
@@ -15,7 +17,7 @@ const initialState = {
 // }
 
 export const componentReducer = (state = initialState, action) => {
-    console.log(action.type, 'POST');
+    // console.log(action.type, 'POST');
     switch (action.type) {
         case LOAD_COMPONENT: return {...state, componentAll: action.payload}
         case REMOVE_COMPONENT: return {...state, componentAll: state.componentAll.filter(e => e.id !== action.payload)
@@ -24,6 +26,14 @@ export const componentReducer = (state = initialState, action) => {
         case ADD_COMPONENT: return {
             ...state, 
             componentAll: [{...action.payload}, ...state.componentAll]
+        }
+        case SHOW_LOADER: return {
+            ...state,
+            loading: true
+        }
+        case HIDE_LOADER: return {
+            ...state,
+            loading: false
         }
         default: return state
     }

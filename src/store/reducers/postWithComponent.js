@@ -1,6 +1,8 @@
-import { CREATE_COMPONENT_TO_POST_LINK, LOAD_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK } from "../../components/types"
+import { CREATE_COMPONENT_TO_POST_LINK, LOAD_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
 const initialState = {
-    postWithComponentAll: []
+    postWithComponentAll: [],
+    loading: false,
+    error: null
 }
 // const handlers = {
 //     [LOAD_EMPLOEE]: state => ({...state,
@@ -28,6 +30,14 @@ export const postWithComponentReducer = (state = initialState, action) => {
         case CREATE_COMPONENT_TO_POST_LINK: return {
             ...state, 
             postWithComponentAll: [{...action.payload}, ...state.postWithComponentAll]
+        }
+        case SHOW_LOADER: return {
+            ...state,
+            loading: true
+        }
+        case HIDE_LOADER: return {
+            ...state,
+            loading: false
         }
         default: return state
     }
