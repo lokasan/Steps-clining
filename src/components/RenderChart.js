@@ -67,7 +67,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
   // }
     
     const getChartYear = (userStatus, key_auth, countUser, key_my) => {
-      
+      console.log(userStatus, key_auth, countUser, 'user status key_auth countUser')
       return new Promise(resolve => {
         // fetchEmploees()
         
@@ -75,7 +75,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
         db.transaction(tx => {
           let RDB = `select sum(count_step)/${countUser} as step, max(strftime('%d', date_time)) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time group by month, year order by year desc, month desc limit 12;`
           if (storeChoise.current) {
-            RDB = `select sum(count_step)  as step, max(strftime('%d', date_time)) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time left join user_local where user_local.id=user_id and key_auth='${storeChoise.current}' group by month, year order by year desc, month desc limit 12;`
+            RDB = `select sum(count_step) as step, max(strftime('%d', date_time)) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time left join user_local where user_local.id=user_id and key_auth='${storeChoise.current}' group by month, year order by year desc, month desc limit 12;`
           }
           let requestDB = `select sum(count_step)/ as step, strftime('%m', date_time) as month, strftime('%Y', date_time) as year from step_time left join user_local where step_time.user_id = user_local.id and month=? and year=?`
           if (userStatus === 'null') {
@@ -153,7 +153,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
                 dataForChart.push({
                   x: typeof chartObj === 'object' && chartDayObj[0].hasOwnProperty('day') ? i.toString() + ' ' + chartDayObj[0]['day'] + ' ' + monthChoose.join(' ')  : i.toString()+ ' ' + monthChoose.join(' '),
                   y: 0,
-                  }) 
+                  })
                 }
               if (chartDayObj.length) {
                 for (const key of chartDayObj) {
@@ -328,6 +328,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
    <PureChart 
     data={sampleDataMonth} 
     type='bar' 
+    
     width={'100%'} 
     height={200} 
     defaultColumnWidth={dataGraph[0].statMem === 'year' ? 22 : dataGraph[0].statMem === 'day' ? 11.7 : 8.6}

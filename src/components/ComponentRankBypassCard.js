@@ -10,8 +10,8 @@ import { updateBypassRank } from '../store/actions/bypassRank'
 import { finishedBypass } from '../store/actions/bypass'
 import { loadFinishedBypassComponents } from '../store/actions/bypassRank'
 import { loadPostWithComponent } from '../store/actions/postWithComponent'
-const db = SQLite.openDatabase('dbas.db')
-import * as SQLite from 'expo-sqlite'
+
+
 const { width } = Dimensions.get("window");
 const CARD_ASPECT_RATIO = 1324 / 863;
 const CARD_WIDTH = 200
@@ -73,23 +73,7 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, disp
             </TouchableOpacity>
             
             <Text style={{textAlign: 'center'}}>{item.name}</Text>
-            <TouchableOpacity onPress={() => {
-                return new Promise((resolve, reject) => {
-                    db.transaction(tx => {
-                        tx.executeSql(
-                            "SELECT * FROM bypass_rank ORDER BY id DESC LIMIT 5",
-                            [],
-                            (_, result) => {
-                                console.log(result, "ЗАПРОС");
-                                resolve(result.rows._array)
-                            },
-                            (_, error) => reject(error)
-    
-                        )
-                    })
-                })
-                
-            }}><Text>hi</Text></TouchableOpacity>
+            
         </Animated.View>
     )
 }

@@ -17,7 +17,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     const openEmploeeHandler = emploee => {
         navigation.navigate('EmploeeInfo', {emploeeId: emploee.id, emploeeName: emploee.name})
     }
-    let result = getEmploeesList().then()
+    // let result = getEmploeesList().then()
     
     // получаю пустой промис исправить ошибку
     // console.log(result, 'раскрыл');

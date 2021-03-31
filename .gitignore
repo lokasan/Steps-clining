@@ -14,8 +14,5 @@ web-report/
 .DS_Store
 /babel.config.js
 /db.db
-/package-lock.json
-/package.json
-/yarn.lock
 /3.png
 set_data.py

@@ -33,6 +33,7 @@ export const loadStartedBypassRank = bypassId => async dispatch => {
 export const updateBypassRank = (componentRankId, id) => async dispatch => {
     await DB.updateBypassRank(componentRankId, id)
     const componentRank = await DB.getComponentRankForId(componentRankId)
+    
     dispatch({
         type: UPDATE_BYPASS_RANK,
         payload: componentRank

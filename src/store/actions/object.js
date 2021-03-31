@@ -2,13 +2,16 @@ import * as FileSystem from 'expo-file-system'
 import { ADD_OBJECT, LOAD_OBJECT, REMOVE_OBJECT, UPDATE_OBJECT, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
 import { DATA } from '../../testData'
 import { DB } from '../../db'
+import { UploadDataToServer } from '../../uploadDataToServer'
 
 export const loadObject = () => {
    
     return async dispatch => {
 
         const object = await DB.getObjects()
-
+        console.log(object, 'Myobjects')
+        // const firebaseObjects = await UploadDataToServer.getObject()
+        // console.log(firebaseObjects, 'firebaseObj')
         dispatch({
             type: LOAD_OBJECT,
             payload: object 
@@ -39,7 +42,7 @@ export const addObject = object => async dispatch => {
     const payload = {...object, img: newPath}
 
     const id = await DB.createObject(payload)
-
+    await UploadDataToServer.addObject(newPath, id, payload)
     payload.id = id
 
     dispatch({

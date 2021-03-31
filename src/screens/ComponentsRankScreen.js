@@ -7,7 +7,8 @@ import { loadComponentRank } from '../store/actions/componentRank'
 import { ComponentsRankBypassCard } from '../components/ComponentRankBypassCard'
 import { AppLoader } from '../components/ui/AppLoader'
 import { hideLoaderBypassRank, showLoaderBypassRank } from '../store/actions/bypassRank'
-
+import * as SQLite from 'expo-sqlite'
+const db = SQLite.openDatabase('dbas.db')
 export const ComponentsRankScreen = ({ navigation }) => {
     
     dispatch = useDispatch()
@@ -39,7 +40,7 @@ export const ComponentsRankScreen = ({ navigation }) => {
     const bypassRankId = bypassRank.length ? bypassRank[0].id : null
     const componentId = component.id
     const componentRankAll = useSelector(state => state.componentRank.componentRankAll)
-    console.log(componentRankAll, 'FUCK THE');
+    
     const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
     const y = new Animated.Value(0) 
     const onScroll = Animated.event([{ nativeEvent: { contentOffset: { y } }}], { useNativeDriver: true })
@@ -61,6 +62,46 @@ export const ComponentsRankScreen = ({ navigation }) => {
                     {...{onScroll}}     
                     />
                 </View>
+                <View style={{flexDirection: 'row', justifyContent:'space-around', margin: 10}}>
+                <TouchableOpacity onPress={() => {
+                return new Promise((resolve, reject) => {
+                    db.transaction(tx => {
+                        tx.executeSql(
+                            "SELECT * FROM bypass_rank ORDER BY id DESC LIMIT 5",
+                            [],
+                            (_, result) => {
+                                console.log(result, "ЗАПРОС");
+                                resolve(result.rows._array)
+                            },
+                            (_, error) => reject(error)
+    
+                        )
+                    })
+                })
+                
+            }}><Text>Показать оценки</Text>
+
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+                return new Promise((resolve, reject) => {
+                    db.transaction(tx => {
+                        tx.executeSql(
+                            "SELECT * FROM bypass ORDER BY id DESC LIMIT 5",
+                            [],
+                            (_, result) => {
+                                console.log(result, "ЗАПРОС");
+                                resolve(result.rows._array)
+                            },
+                            (_, error) => reject(error)
+    
+                        )
+                    })
+                })
+                
+            }}><Text>Показать обходы</Text>
+            
+            </TouchableOpacity>
+            </View>
             </View>
 }
 const styles = StyleSheet.create({

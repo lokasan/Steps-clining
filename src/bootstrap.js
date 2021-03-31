@@ -1,6 +1,7 @@
 import * as Font from 'expo-font'
 import {DB} from './db'
-
+import * as firebase from 'firebase'
+import ApiKeys from './components/ApiKeys'
 export async function bootstrap() {
     try {
         await Font.loadAsync({
@@ -9,6 +10,10 @@ export async function bootstrap() {
         })
         await DB.init()
         console.log('DATABASE CREATED')
+        
+        if (!firebase.apps.length) {
+            firebase.initializeApp(ApiKeys.FirebaseConfig)
+           }
     } catch(e) {
         console.log('Eroor: ', e)
     }

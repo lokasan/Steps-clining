@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
-import {StyleSheet, View, FlatList, Image, ScrollView, Text, TouchableOpacity, Button} from 'react-native'
+import {StyleSheet, View, FlatList, Image, ScrollView, Text, TouchableOpacity, Button, Touchable, Alert} from 'react-native'
 import { MyPedometer }from './MyPedometer'
 // import GoogleFit, { Scopes } from 'react-native-google-fit'
 import * as SQLite from 'expo-sqlite'
@@ -30,10 +30,38 @@ let sampleDataYear = [
   {x: 'Июль', y: 4520},
   {x: 'Август', y: 4520},
 ]
+// var ws = new WebSocket('ws://192.168.1.4:6790')
+// ws.binaryType = 'arraybuffer'
+
+// ws.onopen = function() {
+//   console.log("Соединение установлено")
+  
+//   let my_json = {'action': 'message', 'message': 'hi'}
+//   ws.send(JSON.stringify(my_json))}
+
+
+// ws.onmessage = function(event) {
+
+//   Alert.alert(`Получены данные ${JSON.stringify(JSON.parse(event.data))}`);
+//   console.log(JSON.parse(event.data));
+// }
+// // ws.onclose = function() {
+// //   let disconneted = {'action': 'disconnected', 'message': 'Борис отключился'}
+// //   ws.send(JSON.stringify(disconneted))
+// //   console.log('Я нахожусь на закрытии');
+// //   // ws.close()
+
+// // }
+// var minus = function (event) {
+//   ws.send(JSON.stringify({action: 'minus'}))
+// }
+// // ws.onmessage = function (event) {
+// //   data = JSON.parse(event.data);
+// //   console.log(data)
+// // };
 
 
 export const GraphPed = ( {} ) => {
-
   let dataForChart = [{ 'dataForChart': [], 
                         'statMem': 'day'}]
     const initialState = {
@@ -42,6 +70,8 @@ export const GraphPed = ( {} ) => {
       error: null
     }
     
+        
+        
     const [dataGraph, setDataGraph] = useState(dataForChart)
     const addDataGraph = (dataForChart, statMem, key_auth) => {
       const newDataGraph = {
@@ -79,8 +109,8 @@ export const GraphPed = ( {} ) => {
       let tempP
       let saveDataReq = []
       let count = 0
-      for (let i = 0; i < 10000; i++) {
-        tempP = new Date(2020, 7, 1, 0, count+=10)
+      for (let i = 0; i < 500; i++) {
+        tempP = new Date(2020, 0, 1, 0, count+=1439)
         tempP = tempP.getFullYear() + '-' + (tempP.getMonth() + 1) + '-' +tempP.getDate() + ' ' + tempP.getHours() + ':' + tempP.getMinutes()
         tmp = tempP.split(/\-|\ |\:/)
         console.log('tmp_first_cycle: ', tmp)
@@ -94,7 +124,7 @@ export const GraphPed = ( {} ) => {
         console.log('Out Cycle: ', tempP)
         saveDataReq.push(tempP)
         db.transaction(tx => {
-        tx.executeSql("insert into step_time (user_id, count_step, date_time, current_time) values (?, ?, ?, ?);", [2, Math.floor(Math.random() * 500), saveDataReq[i], Date.now()])
+        tx.executeSql("insert into step_time (user_id, count_step, date_time, current_time) values (?, ?, ?, ?);", [6, Math.floor(Math.random() * 4 + 1), saveDataReq[i], Date.now()])
         
         })
                 
@@ -124,7 +154,8 @@ export const GraphPed = ( {} ) => {
             {/* <TouchableOpacity style={styles.buttonD} onPress={pragmaEdit}><Text>Год</Text></TouchableOpacity>
             <TouchableOpacity style={styles.buttonD} onPress={sendDataToFireBase}><Text>Загрузить в firebase</Text></TouchableOpacity> */}
             {/* <TouchableOpacity style={styles.buttonD} onPress={() => signInWithGoogleAsync()}><Text>Google</Text></TouchableOpacity> */}
-            
+            <TouchableOpacity style={styles.buttonD} ><Text>Открыть соединение</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.buttonD} onPress={() => ws.onclose()}><Text>Закрыть соединение</Text></TouchableOpacity>
           </View>
         </View>
       </ScrollView>

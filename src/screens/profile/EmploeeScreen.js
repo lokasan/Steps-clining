@@ -21,7 +21,7 @@ const removeHandler = (emploee, dispatch, navigation) => {
             text: "Отменить",
             
             style: "cancel"
-          },
+          }, 
           { text: "Удалить", style: 'destructive', onPress() {
             navigation.navigate('Emploees')
             dispatch(removeEmploee(emploee.id))

@@ -1,7 +1,11 @@
 import * as FileSystem from 'expo-file-system'
+import { Alert } from 'react-native'
 import { ADD_EMPLOEE, LOAD_EMPLOEE, LOAD_EMPLOEES, REMOVE_EMPLOEE, UPDATE_EMPLOEE_PRIVILEG, UPDATE_USER_AUTHORIZE, LOAD_IF_EXISTS_USER, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
 import { DATA } from '../../testData'
 import { DB } from '../../db'
+
+import ApiKeys from '../../components/ApiKeys'
+import {UploadDataToServer} from '../../uploadDataToServer'
 
 export const loadEmploeeDouble = () => {
    
@@ -24,6 +28,8 @@ export const removeEmploee = id => async dispatch=> {
 }
 
 export const addEmploee = emploee => async dispatch => {
+    
+    
     const fileImage = emploee.img.split('/').pop()
     const newPath = FileSystem.documentDirectory + fileImage
 
@@ -40,6 +46,7 @@ export const addEmploee = emploee => async dispatch => {
 
     const id = await DB.createUser(payload)
 
+    await UploadDataToServer.addUser(newPath, emploee.create_user_date, payload)
     payload.id = id
 
     dispatch({

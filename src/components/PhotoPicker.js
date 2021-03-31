@@ -2,6 +2,9 @@ import React, {useState} from 'react'
 import {View, StyleSheet, Image, Button, Alert} from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
+import * as firebase from 'firebase'
+import ApiKeys from './ApiKeys'
+
 
 
 
@@ -26,7 +29,7 @@ export const PhotoPicker = ({onPick}) => {
         } 
         const img = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 1,
+            quality: 0.3,
             allowsEditing: true,
             aspect: [4, 3]
 
@@ -40,7 +43,7 @@ export const PhotoPicker = ({onPick}) => {
             return
         } 
         const img = await ImagePicker.launchCameraAsync({
-            quality: 0.7,
+            quality: 0.3,
             allowsEditing: true,
             aspect: [16, 9]
 
@@ -48,6 +51,8 @@ export const PhotoPicker = ({onPick}) => {
         console.log(img)
         setImage(img.uri)
         onPick(img.uri)
+        
+        
     }
     return <View style={styles.wrapper}> 
     <Button title='Сделать фото' onPress={takePhoto}/>

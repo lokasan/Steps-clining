@@ -1,4 +1,5 @@
 import { ADD_POST, LOAD_POST, REMOVE_POST, GET_POSTS_ALL, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
+// import * as firebase from 'firebase'
 const initialState = {
     postAll: [],
     loading: false,

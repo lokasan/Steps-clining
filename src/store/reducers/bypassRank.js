@@ -18,7 +18,7 @@ export const bypassRankReducer = (state = initialState, action) => {
         }
         case UPDATE_BYPASS_RANK: return {
             ...state,
-            bypassRank: [...state.bypassRank, action.payload.rank],
+            // bypassRank: [...state.bypassRank, action.payload.rank],
             bypassComponents: [...state.bypassComponents, ...action.payload]
         }
         case LOAD_FINISHED_COMPONENTS_FOR_BYPASS: return {
