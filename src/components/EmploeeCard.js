@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert} from 'react-native'
+import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert, Animated} from 'react-native'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
 import {useDispatch} from 'react-redux'
 import { removeEmploee, updateUserPrivileg } from '../store/actions/empDouble'
@@ -28,10 +28,10 @@ export const EmploeeCard = ({emploee, onOpen}) => {
           
     }
     return <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(emploee)} onLongPress={removeHandler}>
-    <View style={styles.actionMenu}>
+    <View style={styles.item}>
     
         <Image style={styles.image} source={{uri: emploee.img}}/>
-<Text style={{color: '#fff'}}>{emploee.surname} {emploee.name} {emploee.lastname}</Text>
+<Text>{emploee.surname} {emploee.name} {emploee.lastname}</Text>
         
         
         <ArrowRight/>
@@ -41,6 +41,24 @@ export const EmploeeCard = ({emploee, onOpen}) => {
 }
 
 const styles = StyleSheet.create({
+    item: {
+          backgroundColor: 'rgba(220, 220, 220, .2)',
+          marginHorizontal: '5%',
+          marginVertical: 5,
+          height: 100,
+          borderRadius: 15,
+          shadowColor: "#000000",
+           shadowOffset: {
+            width: 0,
+            height: 6,
+          },
+           shadowOpacity: 0.30,
+           shadowRadius: 4.65,
+
+          //  elevation: 1,
+          
+          
+        },
     emploee: {
         marginBottom: 15,
         overflow: 'hidden'

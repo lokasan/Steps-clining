@@ -16,7 +16,8 @@ export const ComponentCardToPost = ({post, component, postWithComponentAll}) => 
     const dispatch = useDispatch()
     
     let flag = false
-    
+    console.log(postWithComponentAll)
+   
     for (let item of postWithComponentAll) {
         if (item.id === component.id) {
            flag = true

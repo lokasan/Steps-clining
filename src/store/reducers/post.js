@@ -2,7 +2,7 @@ import { ADD_POST, LOAD_POST, REMOVE_POST, GET_POSTS_ALL, SHOW_LOADER, HIDE_LOAD
 // import * as firebase from 'firebase'
 const initialState = {
     postAll: [],
-    loading: false,
+    loading: true,
     error: null
 }
 // const handlers = {
@@ -20,7 +20,7 @@ const initialState = {
 export const postReducer = (state = initialState, action) => {
     console.log(action.type, 'POST');
     switch (action.type) {
-        case LOAD_POST: return {...state, postAll: action.payload}
+        case LOAD_POST: return {...state, postAll: action.payload, loading: false}
         case GET_POSTS_ALL: return {...state, postAlls: action.payload}
         case REMOVE_POST: return {
             ...state, 

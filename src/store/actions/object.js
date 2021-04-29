@@ -6,19 +6,22 @@ import { UploadDataToServer } from '../../uploadDataToServer'
 
 export const loadObject = () => {
    
-    return async dispatch => {
+    return async () => {
 
-        const object = await DB.getObjects()
-        console.log(object, 'Myobjects')
-        // const firebaseObjects = await UploadDataToServer.getObject()
+        // const object = await DB.getObjects()
+        // console.log(object, 'Myobjects')
+        dispatch(showLoaderObject())
+        await UploadDataToServer.getObject()
+        // dispatch(hideLoaderObject())
         // console.log(firebaseObjects, 'firebaseObj')
-        dispatch({
-            type: LOAD_OBJECT,
-            payload: object 
-        })
+        // dispatch({
+        //     type: LOAD_OBJECT,
+        //     payload: firebaseObjects 
+        // })
     }
 }
-export const removeObject = id => async dispatch=> {
+export const removeObject = id => async dispatch => {
+    await UploadDataToServer.removeObject(id)
     await DB.removeObject(id)
     dispatch({
         type: REMOVE_OBJECT,
@@ -42,7 +45,7 @@ export const addObject = object => async dispatch => {
     const payload = {...object, img: newPath}
 
     const id = await DB.createObject(payload)
-    await UploadDataToServer.addObject(newPath, id, payload)
+    await UploadDataToServer.addObject(newPath, {id, ...payload})
     payload.id = id
 
     dispatch({

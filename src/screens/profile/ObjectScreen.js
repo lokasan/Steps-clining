@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react'
-import {View, Text, StyleSheet, Image, Button, ScrollView, Alert, FlatList, SafeAreaView} from 'react-native'
+import {View, Text, StyleSheet, Image, Button, ScrollView, Alert, FlatList, SafeAreaView, ActivityIndicator} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import { DATA } from '../../testData'
@@ -22,12 +22,14 @@ export const ObjectScreen = ({navigation}) => {
         dispatch(loadPost(objectId))
     }, [dispatch])
     const postAll = useSelector(state => state.post.postAll)
+    const loading = useSelector(state => state.post.loading)
     const updatedUserPrivileg =  useCallback(() => {
       dispatch(updateObject(object))
     }, [dispatch, object])
     if (!object) {
       return null
     }
+    
     return <View style={{flex: 1, backgroundColor: '#000'}}>
         
         <View style={styles.container}>
@@ -46,15 +48,19 @@ export const ObjectScreen = ({navigation}) => {
     </View>
    
 </View>
-
-        <FlatList 
-        style={styles.menuCard}
-        data={postAll} 
-        keyExtractor={post => post.id.toString()} 
-        renderItem={({item}) => <PostCard post={item} navigation={navigation}
-        horizontal={false}
-        />}
-                />
+        {loading ? 
+        <View style={styles.center}>
+            <ActivityIndicator size="small" color="#0000ff"/>
+            </View> :
+            <FlatList 
+            style={styles.menuCard}
+            data={postAll} 
+            keyExtractor={post => post.id.toString()} 
+            renderItem={({item}) => <PostCard post={item} navigation={navigation}
+            horizontal={false}
+            />}
+                    />}
+        
     
 </View>
 
@@ -99,7 +105,7 @@ const styles = StyleSheet.create({
     },
     center: {
         flex: 1,
-        // justifyContent: 'center',
+        justifyContent: 'center',
         alignItems: 'center'
     },
     container: {

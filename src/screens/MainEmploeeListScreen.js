@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import { Footer } from '../components/ui/Footer'
-import {View, Text, StyleSheet, FlatList, Alert} from 'react-native'
+import {View, Text, StyleSheet, FlatList, Alert, Platform, Image} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import { getEmploeesList } from '../dataBaseRequests/dataBaseRequests'
 import { EmploeeCard } from '../components/EmploeeCard'
@@ -9,11 +9,46 @@ import { DATA } from '../testData'
 import {AppHeaderIcon} from '../components/AppHeaderIcon'
 import { MyPedometer }from '../components/MyPedometer'
 import { getPostAll } from '../store/actions/post'
+import * as Notifications from 'expo-notifications'
+import Constants from 'expo-constants';
+import { useState } from 'react'
 // import {loadEmploeeDouble} from '../../store/actions/empDouble'
 
 
 
 export const MainEmploeeListScreen = ( {navigation}) => {
+    const [pushToken, setPushToken] = useState()
+    useEffect(() => {
+        registerForPushNotificationsAsync()
+    }, [])
+    registerForPushNotificationsAsync = async () => {
+        if (Constants.isDevice) {
+          const { status: existingStatus } = await Notifications.getPermissionsAsync();
+          let finalStatus = existingStatus;
+          if (existingStatus !== 'granted') {
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+          }
+          if (finalStatus !== 'granted') {
+            alert('Failed to get push token for push notification!');
+            return;
+          }
+          const token = (await Notifications.getExpoPushTokenAsync()).data;
+          console.log(token, ' TOKEN');
+          setPushToken(token)
+        } else {
+          alert('Must use physical device for Push Notifications');
+        }
+      
+        if (Platform.OS === 'android') {
+          Notifications.setNotificationChannelAsync('default', {
+            name: 'default',
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#FF231F7C',
+          });
+        }
+        };
     const openEmploeeHandler = emploee => {
         navigation.navigate('EmploeeInfo', {emploeeId: emploee.id, emploeeName: emploee.name})
     }
@@ -36,16 +71,17 @@ export const MainEmploeeListScreen = ( {navigation}) => {
             tempPrivileg = true
         }
     }
-    return <View style={{flex: 1, backgroundColor: '#000'}}>
-    <View style={styles.container, styles.centers}>
-    {tempPrivileg && <View style={styles.menuCard}>
+    return <View style={{flex: 1}}>
+        <Image source={{uri: 'https://www.alllessons.ru/wp-content/uploads/files/hello_html_m25c160ca.jpg'}} style={StyleSheet.absoluteFillObject} blurRadius={15}/>
+    
+    {tempPrivileg && 
         <FlatList 
         data={emploeeAll} 
         keyExtractor={emploee => emploee.id.toString()} 
         renderItem={({item}) => <EmploeeCard emploee={item} onOpen={openEmploeeHandler}/>}
                 />
-    </View>}
-    </View>
+    }
+    
     {/* <Footer/> */}
     <MyPedometer/>
     </View>
@@ -68,7 +104,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#000'
+        // backgroundColor: '#000'
     },
     centers: {
         flex: 1,
@@ -85,9 +121,9 @@ const styles = StyleSheet.create({
         // padding: 4,
         // marginTop: 50,
         // borderBottomWidth: 0.3,
-        borderTopWidth: 0,
+        // borderTopWidth: 0,
         borderColor: '#fff',
         width: '100%',
-        backgroundColor: '#1C1B1B'
+        // backgroundColor: '#1C1B1B'
     },
 })

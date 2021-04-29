@@ -6,7 +6,8 @@ export async function bootstrap() {
     try {
         await Font.loadAsync({
             'open-bold': require('../src/assets/fonts/OpenSans-Bold.ttf'),
-            'open-regular': require('../src/assets/fonts/OpenSans-Regular.ttf')
+            'open-regular': require('../src/assets/fonts/OpenSans-Regular.ttf'),
+            'adantino': require('../src/assets/fonts/Adantino.ttf')
         })
         await DB.init()
         console.log('DATABASE CREATED')

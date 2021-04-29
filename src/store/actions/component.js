@@ -2,21 +2,24 @@ import * as FileSystem from 'expo-file-system'
 import { LOAD_COMPONENT, ADD_COMPONENT, REMOVE_COMPONENT, UPDATE_COMPONENT, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
 import { DATA } from '../../testData'
 import { DB } from '../../db'
+import { UploadDataToServer } from '../../uploadDataToServer'
 
 export const loadComponent = () => {
    
     return async dispatch => {
+        dispatch(showLoaderComponent())
+        await UploadDataToServer.getComponents()
+        // const component = await DB.getComponents()
 
-        const component = await DB.getComponents()
-
-        dispatch({
-            type: LOAD_COMPONENT,
-            payload: component 
-        })
+        // dispatch({
+        //     type: LOAD_COMPONENT,
+        //     payload: component 
+        // })
     }
 }
 export const removeComponent = id => async dispatch=> {
-    await DB.removeComponent(id)
+    await UploadDataToServer.removeComponent(id)
+    // await DB.removeComponent(id)
     dispatch({
         type: REMOVE_COMPONENT,
         payload: id
@@ -37,8 +40,9 @@ export const addComponent = component => async dispatch => {
     }
     
     const payload = {...component, img: newPath}
-
+    
     const id = await DB.createComponent(payload)
+    await UploadDataToServer.addComponent(newPath, {id, ...payload})
 
     payload.id = id
 

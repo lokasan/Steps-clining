@@ -70,7 +70,7 @@ export class DB {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_USER,
-                    [surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date],
+                    [Date.now(), surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -113,12 +113,12 @@ export class DB {
             })
         })
     }
-    static createObject({name, address, description, img}) {
+    static createObject({id, name, address, description, img}) {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_BUILDING, 
-                    [name, address, description, img],
+                    [id ? id : Date.now(), name, address, description, img],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -131,6 +131,18 @@ export class DB {
                 tx.executeSql(
                     "SELECT * FROM building;",
                     [],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static getObjectById(id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT * FROM building WHERE id = ?;",
+                    [id],
                     (_, result) => resolve(result.rows._array),
                     (_, error) => reject(error)
                 )
@@ -153,7 +165,7 @@ export class DB {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_POST,
-                    [building_id, name, description, img, qrcode, qrcode_img],
+                    [Date.now(), building_id, name, description, img, qrcode, qrcode_img],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -200,7 +212,7 @@ export class DB {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_COMPONENT,
-                    [name, description, img],
+                    [Date.now(), name, description, img],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -247,7 +259,7 @@ export class DB {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_COMPONENT_RANK,
-                    [component_id, name, rank, img],
+                    [Date.now(), component_id, name, rank, img],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -315,7 +327,7 @@ export class DB {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_COMPONENT_TO_POST_LINK,
-                    [post_id, component_id],
+                    [Date.now(), post_id, component_id],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -351,7 +363,7 @@ export class DB {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_BYPASS,
-                    [userId, postId, String(Date.now()), weather, temperature, 0],
+                    [Date.now(), userId, postId, String(Date.now()), weather, temperature, 0],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -425,7 +437,7 @@ export class DB {
             db.transaction(tx => {
                 tx.executeSql(
                 CREATE_NEW_BYPASS_RANK,
-                [bypass_id, component_id, String(Date.now())],
+                [Date.now(), bypass_id, component_id, String(Date.now())],
                 (_, result) => resolve(result.insertId),
                 (_, error) => reject(error)
                 )
@@ -473,7 +485,7 @@ export class DB {
             db.transaction(tx => {
                 tx.executeSql(
                 CREATE_NEW_PHOTO_RANK_GALLERY,
-                [bypassRankId, photo],
+                [Date.now(), bypassRankId, photo],
                 (_, result) => resolve(result.insertId),
                 (_, error) => reject(error)
                 )

@@ -30,7 +30,7 @@ export const ComponentCard = ({component, onOpen}) => {
     return <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(component)} onLongPress={() => removeHandler(component)}>
     <View style={styles.actionMenu}>
     
-        <Image style={styles.image} source={{uri: component.img}}/>
+        <Image style={styles.image} source={{uri: `data:image/jpeg;base64,${component.path}`}}/>
         <View style={styles.privateData}>
         <View>    
 <Text style={{color: '#fff'}}>{component.name}</Text>

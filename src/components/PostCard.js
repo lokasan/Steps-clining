@@ -17,7 +17,7 @@ export const PostCard = ({post, navigation}) => {
               },
               { text: "Удалить", style: 'destructive', onPress() {
                 
-                dispatch(removePost(post.id))
+                dispatch(removePost(post.id, post.building_id))
               } 
             }
             ],
@@ -28,7 +28,7 @@ export const PostCard = ({post, navigation}) => {
     return <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('PostWithComponent', {post})} onLongPress={() => removeHandler(post)}>
     <View style={styles.actionMenu}>
     
-        <Image style={styles.image} source={{uri: post.img}}/>
+        <Image style={styles.image} source={{uri: `data:image/jpeg;base64,${post.path}`}}/>
         <View style={styles.privateData}>
         <View>    
 <Text style={{color: '#fff'}}>{post.name}</Text>

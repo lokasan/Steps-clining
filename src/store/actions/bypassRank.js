@@ -1,8 +1,10 @@
 import { CREATE_NEW_BYPASS_RANK, UPDATE_BYPASS_RANK, LOAD_FINISHED_COMPONENTS_FOR_BYPASS, LOAD_STARTED_BYPASS_RANK, SHOW_LOADER, HIDE_LOADER, UPDATE_BYPASS_RANK_STATE } from '../../components/types'
 import { DB } from '../../db'
+import { UploadDataToServer } from '../../uploadDataToServer'
 
 export const createBypassRank = (bypassId, component_id) => async dispatch => {
     const id = await DB.createBypassRank(bypassId, component_id)
+    await UploadDataToServer.addBypassRank(id, bypassId, component_id)
     dispatch({
         type: CREATE_NEW_BYPASS_RANK,
         payload: {id, component_id}
@@ -28,9 +30,8 @@ export const loadStartedBypassRank = bypassId => async dispatch => {
    
 }
 
-
-
 export const updateBypassRank = (componentRankId, id) => async dispatch => {
+    await UploadDataToServer.editBypassRank(componentRankId, id)
     await DB.updateBypassRank(componentRankId, id)
     const componentRank = await DB.getComponentRankForId(componentRankId)
     

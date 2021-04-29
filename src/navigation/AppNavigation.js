@@ -1,4 +1,4 @@
-import { Platform } from 'react-native'
+import { Platform, Button } from 'react-native'
 import React from 'react'
 import { BottomTabBar, createBottomTabNavigator } from 'react-navigation-tabs'
 import {createAppContainer, createSwitchNavigator} from 'react-navigation'
@@ -156,21 +156,27 @@ const MainNavigator = createDrawerNavigator({
     MainTabs: {
         screen: BottomNavigator,
         navigationOptions: {
-            drawerLabel: 'Главная'
+            drawerLabel: 'Главная',
+            drawerIcon: info => <Ionicons name="ios-arrow-back" size={25} color={info.tintColor}/>
+        }
+    },
+    StatusObject: {
+        screen: ObjectNavigator,
+        navigationOptions: {
+            
+            drawerLabel: 'Состояние объекта',
+            
+            drawerIcon: info => <Ionicons name="md-analytics" size={25} color={info.tintColor}/>,
         }
     },
     About: {
        screen: AboutNavigator,
        navigationOptions: {
-           drawerLabel: 'О нас'
+           drawerLabel: 'О нас',
+           drawerIcon: info => <Ionicons name="md-alert" size={25} color={info.tintColor}/>
        }
     },
-    StatusObject: {
-        screen: ObjectNavigator,
-        navigationOptions: {
-            drawerLabel: 'Состояние объекта'
-        }
-    }
+    
     
 }, {
     contentOptions: {

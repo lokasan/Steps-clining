@@ -2,17 +2,20 @@ import * as FileSystem from 'expo-file-system'
 import { ADD_POST, LOAD_POST, REMOVE_POST, UPDATE_POST, GET_POSTS_ALL, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
 import { DATA } from '../../testData'
 import { DB } from '../../db'
+import { UploadDataToServer } from '../../uploadDataToServer'
 
 export const loadPost = building_id => {
    
-    return async dispatch => {
+    return async () => {
+        dispatch(showLoaderPost())
+        await UploadDataToServer.getPosts(building_id)
 
-        const post = await DB.getPosts(building_id)
+        // const post = await DB.getPosts(building_id)
 
-        dispatch({
-            type: LOAD_POST,
-            payload: post 
-        })
+        // dispatch({
+        //     type: LOAD_POST,
+        //     payload: post 
+        // })
     }
 }
 export const getPostAll = () => {
@@ -27,8 +30,9 @@ export const getPostAll = () => {
         })
     }
 }
-export const removePost = id => async dispatch=> {
-    await DB.removePost(id)
+export const removePost = (id, building_id) => async dispatch=> {
+    await UploadDataToServer.removePost(id, building_id)
+    // await DB.removePost(id)
     dispatch({
         type: REMOVE_POST,
         payload: id
@@ -49,8 +53,8 @@ export const addPost = post => async dispatch => {
     }
     
     const payload = {...post, img: newPath}
-
-    const id = await DB.createPost(payload)
+    // const id = await DB.createPost(payload)
+    await UploadDataToServer.addPost(newPath, {id: Date.now(), ...payload})
 
     payload.id = id
 

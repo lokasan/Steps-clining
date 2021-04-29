@@ -62,7 +62,7 @@ export const AttributeSingle = ({navigation}) => {
         <View style={styles.container}>
     <View style={styles.userCard}>
     <View>
-        <Image style={{height: 150, width: 150}} source={{uri: component.img}}/>
+        <Image style={{height: 150, width: 150}} source={{uri: `data:image/jpeg;base64,${component.path}`}}/>
     </View>
     <View style={styles.privateData}>
         <View style={styles.textStyle}>

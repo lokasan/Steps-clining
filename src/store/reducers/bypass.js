@@ -1,8 +1,9 @@
-import { CREATE_NEW_BYPASS, LOAD_BYPASS, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
+import { CREATE_NEW_BYPASS, LOAD_BYPASS, SHOW_LOADER, HIDE_LOADER, LOAD_BYPASS_STATUS_OBJECT } from "../../components/types"
 
 const initialState = {
     bypassNumber: [],
-    loading: false,
+    bypassGetter: [],
+    loading: true,
     error: null
 }
 
@@ -22,6 +23,11 @@ export const bypassReducer = (state = initialState, action) => {
         }
         case HIDE_LOADER: return {
             ...state,
+            loading: false
+        }
+        case LOAD_BYPASS_STATUS_OBJECT: return {
+            ...state,
+            bypassGetter: action.payload,
             loading: false
         }
         default: return state
