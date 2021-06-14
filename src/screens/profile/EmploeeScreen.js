@@ -52,7 +52,8 @@ export const EmploeeScreen = ({navigation}) => {
         <View style={styles.container, styles.center}>
     <View style={styles.userCard}>
     <View>
-        <Image style={{height: 150, width: 150}} source={{uri: emploee.img}}/>
+    {/* source={{uri: emploee.img}} */}
+        <Image style={{height: 150, width: 150}}/>
     </View>
     <View style={styles.privateData}>
         <View style={styles.textStyle}>

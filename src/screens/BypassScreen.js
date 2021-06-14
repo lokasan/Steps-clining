@@ -1,6 +1,7 @@
 
-import React, {useCallback, useEffect, useState} from 'react'
-import {View, Text, StyleSheet, Image, Button, ScrollView, Alert, FlatList, SafeAreaView, TouchableOpacity, Animated} from 'react-native'
+import React, {useCallback, useEffect, useState, useRef} from 'react'
+import {View, Text, StyleSheet, Image, Button, ScrollView, Alert, FlatList, TouchableOpacity, Animated, StatusBar} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import {useDispatch, useSelector} from 'react-redux'
 import { ComponentsBypassCard } from '../components/ComponentsBypassCard'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
@@ -10,6 +11,7 @@ import { loadStartedBypassRank } from '../store/actions/bypassRank'
 import { finishedBypass } from '../store/actions/bypass'
 import { AppLoader } from '../components/ui/AppLoader'
 import { hideLoaderBypassRank, showLoaderBypassRank } from '../store/actions/bypassRank'
+import { Directions, FlingGestureHandler, State } from 'react-native-gesture-handler'
 export const BypassScreen = ({navigation}) => {
     const dispatch = useDispatch()
     const post = navigation.getParam('element')
@@ -24,7 +26,7 @@ export const BypassScreen = ({navigation}) => {
        
         dispatch(loadFinishedBypassComponents(bypassId))
         dispatch(loadStartedBypassRank(bypassId))
-        dispatch(loadPostWithComponent(post.id))
+        // dispatch(loadPostWithComponent(post.id))
         
     }, [bypassId])
    
@@ -57,25 +59,99 @@ export const BypassScreen = ({navigation}) => {
     
     const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
     const y = new Animated.Value(0) 
+    const [activeIndex, setActiveIndex] = useState(0)
+    const animatedValue = useRef(new Animated.Value(0)).current
+    const reactiveAnimated = useRef(new Animated.Value(0)).current
+    useEffect(() => {
+        Animated.timing(animatedValue, {
+            toValue: reactiveAnimated,
+            duration: 300,
+            useNativeDriver: true
+        }).start()
+    }, [])
+    const setActiveSlide = useCallback(newIndex => {
+        setActiveIndex(newIndex)
+        reactiveAnimated.setValue(newIndex)
+    })
     const onScroll = Animated.event([{ nativeEvent: { contentOffset: { y } }}], { useNativeDriver: true })
-    return <View style={{flex: 1, backgroundColor: '#fff'}}>
-    <View style={styles.container, styles.centers}>
-    
-    <AnimatedFlatList
-        scrollEventThrottle={16}
-        vertical={true}
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-        data={componentsValid}
-        numColumns={2}
-        renderItem={({ index, item: item }) => (
-          <ComponentsBypassCard {...{ index, y, item}} navigation={navigation} post={post} dispatch={dispatch} startedBypassRanks={startedBypassRanks} componentsValid={componentsValid} target={target}/>
-        )}
-        keyExtractor={(item) => String(item.id)}
-        {...{onScroll}}
-        />
-        </View>
-    </View>
+    return (
+    <FlingGestureHandler 
+        key='UP' 
+        direction={Directions.UP} 
+        onHandlerStateChange={(ev) => {
+        if (ev.nativeEvent.state === State.END) {
+            if (activeIndex === componentsValid.length - 1) {
+                return
+            }
+            setActiveSlide(activeIndex + 1)
+        }
+    }}>
+        <FlingGestureHandler
+            key='DOWN' 
+            direction={Directions.DOWN} 
+            onHandlerStateChange={(ev) => {
+            if (ev.nativeEvent.state === State.END) {
+                if (activeIndex === 0) {
+                    return
+                }
+                setActiveSlide(activeIndex - 1)
+            }
+        }}>
+            <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+            {/* <View style={styles.container, styles.centers}> */}
+            
+                <StatusBar hidden/>
+                <FlatList
+                data={componentsValid}
+                keyExtractor={(item) => String(item.id)}
+                scrollEnabled={false}
+                renderItem={({ index, item: item }) => {
+                    const inputRange = [index - 1, index, index + 1]
+                    const translateYs = animatedValue.interpolate({
+                        inputRange,
+                        outputRange: [-30, 0, 30]
+                    })
+                    const opacitys = animatedValue.interpolate({
+                        inputRange,
+                        outputRange: [1 - 1 / 4, 1, 0]
+                    })
+                    const scales = animatedValue.interpolate({
+                        inputRange,
+                        outputRange: [0.92, 1, 1.2]
+                    })
+                    return <ComponentsBypassCard {...{ index, y, item, translateYs, opacitys, scales, activeIndex, componentsList: componentsValid}} 
+                    navigation={navigation} 
+                    post={post}
+                    startedBypassRanks={startedBypassRanks} 
+                    
+                    target={target}/>
+                }}
+                
+                contentContainerStyle={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+                CellRendererComponent={({index, item, children, style, ...props}) => {
+                    const newStyle = [
+                        style,
+                        {
+                            zIndex: componentsValid.length - index,
+                            left: -400 / 2,
+                            top: -400 / 2
+                        }
+                    ]
+                    return <View index={index} {...props} style={newStyle}>
+                        {children}
+                    </View>
+                }}
+                // {...{onScroll}}
+                />
+                
+                {/* </View> */}
+            </SafeAreaView>
+    </FlingGestureHandler>
+    </FlingGestureHandler>)
 }
 const styles = StyleSheet.create({
     center: {

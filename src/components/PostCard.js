@@ -28,7 +28,7 @@ export const PostCard = ({post, navigation}) => {
     return <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('PostWithComponent', {post})} onLongPress={() => removeHandler(post)}>
     <View style={styles.actionMenu}>
     
-        <Image style={styles.image} source={{uri: `data:image/jpeg;base64,${post.path}`}}/>
+        <Image style={styles.image} source={{uri: post.img}}/>
         <View style={styles.privateData}>
         <View>    
 <Text style={{color: '#fff'}}>{post.name}</Text>

@@ -64,13 +64,13 @@ export class DB {
             })
         })
     }
-    static createUser({surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date}) {
+    static createUser({id, surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date}) {
         console.log(surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date)
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_USER,
-                    [Date.now(), surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date],
+                    [id, surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -160,12 +160,12 @@ export class DB {
             })
         })
     }
-    static createPost({building_id, name, description, img, qrcode, qrcode_img}) {
+    static createPost({id, building_id, name, description, img, qrcode, qrcode_img}) {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_POST,
-                    [Date.now(), building_id, name, description, img, qrcode, qrcode_img],
+                    [id ? id : Date.now(), building_id, name, description, img, qrcode, qrcode_img],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -178,6 +178,18 @@ export class DB {
                 tx.executeSql(
                     "SELECT building_id, id, name, description, img, qrcode, qrcode_img FROM post WHERE building_id = ?;",
                     [building_id],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static getPostById(id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT * FROM post WHERE id = ?;",
+                    [id],
                     (_, result) => resolve(result.rows._array),
                     (_, error) => reject(error)
                 )
@@ -207,12 +219,12 @@ export class DB {
             })
         })
     }
-    static createComponent({name, description, img}) {
+    static createComponent({id, name, description, img}) {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_COMPONENT,
-                    [Date.now(), name, description, img],
+                    [id ? id : Date.now(), name, description, img],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -225,6 +237,18 @@ export class DB {
                 tx.executeSql(
                     "SELECT * FROM component;",
                     [],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static getCompoentById(id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT * FROM component WHERE id = ?",
+                    [id],
                     (_, result) => resolve(result.rows._array),
                     (_, error) => reject(error)
                 )
@@ -254,12 +278,12 @@ export class DB {
             })
         })
     }
-    static createComponentRank({component_id, name, rank, img}) {
+    static createComponentRank({id, component_id, name, rank, img}) {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_COMPONENT_RANK,
-                    [Date.now(), component_id, name, rank, img],
+                    [id, component_id, name, rank, img],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -284,6 +308,18 @@ export class DB {
                 tx.executeSql(
                     "SELECT * FROM component_rank WHERE component_id=?;",
                     [component_id],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static getComponentRankPureId(id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT * FROM component_rank WHERE id = ?;",
+                    [id],
                     (_, result) => resolve(result.rows._array),
                     (_, error) => reject(error)
                 )
@@ -315,7 +351,7 @@ export class DB {
             db.transaction(tx => {
                 tx.executeSql(
                     EDIT_COMPONENT_RANK,
-                    [componentRank.name, componentRank.img, componentRank.id],
+                    [componentRank.name, componentRank.img, componentRank.rank, componentRank.id],
                     resolve,
                     (_, error) => reject(error)
                     )
@@ -358,12 +394,12 @@ export class DB {
             })
         })
     }
-    static createBypass(userId, postId, weather, temperature) {
+    static createBypass(id, userId, postId, weather, temperature) {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_BYPASS,
-                    [Date.now(), userId, postId, String(Date.now()), weather, temperature, 0],
+                    [id, userId, postId, String(Date.now()), weather, temperature, 0],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -522,6 +558,18 @@ export class DB {
                 tx.executeSql(
                     "SELECT component_id as id, rank FROM component_rank WHERE id = ?",
                     [componentRankId],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static getComponentInfoById(id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT img FROM component WHERE id=?;",
+                    [id],
                     (_, result) => resolve(result.rows._array),
                     (_, error) => reject(error)
                 )

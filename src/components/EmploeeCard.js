@@ -30,7 +30,7 @@ export const EmploeeCard = ({emploee, onOpen}) => {
     return <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(emploee)} onLongPress={removeHandler}>
     <View style={styles.item}>
     
-        <Image style={styles.image} source={{uri: emploee.img}}/>
+        {/* <Image style={styles.image} source={{uri: emploee.img}}/> */}
 <Text>{emploee.surname} {emploee.name} {emploee.lastname}</Text>
         
         

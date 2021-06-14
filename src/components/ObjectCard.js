@@ -26,21 +26,17 @@ export const ObjectCard = ({object, onOpen}) => {
           
     }
     return <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(object)} onLongPress={() => removeHandler(object)}>
-    <View style={styles.actionMenu}>
-    
-        <Image style={styles.image} source={{uri: object.img}}/>
-        <View style={styles.privateData}>
-        <View>    
-<Text style={{color: '#fff'}}>{object.name}</Text>
-</View>
-<View>
-<Text style={{color: '#fff'}}>{object.address}</Text>
-</View>
-</View>
-        
-        
+    <View style = {styles.actionMenu}>
+        <Image style = {styles.image} source = {{uri: object.img}}/>
+        <View  style = {styles.privateData}>
+            <View>    
+                <Text style = {{color: '#fff'}}>{object.name}</Text>
+            </View>
+            <View>
+                <Text style = {{color: '#fff'}}>{object.address}</Text>
+            </View>
+        </View>
         <ArrowRight/>
-        
     </View>
     </TouchableOpacity>
 }

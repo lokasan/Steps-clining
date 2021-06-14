@@ -5,7 +5,7 @@ export const CREATE_USER_LOCAL_TABLE = "CREATE TABLE IF NOT EXISTS user_local (i
 export const CREATE_STEP_TIME_TABLE = "CREATE TABLE IF NOT EXISTS step_time (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, user_id INTEGER NOT NULL, \
     count_step INTEGER NOT NULL, date_time TEXT NOT NULL, current_time TEXT NOT NULL, FOREIGN KEY (user_id) REFERENCES user_local(id) ON DELETE CASCADE);"
 
-export const CREATE_BUILDING_TABLE = "CREATE TABLE IF NOT EXISTS building (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, \
+export const CREATE_BUILDING_TABLE = "CREATE TABLE IF NOT EXISTS building (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL UNIQUE, \
     address TEXT NOT NULL, description TEXT NOT NULL, img TEXT NOT NULL);"
 
 export const CREATE_POST_TABLE = "CREATE TABLE IF NOT EXISTS post (id INTEGER PRIMARY KEY NOT NULL, building_id INTEGER NOT NULL, \
@@ -46,7 +46,7 @@ export const UPDATE_COMPONENT = ""
 export const CREATE_NEW_COMPONENT_RANK = "INSERT INTO component_rank (id, component_id, name, rank, img) VALUES (?, ?, ?, ?, ?)"
 export const DELETE_COMPONENT_RANK ="DELETE FROM component_rank WHERE id = ?"
 export const UPDATE_COMPONENT_RANK = "UPDATE component_rank SET rank = ? WHERE id = ?"
-export const EDIT_COMPONENT_RANK = "UPDATE component_rank SET name = ?, img = ? WHERE id = ?"
+export const EDIT_COMPONENT_RANK = "UPDATE component_rank SET name = ?, img = ?, rank = ? WHERE id = ?"
 export const CREATE_COMPONENT_TO_POST_LINK =  "INSERT INTO component_with_pos (id, post_id, component_id) VALUES (?, ?, ?)"
 export const DELETE_COMPONENT_TO_POST_LINK = "DELETE FROM component_with_pos WHERE post_id = ? AND component_id = ?"
 export const GET_COMPONENT_TO_POST_LINKS = "SELECT component.id, component.name, component.description, component.img FROM component \

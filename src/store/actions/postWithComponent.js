@@ -54,3 +54,9 @@ export const hideLoaderPostWithComponents = () => async dispatch => {
         type: HIDE_LOADER
     })
 }
+
+export const clearPostWithComponent = () => async dispatch => {
+    dispatch({
+        type: 'CLEAR_POST_WITH_COMPONENT'
+    })
+}

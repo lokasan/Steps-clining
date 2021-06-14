@@ -30,7 +30,7 @@ export const ObjectScreen = ({navigation}) => {
       return null
     }
     
-    return <View style={{flex: 1, backgroundColor: '#000'}}>
+    return <ScrollView style={{flex: 1, backgroundColor: '#000'}}>
         
         <View style={styles.container}>
     <View style={styles.userCard}>
@@ -49,9 +49,9 @@ export const ObjectScreen = ({navigation}) => {
    
 </View>
         {loading ? 
-        <View style={styles.center}>
+        <SafeAreaView style={styles.center}>
             <ActivityIndicator size="small" color="#0000ff"/>
-            </View> :
+            </SafeAreaView> :
             <FlatList 
             style={styles.menuCard}
             data={postAll} 
@@ -66,7 +66,7 @@ export const ObjectScreen = ({navigation}) => {
 
 
 {/* <Footer/> */}
-</View>
+</ScrollView>
 }
 const styles = StyleSheet.create({
     item: {
@@ -91,7 +91,8 @@ const styles = StyleSheet.create({
     },
     privateData: {
         flexDirection: 'column',
-        justifyContent: 'space-evenly'
+        justifyContent: 'space-evenly',
+        width: '60%'
     },
     textStyle: {
         color: '#fff', 
@@ -102,6 +103,7 @@ const styles = StyleSheet.create({
     textStyleLine: {
         color: '#fff',
         fontFamily: 'open-regular'
+        
     },
     center: {
         flex: 1,
@@ -110,7 +112,7 @@ const styles = StyleSheet.create({
     },
     container: {
         // paddingHorizontal: '18%',
-        flex: 1,
+        // flex: 1,
         // height: '89%'
       },
       radioButton: {

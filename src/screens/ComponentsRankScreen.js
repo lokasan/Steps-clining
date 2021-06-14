@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert, Animated, Dimensions, FlatList} from 'react-native'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
 import { Extrapolate } from 'react-native-reanimated'
@@ -8,7 +8,7 @@ import { ComponentsRankBypassCard } from '../components/ComponentRankBypassCard'
 import { AppLoader } from '../components/ui/AppLoader'
 import { hideLoaderBypassRank, showLoaderBypassRank } from '../store/actions/bypassRank'
 import * as SQLite from 'expo-sqlite'
-const db = SQLite.openDatabase('dbas.db')
+const  db                         = SQLite.openDatabase('dbas.db')
 export const ComponentsRankScreen = ({ navigation }) => {
     
     dispatch = useDispatch()
@@ -16,54 +16,62 @@ export const ComponentsRankScreen = ({ navigation }) => {
         
         dispatch(loadComponentRank(componentId))
         
-    }, [])
+        
+    }, [dispatch])
     
     //// остановился тут
-    const target = navigation.getParam('target')
+    
+    const target            = navigation.getParam('target')
     const createdBypassRank = useSelector(state => state.bypassRank.bypassRankId)
-    const component = navigation.getParam('item')
+    const component         = navigation.getParam('item')
     // console.log(createdBypassRank, 'СОЗДАННЫЙ РАНК')
-    const bypassId = useSelector(state => state.bypass.bypassNumber)
-    const post = navigation.getParam('post')
+    const bypassId       = useSelector(state => state.bypass.bypassNumber)
+    const post           = navigation.getParam('post')
     const bypassDispatch = navigation.getParam('dispatch')
     // const bypassRankId = navigation.getParam('startedBypassRank')
-    const componentSingle = navigation.getParam('item')
-    const componentsValid = navigation.getParam('componentsValid')
+    const componentSingle    = navigation.getParam('item')
+    const componentsValid    = navigation.getParam('componentsValid')
     const startedBypassRanks = useSelector(state => state.bypassRank.bypassRankIsStarted)
-    const loading = useSelector(state => state.bypassRank.loading)
+    const loading            = useSelector(state => state.bypassRank.loading)
     console.log(loading, 'загрузка')
     if (loading) {
         return <AppLoader/>
     }
-    // console.log(startedBypassRanks, 'STATE RANK2')
-    const bypassRank = startedBypassRanks.filter(e => e.component_id === componentSingle.id)
-    const bypassRankId = bypassRank.length ? bypassRank[0].id : null
-    const componentId = component.id
+    console.log(startedBypassRanks, 'STATE RANK2')
+    const bypassRank       = startedBypassRanks.filter(e => e.component_id === componentSingle.id)
+    const bypassRankId     = bypassRank.length ? bypassRank[0].id : null
+    const componentId      = component.id
     const componentRankAll = useSelector(state => state.componentRank.componentRankAll)
     
     const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
-    const y = new Animated.Value(0) 
-    const onScroll = Animated.event([{ nativeEvent: { contentOffset: { y } }}], { useNativeDriver: true })
+    const y                = new Animated.Value(0)
+    const onScroll         = Animated.event([{ nativeEvent: { contentOffset: { y } }}], { useNativeDriver: true })
    
-    return <View style={{flex: 1, backgroundColor: '#fff'}}>
+    return <View style = {{flex: 1, backgroundColor: '#fff'}}>
        
-                <View style={styles.container, styles.centers}>
+                <View style = {styles.container, styles.centers}>
                     <AnimatedFlatList 
-                    scrollEventThrottle={16}
-                    vertical={true}
-                    showsVerticalScrollIndicator={false}
-                    bounces={false}
-                    data={componentRankAll} 
-                    renderItem={({ index, item: item }) => (
-                    <ComponentsRankBypassCard {...{ index, y, item}} navigation={navigation} post={post} dispatch={bypassDispatch} bypassRankId={bypassRankId} componentsValid={componentsValid} target={target}
+                    scrollEventThrottle          = {16}
+                    vertical                     = {true}
+                    showsVerticalScrollIndicator = {false}
+                    bounces                      = {false}
+                    data                         = {componentRankAll}
+                    renderItem                   = {({ index, item: item }) => (
+                    <ComponentsRankBypassCard {...{ index, y, item}} 
+                    navigation      = {navigation}
+                    post            = {post}
+                    dispatch        = {bypassDispatch}
+                    bypassRankId    = {bypassRankId}
+                    componentsValid = {componentsValid}
+                    target          = {target}
                     />
                     )}  
-                    keyExtractor={(item) => String(item.id)} 
+                    keyExtractor = {(item) => String(item.id)}
                     {...{onScroll}}     
                     />
                 </View>
-                <View style={{flexDirection: 'row', justifyContent:'space-around', margin: 10}}>
-                <TouchableOpacity onPress={() => {
+                <View             style   = {{flexDirection: 'row', justifyContent:'space-around', margin: 10}}>
+                <TouchableOpacity onPress = {() => {
                 return new Promise((resolve, reject) => {
                     db.transaction(tx => {
                         tx.executeSql(
@@ -117,37 +125,37 @@ const styles = StyleSheet.create({
         // padding: 4,
         // marginTop: 50,
         // borderBottomWidth: 0.3,
-        borderTopWidth: 0,
-        borderColor: '#000',
-        width: '100%',
+        borderTopWidth : 0,
+        borderColor    : '#000',
+        width          : '100%',
         backgroundColor: '#000'
     },
     emploee: {
         marginBottom: 15,
-        overflow: 'hidden'
+        overflow    : 'hidden'
     },
     image: {
-        width: 51,
-        height: 51,
+        width       : 51,
+        height      : 51,
         borderRadius: 25
     },
     textWrap: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         paddingVertical: 5,
-        alignItems: 'center',
-        width: '100%'
+        alignItems     : 'center',
+        width          : '100%'
     }, 
     title: {
-        color: '#fff',
+        color     : '#fff',
         fontFamily: 'open-regular'
     },
     actionMenu: {
-        paddingTop: 10,
-        paddingLeft: 40,
-        paddingBottom: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent:'space-between',
+        paddingTop       : 10,
+        paddingLeft      : 40,
+        paddingBottom    : 10,
+        flexDirection    : 'row',
+        alignItems       : 'center',
+        justifyContent   : 'space-between',
         borderBottomWidth: 0.3,
         
         
@@ -155,7 +163,7 @@ const styles = StyleSheet.create({
 
     },
     privateData: {
-        flexDirection: 'column',
+        flexDirection : 'column',
         justifyContent: 'space-evenly'
     },
 })

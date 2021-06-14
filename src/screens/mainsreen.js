@@ -12,16 +12,25 @@ import { EmploeeContext } from '../context/emploee/authorizationContext';
 import { ScreenContext } from '../context/screen/screenContext';
 import { Footer } from '../components/ui/Footer'
 import {AppHeaderIcon} from '../components/AppHeaderIcon'
+import { loadObject } from '../store/actions/object';
+import { loadComponent } from '../store/actions/component';
+import { useDispatch, useSelector } from 'react-redux';
+import { loadPost } from '../store/actions/post';
+import { loadComponentRank } from '../store/actions/componentRank';
+import { loadPostWithComponent } from '../store/actions/postWithComponent';
 
 export const MainScreen = ({navigation}) => {
+  const dispatch = useDispatch()
   const {addTodo, todos, removeTodo} = useContext(EmploeeContext)
   const {changeScreen} = useContext(ScreenContext)
+  
+ 
   // navigationProfile = navigation
   const myKey = {
     isStatus: null
   }
   const db = SQLite.openDatabase('dbas.db')
-  
+  console.log('I`m in mainscreen')
   function buildQ ()  {
     
      return new Promise(resolve => {
@@ -44,6 +53,9 @@ export const MainScreen = ({navigation}) => {
   useEffect(() => {
     console.log('hi')
     loadGetDB()
+    dispatch(loadObject()),
+    dispatch(loadComponent())
+
     
   }, [])
   async function getAsyncData() {

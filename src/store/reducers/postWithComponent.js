@@ -39,6 +39,10 @@ export const postWithComponentReducer = (state = initialState, action) => {
             ...state,
             loading: false
         }
+        case 'CLEAR_POST_WITH_COMPONENT': return {
+            ...state,
+            postWithComponentAll: []
+        }
         default: return state
     }
 }

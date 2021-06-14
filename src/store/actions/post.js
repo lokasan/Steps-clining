@@ -25,38 +25,39 @@ export const getPostAll = () => {
         const post = await DB.getPostAll()
 
         dispatch({
-            type: GET_POSTS_ALL,
-            payload: post 
+            type   : GET_POSTS_ALL,
+            payload: post
         })
     }
 }
 export const removePost = (id, building_id) => async dispatch=> {
     await UploadDataToServer.removePost(id, building_id)
-    // await DB.removePost(id)
+    await DB.removePost(id)
     dispatch({
-        type: REMOVE_POST,
+        type   : REMOVE_POST,
         payload: id
     })
 }
 
 export const addPost = post => async dispatch => {
     const fileImage = post.img.split('/').pop()
-    const newPath = FileSystem.documentDirectory + fileImage
+    const newPath   = FileSystem.documentDirectory + fileImage
 
     try {
         FileSystem.moveAsync({
-            to: newPath,
+            to  : newPath,
             from: post.img
         })
     } catch(e) {
         console.log('Error: ', e)
     }
     
-    const payload = {...post, img: newPath}
-    // const id = await DB.createPost(payload)
-    await UploadDataToServer.addPost(newPath, {id: Date.now(), ...payload})
+    const payload    = {...post, img: newPath}
+          payload.id = Date.now()
+    await DB.createPost(payload)
+    await UploadDataToServer.addPost(newPath, payload)
 
-    payload.id = id
+    
 
     dispatch({
         type: ADD_POST,
@@ -67,7 +68,7 @@ export const addPost = post => async dispatch => {
 export const updatePost = post => async dispatch => {
     await DB.updatePost(post)
     dispatch({
-        type: UPDATE_POST,
+        type   : UPDATE_POST,
         payload: post.id
     })
 }

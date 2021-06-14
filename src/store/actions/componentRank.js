@@ -7,7 +7,8 @@ import { UploadDataToServer } from '../../uploadDataToServer'
 export const loadComponentRank = component_id => {
    
     return async () => {
-        UploadDataToServer.getComponentRanks(component_id)
+        // dispatch(showLoaderComponentRank())
+        await UploadDataToServer.getComponentRanks(component_id)
         // const componentRank = await DB.getComponentRankId(component_id)
 
         // dispatch({
@@ -16,8 +17,8 @@ export const loadComponentRank = component_id => {
         // })
     }
 }
-export const removeComponentRank = id => async dispatch=> {
-    await UploadDataToServer.removeComponentRank(id)
+export const removeComponentRank = (id, component_id) => async dispatch=> {
+    await UploadDataToServer.removeComponentRank(id, component_id)
     await DB.removeComponentRank(id)
     
     dispatch({
@@ -27,7 +28,8 @@ export const removeComponentRank = id => async dispatch=> {
 }
 
 export const addComponentRank = componentRank => async dispatch => {
-    const fileImage = componentRank.img.split('/').pop()
+    const idAndFileName = Date.now()
+    const fileImage = idAndFileName + '.' + componentRank.img.split('/').pop().split('.').pop()
     const newPath = FileSystem.documentDirectory + fileImage
 
     try {
@@ -43,10 +45,10 @@ export const addComponentRank = componentRank => async dispatch => {
 
     const payload = {...componentRank, img: newPath}
     
-    const id = await DB.createComponentRank(payload)
-    await UploadDataToServer.addComponentRank(newPath, {id, ...payload})
+    payload.id = idAndFileName
+    await DB.createComponentRank(payload)
+    await UploadDataToServer.addComponentRank(newPath, payload)
 
-    payload.id = id
 
     dispatch({
         type: ADD_COMPONENT_RANK,
@@ -64,7 +66,8 @@ export const updateComponentRank = (componentRank, componentLength, count) => as
 }
 
 export const editComponentRank = (componentRank) => async dispatch => {
-    const fileImage = componentRank.img.split('/').pop()
+    const idAndFileName = Date.now()
+    const fileImage = idAndFileName + '.' + componentRank.img.split('/').pop().split('.').pop()
     console.log(fileImage);
     const newPath = FileSystem.documentDirectory + fileImage
     console.log(newPath);
@@ -81,7 +84,7 @@ export const editComponentRank = (componentRank) => async dispatch => {
     } catch(e) {
         console.log('Error: ', e)
     }
-    const payload = {...componentRank, img: newPath, flag: flag}
+    const payload = {...componentRank, img: newPath, flag: flag, idAndFileName:idAndFileName}
     await UploadDataToServer.editComponentRank(newPath, payload)
     await DB.editComponentRank(payload)
     dispatch({
@@ -99,5 +102,10 @@ export const showLoaderComponentRank = () => async dispatch => {
 export const hideLoaderComponentRank = () => async dispatch => {
     dispatch({
         type: HIDE_LOADER
+    })
+}
+export const clearComponentRank = () => async dispatch => {
+    dispatch({
+        type: 'CLEAR_COMPONENT_RANK'
     })
 }

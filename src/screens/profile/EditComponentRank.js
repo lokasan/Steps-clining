@@ -19,6 +19,7 @@ export const EditComponentRank = ({navigation}) => {
     const componentRankName = componentRank.name
     const componentRankRank = componentRank.rank
     const componentRankImg = componentRank.img
+    const componentRankComponentId = componentRank.component_id
     const [name, setName] = useState(componentRankName)
     const [rank, setRank] = useState(componentRankRank.toString())
     
@@ -32,6 +33,7 @@ export const EditComponentRank = ({navigation}) => {
         id: componentRankId,
         name,
         rank,
+        component_id: componentRankComponentId,
         img: imgRef.current,
       }
       

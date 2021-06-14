@@ -1,13 +1,15 @@
 import React from 'react'
-import { Text, View , StyleSheet} from 'react-native'
+import { Text, View , StyleSheet, SafeAreaView, StatusBar, TouchableOpacity} from 'react-native'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import {AppHeaderIcon} from '../components/AppHeaderIcon'
-export const AboutScreen = () => {
-    return <View style={styles.center}>
-        <Text>Название компании</Text>
-        <Text>Фото <Text style={styles.boldText}>объектов</Text></Text>
-        <Text>Фото <Text style={styles.boldText}>постов</Text></Text>
-    </View>
+export const AboutScreen = ({navigation}) => {
+    return (
+    <SafeAreaView style={{flex: 1, backgroundColor: '#1E1D1D'}}>
+        <StatusBar hidden/>
+        <TouchableOpacity onPress={() => navigation.navigate('TravelUpDetails')}></TouchableOpacity>
+        <Text style={{color: 'white'}}>details screen</Text>
+    </SafeAreaView>
+    )
 }
 AboutScreen.navigationOptions = ({navigation}) => ({
     headerTitle: 'О нас',

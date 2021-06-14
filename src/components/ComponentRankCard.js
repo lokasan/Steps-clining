@@ -18,7 +18,7 @@ export const ComponentRankCard = ({componentRank, dispatch, componentRankAll, na
               },
               { text: "Удалить", style: 'destructive', onPress() {
                 dispatch(updateComponentRank(componentRankAll.filter(e => e.id !== componentRank.id), componentRankAll.length -1, count=1))
-                dispatch(removeComponentRank(componentRank.id))
+                dispatch(removeComponentRank(componentRank.id, componentRank.component_id))
               } 
             }
             ],

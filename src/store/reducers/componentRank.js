@@ -49,6 +49,10 @@ export const componentRankReducer = (state = initialState, action) => {
             ...state,
             loading: false
         }
+        case 'CLEAR_COMPONENT_RANK': return {
+            ...state,
+            componentRankAll: []
+        }
         default: return state
     }
 }

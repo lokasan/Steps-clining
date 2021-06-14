@@ -5,7 +5,7 @@ import { BarCodeScanner } from 'expo-barcode-scanner'
 import { withNavigationFocus } from 'react-navigation'
 import { useDispatch, useSelector } from 'react-redux'
 import { getPostAll } from '../store/actions/post';
-import { loadPostWithComponent } from '../store/actions/postWithComponent';
+import { clearPostWithComponent, loadPostWithComponent } from '../store/actions/postWithComponent';
 import ActiveComponentsCard from '../components/ActiveComponentsCard';
 import { createBypass, loadBypass } from '../store/actions/bypass';
 
@@ -14,8 +14,8 @@ export const QRCode = ({goBack, navigation}) => {
 
   const dispatch = useDispatch()
   const [isFocused, setIsFocused] = useState(true)
-  const result = useSelector(state => state.post.postAlls)
-  const svaaaag = useSelector(state => state.postWithComponent.postWithComponentAll)
+  const posts = useSelector(state => state.post.postAlls)
+  const postsWithComponent = useSelector(state => state.postWithComponent.postWithComponentAll)
   const bypassId = useSelector(state => state.bypass.bypassNumber)
   // console.log('Hello', bypassId)
   const userId = useSelector(state => state.empDouble.empAll.filter(e => e.status === 1))
@@ -52,7 +52,7 @@ export const QRCode = ({goBack, navigation}) => {
 
   useEffect(() => {
     dispatch(getPostAll())
-  }, [dispatch]) 
+  }, []) 
 
   useEffect(() => {
     (async () => {
@@ -67,7 +67,7 @@ export const QRCode = ({goBack, navigation}) => {
     } 
   })
   useEffect(() => {
-    for (const element of result) {
+    for (const element of posts) {
       if (dataScan === element.name) {
         dispatch(loadBypass(userId[0].id, element.id))
         dispatch(loadPostWithComponent(element.id))
@@ -87,10 +87,10 @@ export const QRCode = ({goBack, navigation}) => {
     setDataScan(undefined)
   }
   let content = (<Image style={{height: 300, width: 300, marginHorizontal: '15%', marginTop: '30%', opacity: 0.5}} source={require('../images/3.png')} />);
-  for (const element of result){
+  for (const element of posts){
     // console.log(element);
     if (dataScan === element.name) {
-      // console.log(svaaaag);
+      console.log(postsWithComponent, ' MY Data test');
       
       const x = new Animated.Value(0) 
       const onScroll = Animated.event([{ nativeEvent: { contentOffset: { x } }}], { useNativeDriver: true })
@@ -103,19 +103,19 @@ export const QRCode = ({goBack, navigation}) => {
               .then((res) => res.json())
               .then(data => {
                 console.log(Math.round(data.main.temp - 272.1), data.weather[0].description)
-                dispatch(createBypass(userId[0].id, element.id, data.weather[0].description, parseInt(Math.round(data.main.temp - 272.1))))
-                navigation.navigate('BypassScreen', {svaaaag, element, goBackQRScreen})
+                dispatch(createBypass(userId[0].id, element.id, data.weather[0].description, parseInt(Math.round(data.main.temp - 272.1)), data.weather[0].icon))
+                navigation.navigate('BypassScreen', {postsWithComponent, element, goBackQRScreen})
               }).catch((err) => console.log(err))
             } else {
               
-              navigation.navigate('BypassScreen', {svaaaag, element, goBackQRScreen})
+              navigation.navigate('BypassScreen', {postsWithComponent, element, goBackQRScreen})
               Alert.alert('Hello')
             }
               }}>
       <Image style={styles.image} source={{uri: element.img}}/>
       </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={goBackQRScreen}>
+      <TouchableOpacity onPress={() =>{goBackQRScreen(); dispatch(clearPostWithComponent());}}>
         <Text style={styles.title}>{element.name}</Text>
         
       </TouchableOpacity>
@@ -124,7 +124,7 @@ export const QRCode = ({goBack, navigation}) => {
         horizontal={true}
         showsHorizontalScrollIndicator={false}
         bounces={false}
-        data={svaaaag}
+        data={postsWithComponent}
         renderItem={({ index, item: item }) => (
           <ActiveComponentsCard {...{ index, x, item}} />
         )}

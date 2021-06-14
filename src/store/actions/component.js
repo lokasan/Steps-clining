@@ -21,30 +21,29 @@ export const removeComponent = id => async dispatch=> {
     await UploadDataToServer.removeComponent(id)
     // await DB.removeComponent(id)
     dispatch({
-        type: REMOVE_COMPONENT,
+        type   : REMOVE_COMPONENT,
         payload: id
     })
 }
 
 export const addComponent = component => async dispatch => {
     const fileImage = component.img.split('/').pop()
-    const newPath = FileSystem.documentDirectory + fileImage
+    const newPath   = FileSystem.documentDirectory + fileImage
 
     try {
         FileSystem.moveAsync({
-            to: newPath,
+            to  : newPath,
             from: component.img
         })
     } catch(e) {
         console.log('Error: ', e)
     }
     
-    const payload = {...component, img: newPath}
-    
-    const id = await DB.createComponent(payload)
-    await UploadDataToServer.addComponent(newPath, {id, ...payload})
+    const payload    = {...component, img: newPath}
+          payload.id = Date.now()
+    await DB.createComponent(payload)
+    await UploadDataToServer.addComponent(newPath, payload)
 
-    payload.id = id
 
     dispatch({
         type: ADD_COMPONENT,
@@ -55,7 +54,7 @@ export const addComponent = component => async dispatch => {
 export const updateComponent = component => async dispatch => {
     await DB.updateComponent(component)
     dispatch({
-        type: UPDATE_COMPONENT,
+        type   : UPDATE_COMPONENT,
         payload: component.id
     })
 }

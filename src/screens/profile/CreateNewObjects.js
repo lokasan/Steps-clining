@@ -12,11 +12,11 @@ import { PhotoPicker } from '../../components/PhotoPicker'
 export const CreateNewObjects = ({navigation}) => {
     const dispatch = useDispatch()
     
-    const [name, setName] = useState('')
-    const [address, setAddress] = useState('')
+    const [name, setName]               = useState('')
+    const [address, setAddress]         = useState('')
     const [description, setDescription] = useState('')
     
-    const imgRef = useRef()
+    const imgRef           = useRef()
     const photoPickHandler = uri => {
       imgRef.current = uri
     }
@@ -31,46 +31,46 @@ export const CreateNewObjects = ({navigation}) => {
       dispatch(addObject(object))
       navigation.navigate('ObjectsBuildings')
     }
-    return <ScrollView style={styles.wrapper}>
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    return                    <ScrollView style = {styles.wrapper}>
+    <TouchableWithoutFeedback onPress           = {() => Keyboard.dismiss()}>
             <View>
-        <Text style={styles.title}>Создание нового объекта</Text>
+        <Text style = {styles.title}>Создание нового объекта</Text>
         <AppCard>
         <TextInput
-        style={styles.textarea}
-        placeholder='Название объекта'
-        value={name}
-        onChangeText={setName}/>
+        style        = {styles.textarea}
+        placeholder  = 'Название объекта'
+        value        = {name}
+        onChangeText = {setName}/>
         
         <TextInput
-        style={styles.textarea}
-        placeholder='Адрес объекта'
-        value={address}
-        onChangeText={setAddress}/>
+        style        = {styles.textarea}
+        placeholder  = 'Адрес объекта'
+        value        = {address}
+        onChangeText = {setAddress}/>
         <TextInput
-        style={styles.textarea}
-        placeholder='Описание'
-        value={description}
-        onChangeText={setDescription}/>
+        style        = {styles.textarea}
+        placeholder  = 'Описание'
+        value        = {description}
+        onChangeText = {setDescription}/>
         </AppCard>
-        <PhotoPicker onPick={photoPickHandler}/>
+        <PhotoPicker onPick = {photoPickHandler}/>
         
      <Button 
-     title='Создать объект' 
-     onPress={createObjectHandler} 
-     color={HEADER_FOOTER.MAIN_COLOR}
-     disabled={!name || !address || !description}/>
+     title    = 'Создать объект'
+     onPress  = {createObjectHandler}
+     color    = {HEADER_FOOTER.MAIN_COLOR}
+     disabled = {!name || !address || !description}/>
       </View>
       </TouchableWithoutFeedback>
     </ScrollView>
 }
 CreateNewObjects.navigationOptions = ({navigation}) => ({
-    headerTitle: 'Новый объект', 
+    headerTitle: 'Новый объект',
     headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
     <Item 
-    title='AddNewUser'
-    iconName='ios-arrow-dropdown'
-    onPress={() => navigation.navigate('CreateObjects')}
+    title    = 'AddNewUser'
+    iconName = 'ios-arrow-dropdown'
+    onPress  = {() => navigation.navigate('CreateObjects')}
     />
   </HeaderButtons>
 })
@@ -80,15 +80,15 @@ const styles = StyleSheet.create({
         padding: 10
     },
     title: {
-        fontSize: 20,
-        textAlign: 'center',
-        fontFamily: 'open-regular',
+        fontSize      : 20,
+        textAlign     : 'center',
+        fontFamily    : 'open-regular',
         marginVertical: 10
     },
     textarea: {
-        top: -10,
-        height: 60, 
-        borderColor: 'gray', 
+        top              : -10,
+        height           : 60,
+        borderColor      : 'gray',
         borderBottomWidth: 1
     }
 })

@@ -15,8 +15,8 @@ export const loadEmploeeDouble = () => {
         const emploee = await DB.getUsers()
 
         dispatch({
-            type: LOAD_EMPLOEES,
-            payload: emploee 
+            type   : LOAD_EMPLOEES,
+            payload: emploee
         })
     }
 }
@@ -24,7 +24,7 @@ export const removeEmploee = id => async dispatch=> {
     await UploadDataToServer.removeUser(id)
     await DB.removeUser(id)
     dispatch({
-        type: REMOVE_EMPLOEE,
+        type   : REMOVE_EMPLOEE,
         payload: id
     })
 }
@@ -33,22 +33,23 @@ export const addEmploee = emploee => async dispatch => {
     
     
     const fileImage = emploee.img.split('/').pop()
-    const newPath = FileSystem.documentDirectory + fileImage
+    const newPath   = FileSystem.documentDirectory + fileImage
 
     try {
         FileSystem.moveAsync({
-            to: newPath,
+            to  : newPath,
             from: emploee.img
         })
     } catch(e) {
         console.log('Error: ', e)
     }
     
-    const payload = {...emploee, img: newPath}
-    const id = await DB.createUser(payload)
+    const payload    = {...emploee, img: newPath}
+    const id         = Date.now()
+          payload.id = id
+    
 
-    await UploadDataToServer.addUser(newPath, {id, ...payload})
-    payload.id = id
+    await UploadDataToServer.addUser(newPath, payload)
 
     dispatch({
         type: ADD_EMPLOEE,
@@ -59,7 +60,7 @@ export const addEmploee = emploee => async dispatch => {
 export const updateUserPrivileg = emploee => async dispatch => {
     await DB.updateUserPrivileg(emploee)
     dispatch({
-        type: UPDATE_EMPLOEE_PRIVILEG,
+        type   : UPDATE_EMPLOEE_PRIVILEG,
         payload: emploee.id
     })
 }
@@ -68,7 +69,7 @@ export const loadUserExists = email => {
         const activeUser = await DB.getUser(email)
 
         dispatch({
-            type: LOAD_IF_EXISTS_USER,
+            type   : LOAD_IF_EXISTS_USER,
             payload: activeUser
         })
     }
@@ -77,7 +78,7 @@ export const loadUserExists = email => {
 export const updateUser = (user) => async dispatch => {
     await DB.updateUserAuthorize(user.status === 0 ? 1 : 0, user.email)
     dispatch({
-        type: UPDATE_USER_AUTHORIZE,
+        type   : UPDATE_USER_AUTHORIZE,
         payload: user
     })
 }
