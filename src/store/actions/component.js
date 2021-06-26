@@ -43,8 +43,6 @@ export const addComponent = component => async dispatch => {
           payload.id = Date.now()
     await DB.createComponent(payload)
     await UploadDataToServer.addComponent(newPath, payload)
-
-
     dispatch({
         type: ADD_COMPONENT,
         payload

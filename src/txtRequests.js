@@ -1,6 +1,6 @@
 export const CREATE_USER_LOCAL_TABLE = "CREATE TABLE IF NOT EXISTS user_local (id INTEGER PRIMARY KEY NOT NULL, \
     surname TEXT NOT NULL, name TEXT NOT NULL, lastname TEXT NOT NULL, position TEXT NOT NULL, \
-    email TEXT NOT NULL, privileg INTEGER NOT NULL, key_auth TEXT NOT NULL, status INTEGER, img TEXT, create_user_date TEXT);"
+    email TEXT NOT NULL, privileg INTEGER NOT NULL, key_auth TEXT NOT NULL, status INTEGER, img TEXT, create_user_date TEXT, start_shift TEXT);"
 
 export const CREATE_STEP_TIME_TABLE = "CREATE TABLE IF NOT EXISTS step_time (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, user_id INTEGER NOT NULL, \
     count_step INTEGER NOT NULL, date_time TEXT NOT NULL, current_time TEXT NOT NULL, FOREIGN KEY (user_id) REFERENCES user_local(id) ON DELETE CASCADE);"
@@ -31,7 +31,7 @@ export const CREATE_BYPASS_RANK_TABLE = "CREATE TABLE IF NOT EXISTS bypass_rank 
 export const CREATE_PHOTO_RANK_GALLERY = "CREATE TABLE IF NOT EXISTS photo_rank_gallery (id INTEGER PRIMARY KEY NOT NULL, bypass_rank_id INTEGER NOT NULL, img TEXT NOT NULL, \
     FOREIGN KEY (bypass_rank_id) REFERENCES bypass_rank(id) ON DELETE CASCADE);"
 
-export const CREATE_NEW_USER = "INSERT INTO user_local (id, surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+export const CREATE_NEW_USER = "INSERT INTO user_local (id, surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date, start_shift) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
 export const DELETE_USER = "DELETE FROM user_local WHERE id = ?"
 export const UPDATE_USER = ""
 export const CREATE_NEW_BUILDING = "INSERT INTO building (id, name, address, description, img) VALUES (?, ?, ?, ?, ?);"
@@ -46,6 +46,7 @@ export const UPDATE_COMPONENT = ""
 export const CREATE_NEW_COMPONENT_RANK = "INSERT INTO component_rank (id, component_id, name, rank, img) VALUES (?, ?, ?, ?, ?)"
 export const DELETE_COMPONENT_RANK ="DELETE FROM component_rank WHERE id = ?"
 export const UPDATE_COMPONENT_RANK = "UPDATE component_rank SET rank = ? WHERE id = ?"
+export const EDIT_USER = "UPDATE user_local SET surname = ?, name = ?, lastname = ?, position = ?, email = ?, privileg = ?, img = ?, start_shift = ? WHERE id = ?"
 export const EDIT_COMPONENT_RANK = "UPDATE component_rank SET name = ?, img = ?, rank = ? WHERE id = ?"
 export const CREATE_COMPONENT_TO_POST_LINK =  "INSERT INTO component_with_pos (id, post_id, component_id) VALUES (?, ?, ?)"
 export const DELETE_COMPONENT_TO_POST_LINK = "DELETE FROM component_with_pos WHERE post_id = ? AND component_id = ?"

@@ -16,6 +16,7 @@ import { loadComponentRank } from '../store/actions/componentRank'
 import { loadPostWithComponent } from '../store/actions/postWithComponent'
 import { loadObject } from '../store/actions/object'
 import { loadComponent } from '../store/actions/component'
+import { getUsersServer } from '../store/actions/empDouble'
 // import {loadEmploeeDouble} from '../../store/actions/empDouble'
 
 
@@ -25,6 +26,8 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     let   buildings                 = useSelector(state => state.object.objAll)
     let   components                = useSelector(state => state.component.componentAll)
     let   posts                     = useSelector(state => state.post.postAll)
+    const isOnline = useSelector(state => state.empDouble.isOnlineEmp)
+    console.log('MYOF', isOnline)
     const [pushToken, setPushToken] = useState()
     console.log('buildings', buildings)
     useEffect(() => {
@@ -84,6 +87,11 @@ export const MainEmploeeListScreen = ( {navigation}) => {
         // dispatch(loadObject()),
         // dispatch(loadComponent())
     }, [dispatch])
+    useEffect(() => {
+      dispatch(getUsersServer())
+  }, [])
+  const emplServer = useSelector(state => state.empDouble.empServer)
+  console.log(emplServer, 'emplServer')
     const emploeeAll   = useSelector(state => state.empDouble.empAll)
     let   tempPrivileg = false
     console.log(emploeeAll, 'Алл сотрудники');
@@ -100,9 +108,9 @@ export const MainEmploeeListScreen = ( {navigation}) => {
         </View>: null }
     {tempPrivileg && 
         <FlatList 
-        data         = {emploeeAll}
+        data         = {emplServer}
         keyExtractor = {emploee => emploee.id.toString()}
-        renderItem   = {({item}) => <EmploeeCard emploee={item} onOpen={openEmploeeHandler}/>}
+        renderItem   = {({item}) => <EmploeeCard emploee={item} onOpen={openEmploeeHandler} isOnline={isOnline}/>}
                 />}
     
     

@@ -1,11 +1,13 @@
-import React, {useCallback, useEffect, useState} from 'react'
-import {View, Text, StyleSheet, Image, Button, ScrollView, Alert} from 'react-native'
+import React, {useCallback, useEffect, useState, useRef} from 'react'
+import {View, Text, StyleSheet, Image, Button, ScrollView, Alert, Modal, TouchableOpacity, Animated, Dimensions} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import { DATA } from '../../testData'
 import { Footer } from '../../components/ui/Footer'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import { HEADER_FOOTER } from '../../theme'
 import { removeEmploee, updateUserPrivileg } from '../../store/actions/empDouble'
+import {PinchGestureHandler, PanGestureHandler} from 'react-native-gesture-handler'
+import { ArrowRight } from '../../components/ui/imageSVG/circle'
 var radio_props = [
     {label: 'Без прав', value: 0 },
     {label: 'Только чтение', value: 1 },
@@ -32,13 +34,13 @@ const removeHandler = (emploee, dispatch, navigation) => {
       )
       
 }
+const width = Dimensions.get('window')
 
 export const EmploeeScreen = ({navigation}) => {
   const dispatch = useDispatch()
-  
-    
+    const [zoomable, setZoomable] = useState(false)
     const emploeeId = navigation.getParam('emploeeId')
-    const emploee = useSelector(state => state.empDouble.empAll.find(e => e.id === emploeeId))
+    const emploee = useSelector(state => state.empDouble.empServer.find(e => e.id === emploeeId))
     const [selectedValue, setSelectedValue] = useState(emploee ? emploee.privileg : 0)
     console.log(emploee);
     const updatedUserPrivileg =  useCallback(() => {
@@ -47,13 +49,32 @@ export const EmploeeScreen = ({navigation}) => {
     if (!emploee) {
       return null
     }
-    return <View style={{flex: 1, backgroundColor: '#000'}}>
+    const scale = useRef(new Animated.Value(1)).current
+    const translateX = useRef(new Animated.Value(0)).current
+    const translateY = useRef(new Animated.Value(0)).current
+    const handlePan = Animated.event([
+      {
+        nativeEvent: {
+          translationX: translateX,
+          translationY: translateY
+        },
+      },
+    ], {
+      listener: e => console.log(e.nativeEvent),
+      useNativeDriver: true
+    })
+    const handlePinch = Animated.event([ { nativeEvent: { scale } } ])
+    useEffect(() => {
+      console.log("CLICK ON ZOOM")
+    }, [zoomable])
+    return <React.Fragment><View style={{flex: 1, backgroundColor: '#000'}}>
         <ScrollView>
         <View style={styles.container, styles.center}>
     <View style={styles.userCard}>
     <View>
-    {/* source={{uri: emploee.img}} */}
-        <Image style={{height: 150, width: 150}}/>
+        <TouchableOpacity onPress={() => setZoomable(true)}>
+        <Image source={{uri: emploee.img}} style={{height: 150, width: 150}}/>
+        </TouchableOpacity>
     </View>
     <View style={styles.privateData}>
         <View style={styles.textStyle}>
@@ -117,10 +138,26 @@ export const EmploeeScreen = ({navigation}) => {
 <Button title='Удалить' color={HEADER_FOOTER.DANGER_COLOR} onPress={() => removeHandler(emploee, dispatch, navigation)}/>
 {/* <Footer/> */}
 </View>
+<Modal visible={zoomable} animated>
+  <View style={{paddingTop: '15%', backgroundColor: '#000', position: 'relative', paddingLeft: '90%'}}>
+  <TouchableOpacity onPress={() => setZoomable(false)}>
+    <ArrowRight/>
+  </TouchableOpacity>
+  </View>
+  <PanGestureHandler onGestureEvent={handlePan}>
+  <Animated.View style={{backgroundColor: '#000', flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+<PinchGestureHandler onGestureEvent={handlePinch}>
+    <Animated.Image source={{uri: emploee.img}} style={[styles.image, { transform: [{scale}, {translateX}, {translateY}]}]}/>
+</PinchGestureHandler>
+</Animated.View>
+</PanGestureHandler>
+</Modal>
+</React.Fragment>
 }
 const styles = StyleSheet.create({
     image: {
-        width: '100%'
+        width: '100%',
+        height: 300
     },
     userCard: {
         // flex: 1,

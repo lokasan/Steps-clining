@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loadPost } from '../store/actions/post';
 import { loadComponentRank } from '../store/actions/componentRank';
 import { loadPostWithComponent } from '../store/actions/postWithComponent';
+import { UploadDataToServer } from '../uploadDataToServer';
 
 export const MainScreen = ({navigation}) => {
   const dispatch = useDispatch()
@@ -27,7 +28,8 @@ export const MainScreen = ({navigation}) => {
  
   // navigationProfile = navigation
   const myKey = {
-    isStatus: null
+    isStatus: null,
+    id: null
   }
   const db = SQLite.openDatabase('dbas.db')
   console.log('I`m in mainscreen')
@@ -38,6 +40,7 @@ export const MainScreen = ({navigation}) => {
         tx.executeSql('select * from user_local where status=1', [], (_, { rows }) => {
           console.log(JSON.stringify(rows),'напечатал из бд');
           myKey.isStatus = rows.length !== 0 ? JSON.stringify(rows._array[0]['status']) : 0
+          myKey.id = rows.length !== 0 ? JSON.stringify(rows._array[0]['id']) : 0
           console.log(rows['_array'])
          resolve()                
        }                                
@@ -62,6 +65,7 @@ export const MainScreen = ({navigation}) => {
     console.log('start')
     await buildQ()
     if (myKey.isStatus) {
+      UploadDataToServer.addActiveUser(myKey.id)
       navigation.navigate('App')
       
   

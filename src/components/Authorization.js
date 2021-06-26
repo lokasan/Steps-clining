@@ -8,7 +8,8 @@ import { GraphContext } from '../context/graph/graphContext'
 import * as Google from 'expo-google-app-auth'
 import { CreateUserInLocalBase } from './CreateUserInLocalBase'
 import { DB } from '../db'
-import { addEmploee, loadEmploeeDouble, updateUser } from '../store/actions/empDouble'
+import { addEmploee, getUsersServer, loadEmploeeDouble, updateUser } from '../store/actions/empDouble'
+import { UploadDataToServer } from '../uploadDataToServer'
 const IOS_CLIENT = '393783114907-tanuhn4qqds9vr7o58ksn58okss0qs5v.apps.googleusercontent.com'
 const ANDROID_CLIENT = '393783114907-jrgn1caq85o8ns7bfe6reorj0vcjg7u4.apps.googleusercontent.com'
 // import GoogleFit, { Scopes } from 'react-native-google-fit'
@@ -21,16 +22,19 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
     useEffect(() => {
         dispatch(loadEmploeeDouble())
     }, [dispatch])
-    // const [valueP, onChangeP] = useState('')
+    const [valueP, onChangeP] = useState('')
     const privileg = value.toString() === 'root-klining-steps' ? 'admin' : null
     const pressHandler = () => {
-        if (value.trim()) {
-            onSubmit(value)
+        if (value.trim() && valueP.length) {
+            onSubmit(value, valueP)
             onChangeText('')
+            onChangeP('')
             
             // onOpen(1)
-            navigation.navigate('App')
+            // navigation.navigate('App')
+            DB.createAlter()
             // onChangeP('')
+            dispatch(getUsersServer())
         } else {
             Alert.alert('Данные пусты')
         }
@@ -103,7 +107,7 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
             }
             
             
-            
+            // UploadDataToServer.addActiveUser(myKey.id)
             navigation.navigate('App')
             
             return result.accessToken;
@@ -122,20 +126,20 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
         <View style={styles.forms}>
             <AppCard style={styles.card}>
         <TextInput 
-        placeholder='Введите логин' 
+        placeholder='Введите почту' 
         style={styles.textA} 
         onChangeText={text => onChangeText(text)}
         value={value}
         autoCorrect={false}
         autoCapitalize='none'
         ></TextInput>
-        {/* <TextInput 
+        <TextInput 
         placeholder='Введите пароль' 
         secureTextEntry={true} 
         style={styles.textI} 
         onChangeText={text => onChangeP(text)}
         value={valueP}
-        ></TextInput> */}
+        ></TextInput>
         </AppCard>
         <View style={styles.buttonsStyle}>
         <TouchableOpacity style={styles.buttonGoggle} onPress={() => signInWithGoogleAsync()}><Image style={{height: 30, width: 30, opacity: 1}} source={require('../images/Gauth.png')}/></TouchableOpacity>
@@ -180,11 +184,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#3949ab',
         padding: 10,
         borderRadius: 5,
-        borderTopLeftRadius: 0,
-        borderBottomLeftRadius: 0,
-        top:30,
         height:40,
-        width: '85%',
+        width: '100%',
         marginBottom: '20%',
         // width: '40%'
     },

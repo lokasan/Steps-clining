@@ -3,7 +3,8 @@ import { CLEAR_ERROR, FETCH_USERS, HIDE_LOADER, LOAD_EMPLOEE, SHOW_ERROR, SHOW_L
 const initialState = {
     emploee: [],
     loading: false,
-    error: null
+    error: null,
+    existsEmail: 0
 }
 const handlers = {
     [LOAD_EMPLOEE]: (state, {id, userName, steps, key_auth, status}) => ({...state,
@@ -30,9 +31,10 @@ const handlers = {
         return emploee
     })
     }),
+    ['EXISTS_EMAIL']: (state, action) => ({ ...state, existsEmail: action.payload}),
     DEFAULT: state => state
 }
 export const empListReducer = (state = initialState, action) => {
     const handler = handlers[action.type] || handlers.DEFAULT
     return handler(state, action)
-} 
+}

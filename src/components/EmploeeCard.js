@@ -1,10 +1,11 @@
 import React from 'react'
 import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert, Animated} from 'react-native'
-import {ArrowRight} from '../components/ui/imageSVG/circle'
+import {ArrowRight, Clock, Cycle, QRIcon, Rank} from '../components/ui/imageSVG/circle'
 import {useDispatch} from 'react-redux'
 import { removeEmploee, updateUserPrivileg } from '../store/actions/empDouble'
 
-export const EmploeeCard = ({emploee, onOpen}) => {
+export const EmploeeCard = ({emploee, onOpen, isOnline}) => {
+  
     const dispatch = useDispatch()
     const removeHandler = () => {
         Alert.alert(
@@ -31,10 +32,27 @@ export const EmploeeCard = ({emploee, onOpen}) => {
     <View style={styles.item}>
     
         {/* <Image style={styles.image} source={{uri: emploee.img}}/> */}
-<Text>{emploee.surname} {emploee.name} {emploee.lastname}</Text>
-        
-        
-        <ArrowRight/>
+        <View>
+<Text style={{marginStart: '2%'}}>{emploee.surname} {emploee.name} {emploee.lastname}</Text>
+
+</View>
+<View style={{ display: 'flex', justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center'}}>
+<View>
+{Rank('#000', 25, 24)}
+</View>
+<View>
+{Cycle('#000', 25, 24)}
+</View>
+<View>
+{QRIcon('#000', 25, 24)}
+</View>
+<View>
+{Clock('#000', 25, 25)}
+</View>
+
+        <Image source={{uri: emploee.img}} style={isOnline?.filter(el => el == emploee.id).length ? {borderRadius: 50, borderWidth: 1, width: 60, height: 60, borderColor: 'rgba(0, 255, 0, 1)'} : {borderRadius: 50, borderWidth: 1, width: 60, height: 60, borderColor: 'rgba(255, 0, 0, 1)'}}/>
+        </View>
+        {/* <ArrowRight/> */}
         
     </View>
     </TouchableOpacity>
@@ -47,6 +65,9 @@ const styles = StyleSheet.create({
           marginVertical: 5,
           height: 100,
           borderRadius: 15,
+          display: 'flex',
+        //   flexDirection: 'row',
+          justifyContent: 'space-evenly',
           shadowColor: "#000000",
            shadowOffset: {
             width: 0,

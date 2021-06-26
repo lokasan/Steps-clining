@@ -7,7 +7,7 @@ import { getEmploeesList } from '../../dataBaseRequests/dataBaseRequests'
 import { EmploeeCard } from '../../components/EmploeeCard'
 import { DATA } from '../../testData'
 import {AppHeaderIcon} from '../../components/AppHeaderIcon'
-import {loadEmploeeDouble} from '../../store/actions/empDouble'
+import {getUsersServer, loadEmploeeDouble} from '../../store/actions/empDouble'
 
 
 
@@ -19,18 +19,23 @@ export const EmploeesList = ( {navigation}) => {
     // получаю пустой промис исправить ошибку
     // console.log(result, 'раскрыл');
     const dispatch = useDispatch()
-   
-
+    useEffect(() => {
+        dispatch(getUsersServer())
+    }, [])
+    const emplServer = useSelector(state => state.empDouble.empServer)
     const emploeeAll = useSelector(state => state.empDouble.empAll)
+    const isOnline = useSelector(state => state.empDouble.isOnlineEmp)
+    console.log('MYOF', isOnline)
+    // console.log(state, 'statw past is online')
     // console.log(emploeeAll, "ЗЕМЛНЯН")
     // console.log(emploeeAll, 'Алл сотрудники');
     return <View style={{flex: 1, backgroundColor: '#000'}}>
     <View style={styles.container, styles.centers}>
     <ScrollView style={styles.menuCard}>
         <FlatList 
-        data={emploeeAll} 
+        data={emplServer} 
         keyExtractor={emploee => emploee.id.toString()} 
-        renderItem={({item}) => <EmploeeCard emploee={item} onOpen={openEmploeeHandler}/>}
+        renderItem={({item}) => <EmploeeCard emploee={item} onOpen={openEmploeeHandler} isOnline={isOnline}/>}
                 />
     </ScrollView>
     </View>

@@ -1,10 +1,12 @@
 import { ADD_EMPLOEE, LOAD_EMPLOEES, REMOVE_EMPLOEE, UPDATE_USER_AUTHORIZE, LOAD_IF_EXISTS_USER, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
 const initialState = {
     empAll: [],
+    empServer: [],
     readAndWriteUser: [],
     readUser: [],
     otherUser: [],
     existsUser: [],
+    isOnlineEmp: [],
     loading: false,
     error: null
 }
@@ -51,6 +53,19 @@ export const empDoubleReducer = (state = initialState, action) => {
         case HIDE_LOADER: return {
             ...state,
             loading: false
+        }
+        case 'GET_USERS': return {
+            ...state,
+            empServer: action.payload
+
+        }
+        case 'ADD_ACTIVE_USER': return {
+            ...state,
+            isOnlineEmp: [...action.payload, ...state.isOnlineEmp]
+        }
+        case 'REMOVE_ACTIVE_USER': return {
+            ...state,
+            isOnlineEmp: state.isOnlineEmp.filter(el => el != action.payload)
         }
         default: return state
     }

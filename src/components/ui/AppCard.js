@@ -1,6 +1,5 @@
 import React from 'react'
 import {StyleSheet, View} from 'react-native'
-import { findDOMNode } from 'react-dom'
 
 
 export const AppCard = props => (

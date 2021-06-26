@@ -151,11 +151,41 @@ async function socket_onmessage_callback(recv) {
             type   : LOAD_COMPONENT_RANK,
             payload: await DB.getComponentRankId(data['TARGET_ID'])
         })
+    } else if (ACTION in data && data[ACTION] === 'CHECK_EMAIL') {
+        dispatch({
+            type: 'EXISTS_EMAIL',
+            payload: data[MESSAGE]
+        })
+    } else if(ACTION in data && data[ACTION] === 'ADD_ACTIVE_USER') {
+        console.log(data[MESSAGE], 'ACTIVE_USER')
+        dispatch({
+            type: 'ADD_ACTIVE_USER',
+            payload: data[MESSAGE]
+        })
+    } else if (ACTION in data && data[ACTION] === 'REMOVE_ACTIVE_USER') {
+        dispatch({
+            type: 'REMOVE_ACTIVE_USER',
+            payload: data[MESSAGE]
+        })
+    }
+    else if (ACTION in data && data[ACTION] === 'GET_USERS') {
+        console.log(data['CREATE_ELEMENTS'])
+        await doCreateAndRemoveLocalStoreAndBase(
+            data,
+            DB.getUserById,
+            DB.createUser,
+            DB.removeUser,
+            DB.editUser)
+        // data[MESSAGE].map((el, id) => el['path'] = data['CONTENT'][id])
+        dispatch({
+            type: 'GET_USERS',
+            payload: await DB.getUsers()
+        })
     }
     // `data:image/jpeg;base64,${object.path}
     
 }
-//  разобраться с багом отобрадения на андройде
+//  разобраться с багом отображения на андройде
 export async function doCreateAndRemoveLocalStoreAndBase(data, get, create, remove, edit, update) {
     if (data['CREATE_ELEMENTS'].length) {
         data['CREATE_ELEMENTS'].map((el, id) => el['path'] = data['CONTENT'][id])
@@ -225,28 +255,33 @@ export class UploadDataToServer {
     }
     
     static async addUser(path, payload) {
-        ws.send(JSON.stringify(
-            {
-                ACTION     : CREATE_USER,
-                ID         : payload.id,
-                SURNAME    : payload.surname,
-                NAME       : payload.name,
-                LASTNAME   : payload.lastname,
-                POSITION   : payload.position,
-                EMAIL      : payload.email,
-                PRIVILEG   : payload.privileg,
-                KEY_AUTH   : payload.key_auth,
-                STATUS     : payload.status,
-                NAME_FILE  : String(Date.now()),
-                IMAGE      : payload.image,
-                PASSWD_HASH: '12151',
-                // NOTIFICATION_TOKEN: ''
-
-            }))
-        
-        
         const blob = await this.getBlob(path)
-        ws.send(blob, {'Content-Type': 'images/jpeg', 'headers': 'Robo'})
+        let reader = new FileReader()
+        reader.readAsDataURL(blob)
+        reader.onloadend = function () {
+            let base64data = reader.result
+            ws.send(JSON.stringify(
+                {
+                    ACTION     : CREATE_USER,
+                    ID         : payload.id,
+                    SURNAME    : payload.surname,
+                    NAME       : payload.name,
+                    LASTNAME   : payload.lastname,
+                    POSITION   : payload.position,
+                    EMAIL      : payload.email,
+                    PRIVILEG   : payload.privileg,
+                    KEY_AUTH   : payload.key_auth,
+                    STATUS     : payload.status,
+                    NAME_FILE  : String(Date.now()),
+                    IMAGE      : payload.image,
+                    PASSWD_HASH: '12151',
+                    PATH       : base64data
+                    // NOTIFICATION_TOKEN: ''
+    
+                }))
+        }
+        // const blob = await this.getBlob(path)
+        // ws.send(blob, {'Content-Type': 'images/jpeg', 'headers': 'Robo'})
         
     }
     static async addObject(path, payload) { 
@@ -501,6 +536,14 @@ export class UploadDataToServer {
                 BYPASS_ID        : bypassId
             }))
     }
+    static async getUsers() {
+        ws.send(JSON.stringify(
+            {
+                ACTION: 'GET_USERS',
+                LOCAL_DATABASE: await DB.getUsers()
+            }
+        ))
+    }
     static async getObject() {
         // const response = await fetch('https://brigadir-cc6a6-default-rtdb.firebaseio.com/objects.json', {
         //     headers: {'Content-Type': 'application.json'}
@@ -600,6 +643,19 @@ export class UploadDataToServer {
                 POST_NAME: post_name
             }
         ))
+    }
+    static async checkUserEmail(text) {
+        ws.send(JSON.stringify({
+            ACTION: 'CHECK_EMAIL',
+            EMAIL: text
+        }))
+    }
+
+    static async addActiveUser(id) {
+        ws.send(JSON.stringify({
+            ACTION: 'ADD_ACTIVE_USER',
+            ID: id
+        }))
     }
 }
 // Остановился на обновлении оценок при добавлении новых. Посмотреть , что за ошибка при перезагрузке, возможно, что дело в локальной бд

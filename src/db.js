@@ -3,7 +3,7 @@ import { DELETE_POST, CREATE_BUILDING_TABLE, CREATE_BYPASS_RANK_TABLE, CREATE_BY
     CREATE_COMPONENT_TABLE, CREATE_COMPONENT_WITH_POST_TABLE, CREATE_NEW_BUILDING, CREATE_NEW_COMPONENT, CREATE_NEW_USER, 
     CREATE_POST_TABLE, CREATE_STEP_TIME_TABLE, CREATE_USER_LOCAL_TABLE, DELETE_BUILDING, DELETE_COMPONENT, DELETE_USER, 
     CREATE_NEW_POST, CREATE_NEW_COMPONENT_RANK, DELETE_COMPONENT_RANK, UPDATE_COMPONENT_RANK, EDIT_COMPONENT_RANK, 
-    CREATE_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, GET_COMPONENT_TO_POST_LINKS, CREATE_PHOTO_RANK_GALLERY, CREATE_NEW_BYPASS, BYPASS_IS_CLEANER, UPDATE_BYPASS, FINISHED_BYPASS, DELETE_BYPASS, CREATE_NEW_BYPASS_RANK, UPDATE_BYPASS_RANK, CREATE_NEW_PHOTO_RANK_GALLERY, DELETE_PHOTO_RANK_GALLERY, LOAD_BYPASS, LOAD_FINISHED_COMPONENTS_FOR_BYPASS, LOAD_STARTED_BYPASS_RANK } from './txtRequests'
+    CREATE_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, GET_COMPONENT_TO_POST_LINKS, CREATE_PHOTO_RANK_GALLERY, CREATE_NEW_BYPASS, BYPASS_IS_CLEANER, UPDATE_BYPASS, FINISHED_BYPASS, DELETE_BYPASS, CREATE_NEW_BYPASS_RANK, UPDATE_BYPASS_RANK, CREATE_NEW_PHOTO_RANK_GALLERY, DELETE_PHOTO_RANK_GALLERY, LOAD_BYPASS, LOAD_FINISHED_COMPONENTS_FOR_BYPASS, LOAD_STARTED_BYPASS_RANK, EDIT_USER } from './txtRequests'
 
 const db = SQLite.openDatabase('dbas.db')
 export class DB {
@@ -28,6 +28,20 @@ export class DB {
         })
         
     }
+
+    static createAlter() {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    'alter table user_local add start_shift text;',
+                    [],
+                    resolve,
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+
     static getUser(email) {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
@@ -64,13 +78,13 @@ export class DB {
             })
         })
     }
-    static createUser({id, surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date}) {
-        console.log(surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date)
+    static createUser({id, surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date, start_shift}) {
+        console.log(surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date, start_shift)
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_USER,
-                    [id, surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date],
+                    [id, surname, name, lastname, position, email, privileg, key_auth, status=0, img, create_user_date, start_shift],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -137,6 +151,20 @@ export class DB {
             })
         })
     }
+
+    static getUserById(id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT * FROM user_local WHERE id = ?;",
+                    [id],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+
     static getObjectById(id) {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
@@ -346,6 +374,20 @@ export class DB {
             })
         })
     }
+
+    static editUser(user) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    EDIT_USER,
+                    [user.surname, user.name, user.lastname, user.position, user.email, user.privileg, user.img, user.start_shift],
+                    resolve,
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+
     static editComponentRank(componentRank) {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {

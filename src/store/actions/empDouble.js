@@ -20,6 +20,10 @@ export const loadEmploeeDouble = () => {
         })
     }
 }
+
+export const getUsersServer = () => async dispatch => {
+    await UploadDataToServer.getUsers()
+}
 export const removeEmploee = id => async dispatch=> {
     await UploadDataToServer.removeUser(id)
     await DB.removeUser(id)
@@ -47,8 +51,8 @@ export const addEmploee = emploee => async dispatch => {
     const payload    = {...emploee, img: newPath}
     const id         = Date.now()
           payload.id = id
-    
-
+    //
+    // await DB.createUser(payload)
     await UploadDataToServer.addUser(newPath, payload)
 
     dispatch({
