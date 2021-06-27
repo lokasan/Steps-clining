@@ -65,7 +65,8 @@ export const MainScreen = ({navigation}) => {
     console.log('start')
     await buildQ()
     if (myKey.isStatus) {
-      UploadDataToServer.addActiveUser(myKey.id)
+      await UploadDataToServer.addActiveUser(myKey.id)
+      await UploadDataToServer.getActiveUsers()
       navigation.navigate('App')
       
   

@@ -67,6 +67,10 @@ export const empDoubleReducer = (state = initialState, action) => {
             ...state,
             isOnlineEmp: state.isOnlineEmp.filter(el => el != action.payload)
         }
+        case 'GET_ACTIVE_USERS': return {
+            ...state,
+            isOnlineEmp: action.payload
+        }
         default: return state
     }
 }

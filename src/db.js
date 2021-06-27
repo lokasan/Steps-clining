@@ -380,7 +380,7 @@ export class DB {
             db.transaction(tx => {
                 tx.executeSql(
                     EDIT_USER,
-                    [user.surname, user.name, user.lastname, user.position, user.email, user.privileg, user.img, user.start_shift],
+                    [user.surname, user.name, user.lastname, user.position, user.email, user.privileg, user.img, user.start_shift, user.id],
                     resolve,
                     (_, error) => reject(error)
                 )

@@ -93,7 +93,7 @@ export const MainProfileScreen = ({navigation}) => {
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
             <View style={styles.userCard}>
                 <View>
-                    <Image style={{height: 150, width: 150}} source={require('../../images/6.jpg')}/>
+                    <Image style={{height: 150, width: 150}} source={{uri: result.img}}/>
                 </View>
                 <View style={styles.privateData}>
                     <View style={styles.textStyle}>

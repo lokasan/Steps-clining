@@ -163,8 +163,14 @@ async function socket_onmessage_callback(recv) {
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === 'REMOVE_ACTIVE_USER') {
+        console.log(data[MESSAGE], 'REMOVE_ACTIVE_USER')
         dispatch({
             type: 'REMOVE_ACTIVE_USER',
+            payload: data[MESSAGE]
+        })
+    } else if(ACTION in data && data[ACTION] === 'GET_ACTIVE_USERS') {
+        dispatch({
+            type: 'GET_ACTIVE_USERS',
             payload: data[MESSAGE]
         })
     }
@@ -655,6 +661,11 @@ export class UploadDataToServer {
         ws.send(JSON.stringify({
             ACTION: 'ADD_ACTIVE_USER',
             ID: id
+        }))
+    }
+    static async getActiveUsers() {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_ACTIVE_USERS'
         }))
     }
 }
