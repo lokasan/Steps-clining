@@ -52,8 +52,9 @@ export const addEmploee = emploee => async dispatch => {
     const id         = Date.now()
           payload.id = id
     //
-    // await DB.createUser(payload)
     await UploadDataToServer.addUser(newPath, payload)
+    await DB.createUser(payload)
+    
 
     dispatch({
         type: ADD_EMPLOEE,
@@ -62,6 +63,7 @@ export const addEmploee = emploee => async dispatch => {
 }
 
 export const updateUserPrivileg = emploee => async dispatch => {
+    await UploadDataToServer.updateUserPrivileg(emploee)
     await DB.updateUserPrivileg(emploee)
     dispatch({
         type   : UPDATE_EMPLOEE_PRIVILEG,

@@ -12,7 +12,7 @@ import { ADD_OBJECT, ACTION, CREATE, MESSAGE, NAME_FILE, NAME, ADDRESS, DESCRIPT
     LOAD_COMPONENT_RANK, UPDATE_COMPONENT_RANK, LOAD_COMPONENT_TO_POST_LINK, GET_COMPONENT_TO_POST_LINK, IMAGE,
     GET_BYPASS_STATUS_OBJECT, LOAD_BYPASS_STATUS_OBJECT, REMOVE_POST, GET_OBJECTS_SYNCHRONIZE, GET_POSTS_SYNCHRONIZE, 
     GET_COMPONENTS_SYNCHRONIZE, GET_COMPONENTS_RANKS_SYNCHRONIZE, FINISHED_BYPASS, GET_BYPASS_STATUS_POSTS, 
-    LOAD_BYPASS_STATUS_POSTS, GET_BYPASS_STATUS_USERS, LOAD_BYPASS_STATUS_USERS, GET_BYPASS_STATUS_USERS_DETAIL, LOAD_BYPASS_STATUS_USERS_DETAIL} from './components/types'
+    LOAD_BYPASS_STATUS_POSTS, GET_BYPASS_STATUS_USERS, LOAD_BYPASS_STATUS_USERS, GET_BYPASS_STATUS_USERS_DETAIL, LOAD_BYPASS_STATUS_USERS_DETAIL, UPDATE_EMPLOEE_PRIVILEG} from './components/types'
 import { DB } from './db';
 import { hideLoaderBypass, hideLoaderBypassIcon } from './store/actions/bypass';
 import { hideLoaderComponent } from './store/actions/component';
@@ -281,6 +281,7 @@ export class UploadDataToServer {
                     NAME_FILE  : String(Date.now()),
                     IMAGE      : payload.image,
                     PASSWD_HASH: '12151',
+                    START_SHIFT: payload.start_shift,
                     PATH       : base64data
                     // NOTIFICATION_TOKEN: ''
     
@@ -666,6 +667,12 @@ export class UploadDataToServer {
     static async getActiveUsers() {
         ws.send(JSON.stringify({
             ACTION: 'GET_ACTIVE_USERS'
+        }))
+    }
+    static async updateUserPrivileg(emploee) {
+        ws.send(JSON.stringify({
+            ACTION: UPDATE_EMPLOEE_PRIVILEG,
+            EMPLOEE: emploee
         }))
     }
 }

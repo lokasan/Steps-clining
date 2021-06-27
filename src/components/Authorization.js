@@ -32,7 +32,7 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
             
             // onOpen(1)
             // navigation.navigate('App')
-            DB.createAlter()
+            // DB.createAlter()
             // onChangeP('')
             dispatch(getUsersServer())
         } else {

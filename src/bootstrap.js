@@ -2,7 +2,6 @@ import * as Font from 'expo-font'
 import {DB} from './db'
 import * as firebase from 'firebase'
 import ApiKeys from './components/ApiKeys'
-import { UploadDataToServer } from './uploadDataToServer'
 export async function bootstrap() {
     try {
         await Font.loadAsync({
@@ -12,7 +11,7 @@ export async function bootstrap() {
         })
         await DB.init()
         console.log('DATABASE CREATED')
-        await UploadDataToServer.getUsers()
+        
         console.log('USERS LOADED')
         
         if (!firebase.apps.length) {

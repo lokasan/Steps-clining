@@ -85,7 +85,7 @@ export class DB {
                 tx.executeSql(
                     CREATE_NEW_USER,
                     [id, surname, name, lastname, position, email, privileg, key_auth, status=0, img, create_user_date, start_shift],
-                    (_, result) => resolve(result.insertId),
+                    resolve,
                     (_, error) => reject(error)
                 )
             })

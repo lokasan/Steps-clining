@@ -26,12 +26,12 @@ export const empDoubleReducer = (state = initialState, action) => {
     // console.log(action.type, 'МММММММММММММММММММММММММММММММММММММ');
     switch (action.type) {
         case LOAD_EMPLOEES: return {...state, empAll: action.payload}
-        case REMOVE_EMPLOEE: return {...state, empAll: state.empAll.filter(e => e.id !== action.payload)
+        case REMOVE_EMPLOEE: return {...state, empServer: state.empServer.filter(e => e.id !== action.payload)
 
         }
         case ADD_EMPLOEE: return {
             ...state, 
-            empAll: [{...action.payload}, ...state.empAll]
+            empServer: [{...action.payload}, ...state.empServer]
         }
         case LOAD_IF_EXISTS_USER: return {
             ...state,
