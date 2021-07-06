@@ -1,9 +1,13 @@
-import React from 'react'
+import React, {Fragment, useState} from 'react'
 import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert} from 'react-native'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
 import { removeObject } from '../store/actions/object'
+import { ModalForRemove } from './ui/ModalForRemove'
 
 export const ObjectCard = ({object, onOpen}) => {
+    const TEXT_TITLE = 'Удаление объекта'
+    const TEXT_ACTION = 'Вы уверены, что хотите удалить объект'
+    const [modalVisible, setModalVisible] = useState(false)
     const removeHandler = (object) => {
         Alert.alert(
             "Удаление объекта",
@@ -25,7 +29,9 @@ export const ObjectCard = ({object, onOpen}) => {
           )
           
     }
-    return <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(object)} onLongPress={() => removeHandler(object)}>
+    return <Fragment>
+    <ModalForRemove TEXT_TITLE={TEXT_TITLE} TEXT_ACTION={TEXT_ACTION} remove={removeObject}  modalVisible={modalVisible} setModalVisible={setModalVisible} myObject={object} />
+    <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(object)} onLongPress={() => setModalVisible(true)}>
     <View style = {styles.actionMenu}>
         <Image style = {styles.image} source = {{uri: object.img}}/>
         <View  style = {styles.privateData}>
@@ -39,6 +45,7 @@ export const ObjectCard = ({object, onOpen}) => {
         <ArrowRight/>
     </View>
     </TouchableOpacity>
+    </Fragment>
 }
 
 const styles = StyleSheet.create({

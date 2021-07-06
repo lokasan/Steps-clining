@@ -71,6 +71,35 @@ export const empDoubleReducer = (state = initialState, action) => {
             ...state,
             isOnlineEmp: action.payload
         }
+        case 'GET_USER_SHIFT': return {
+            ...state,
+            empServer: state.empServer.map(el => {
+                if (el.id === action.payload.user_id) {
+                    el.time_shift = action.payload.start_shift
+                }
+                return el
+            })
+        } 
+        case 'UPDATE_USER_SHIFT': return {
+            ...state,
+            empServer: [...state.empServer.filter(el => el.id !== action.payload.id), action.payload]
+        }
+        case 'UPDATE_EMPLOEE_PRIVILEG': return {
+            ...state,
+            empServer: [...state.empServer.map(el => {
+                if (el.id == action.payload.id) {
+                    el.privileg = action.payload.privileg
+                }
+                return el
+            } )],
+            empAll: [...state.empServer.map(el => {
+                if (el.id == action.payload.id) {
+                    el.privileg = action.payload.privileg
+                }
+                return el
+            } )]
+        }
+
         default: return state
     }
 }

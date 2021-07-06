@@ -89,7 +89,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     }, [dispatch])
     useEffect(() => {
       dispatch(getUsersServer())
-  }, [])
+  }, [dispatch])
   const emplServer = useSelector(state => state.empDouble.empServer)
   console.log(emplServer, 'emplServer')
     const emploeeAll   = useSelector(state => state.empDouble.empAll)

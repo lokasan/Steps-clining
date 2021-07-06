@@ -144,7 +144,11 @@ export const MainProfileScreen = ({navigation}) => {
         }
         </View>
         {/* </ScrollView> */}
-        <TouchableOpacity onPress={exitHandler}><Text style={{color: 'red', textAlign: 'center', paddingBottom: 10}}>Выйти из системы</Text></TouchableOpacity>
+        <TouchableOpacity onPress={exitHandler}>
+            <Text 
+            style={{color: 'red', textAlign: 'center', paddingBottom: 10}}
+            >Выйти из системы</Text>
+            </TouchableOpacity>
         {/* <Footer/> */}
     </View>
     

@@ -1,15 +1,19 @@
-import React from 'react'
-import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert, Animated} from 'react-native'
+import React, {Fragment, useState} from 'react'
+import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert, Animated, Modal, Pressable} from 'react-native'
 import {ArrowRight, Clock, Cycle, QRIcon, Rank} from '../components/ui/imageSVG/circle'
 import {useDispatch} from 'react-redux'
 import { removeEmploee, updateUserPrivileg } from '../store/actions/empDouble'
+import { ModalForRemove } from './ui/ModalForRemove'
+
 
 export const EmploeeCard = ({emploee, onOpen, isOnline}) => {
-  
-    const dispatch = useDispatch()
-    const removeHandler = () => {
+  const TEXT_TITLE = 'Удаление пользователя'
+  const TEXT_ACTION = 'Вы уверены, что хотите удалить пользователя'
+  const [modalVisible, setModalVisible] = useState(false)
+  const dispatch = useDispatch()
+  const removeHandler = () => {
         Alert.alert(
-            "Удаление польователя",
+            "Удаление пользователя",
             "Вы уверены, что хотите удалить пользователя " + emploee.name + ' ?',
             [
               
@@ -27,8 +31,12 @@ export const EmploeeCard = ({emploee, onOpen, isOnline}) => {
             { cancelable: false }
           )
           
+    
     }
-    return <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(emploee)} onLongPress={removeHandler}>
+    
+    return <Fragment>
+      <ModalForRemove TEXT_TITLE={TEXT_TITLE} TEXT_ACTION={TEXT_ACTION} remove={removeEmploee}  modalVisible={modalVisible} setModalVisible={setModalVisible} myObject={emploee} isOnline={isOnline}/>
+      <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(emploee)} onLongPress={() => setModalVisible(true)}>
     <View style={styles.item}>
     
         {/* <Image style={styles.image} source={{uri: emploee.img}}/> */}
@@ -56,6 +64,7 @@ export const EmploeeCard = ({emploee, onOpen, isOnline}) => {
         
     </View>
     </TouchableOpacity>
+    </Fragment>
 }
 
 const styles = StyleSheet.create({
@@ -66,7 +75,6 @@ const styles = StyleSheet.create({
           height: 100,
           borderRadius: 15,
           display: 'flex',
-        //   flexDirection: 'row',
           justifyContent: 'space-evenly',
           shadowColor: "#000000",
            shadowOffset: {
@@ -75,10 +83,6 @@ const styles = StyleSheet.create({
           },
            shadowOpacity: 0.30,
            shadowRadius: 4.65,
-
-          //  elevation: 1,
-          
-          
         },
     emploee: {
         marginBottom: 15,
@@ -111,5 +115,5 @@ const styles = StyleSheet.create({
         
         borderColor: '#fff'
 
-    }
+    },
 })

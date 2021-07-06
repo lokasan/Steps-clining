@@ -2,10 +2,10 @@ import * as Google from 'expo-google-app-auth'
 import {Alert} from 'react-native'
 const IOS_CLIENT = '393783114907-tanuhn4qqds9vr7o58ksn58okss0qs5v.apps.googleusercontent.com'
 const ANDROID_CLIENT = '393783114907-jrgn1caq85o8ns7bfe6reorj0vcjg7u4.apps.googleusercontent.com'
-import GoogleFit, { Scopes } from 'react-native-google-fit'
-GoogleFit.checkIsAuthorized().then(() => {
-  console.log(GoogleFit.isAuthorized, 'BOOOLEAN')
-})
+// import GoogleFit, { Scopes } from 'react-native-google-fit'
+// GoogleFit.checkIsAuthorized().then(() => {
+//   console.log(GoogleFit.isAuthorized, 'BOOOLEAN')
+// })
 const opt = {
   startDate: "2020-01-01T00:00:17.971Z", // required ISO8601Timestamp
   endDate: new Date().toISOString(), // required ISO8601Timestamp

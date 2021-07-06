@@ -1,9 +1,13 @@
-import React from 'react'
+import React, {Fragment, useState} from 'react'
 import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert} from 'react-native'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
 import { removePost } from '../store/actions/post'
+import { ModalForRemove } from './ui/ModalForRemove'
 
 export const PostCard = ({post, navigation}) => {
+    const TEXT_TITLE = 'Удаление поста'
+    const TEXT_ACTION = 'Вы уверены, что хотите удалить пост'
+    const [modalVisible, setModalVisible] = useState(false)
     const removeHandler = (post) => {
         Alert.alert(
             "Удаление поста",
@@ -25,7 +29,9 @@ export const PostCard = ({post, navigation}) => {
           )
           
     }
-    return <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('PostWithComponent', {post})} onLongPress={() => removeHandler(post)}>
+    return <Fragment>
+        <ModalForRemove TEXT_TITLE={TEXT_TITLE} TEXT_ACTION={TEXT_ACTION} remove={removePost}  modalVisible={modalVisible} setModalVisible={setModalVisible} myObject={post}/>
+    <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('PostWithComponent', {post})} onLongPress={() => setModalVisible(true)}>
     <View style={styles.actionMenu}>
     
         <Image style={styles.image} source={{uri: post.img}}/>
@@ -43,6 +49,7 @@ export const PostCard = ({post, navigation}) => {
         
     </View>
     </TouchableOpacity>
+    </Fragment>
 }
 
 const styles = StyleSheet.create({

@@ -1,11 +1,15 @@
-import React from 'react'
+import React, { Fragment, useState } from 'react'
 import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert} from 'react-native'
 import { useDispatch } from 'react-redux'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
 import { removeComponent } from '../store/actions/component'
+import { ModalForRemove } from './ui/ModalForRemove'
 
 
 export const ComponentCard = ({component, onOpen}) => {
+    const TEXT_TITLE = 'Удаление компонента'
+    const TEXT_ACTION = 'Вы уверены, что хотите удалить компонент'
+    const [modalVisible, setModalVisible] = useState(false)
     const dispatch = useDispatch()
     const removeHandler = (component) => {
         Alert.alert(
@@ -27,7 +31,9 @@ export const ComponentCard = ({component, onOpen}) => {
           )
           
     }
-    return <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(component)} onLongPress={() => removeHandler(component)}>
+    return ( <Fragment>
+        <ModalForRemove TEXT_TITLE={TEXT_TITLE} TEXT_ACTION={TEXT_ACTION} remove={removeComponent}  modalVisible={modalVisible} setModalVisible={setModalVisible} myObject={component} />
+    <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(component)} onLongPress={() => setModalVisible(true)}>
     <View style={styles.actionMenu}>
     
         <Image style={styles.image} source={{uri: component.img}}/>
@@ -42,6 +48,7 @@ export const ComponentCard = ({component, onOpen}) => {
         
     </View>
     </TouchableOpacity>
+    </Fragment>)
 }
 
 const styles = StyleSheet.create({

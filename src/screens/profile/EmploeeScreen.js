@@ -1,13 +1,15 @@
 import React, {useCallback, useEffect, useState, useRef} from 'react'
 import {View, Text, StyleSheet, Image, Button, ScrollView, Alert, Modal, TouchableOpacity, Animated, Dimensions} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
+import DateTimePicker from '@react-native-community/datetimepicker'
 import { DATA } from '../../testData'
 import { Footer } from '../../components/ui/Footer'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import { HEADER_FOOTER } from '../../theme'
-import { removeEmploee, updateUserPrivileg } from '../../store/actions/empDouble'
+import { getUserShift, removeEmploee, updateUserPrivileg, updateUserShift } from '../../store/actions/empDouble'
 import {PinchGestureHandler, PanGestureHandler} from 'react-native-gesture-handler'
 import { ArrowRight } from '../../components/ui/imageSVG/circle'
+import { UploadDataToServer } from '../../uploadDataToServer'
 var radio_props = [
     {label: 'Без прав', value: 0 },
     {label: 'Только чтение', value: 1 },
@@ -37,21 +39,51 @@ const removeHandler = (emploee, dispatch, navigation) => {
 const width = Dimensions.get('window')
 
 export const EmploeeScreen = ({navigation}) => {
-  const dispatch = useDispatch()
+   
+    const dispatch = useDispatch()
     const [zoomable, setZoomable] = useState(false)
     const emploeeId = navigation.getParam('emploeeId')
     const emploee = useSelector(state => state.empDouble.empServer.find(e => e.id === emploeeId))
     const [selectedValue, setSelectedValue] = useState(emploee ? emploee.privileg : 0)
+    
+    const [date, setDate] = useState(new Date(emploee?.start_shift ? parseInt(emploee.start_shift) : new Date().getTime()))
+    const [show, setShow] = useState(false)
+    const [mode, setMode] = useState('date')
+    useEffect(() => {
+      dispatch(getUserShift(emploeeId))
+    }, [])
+    const scale = useRef(new Animated.Value(1)).current
+    const translateX = useRef(new Animated.Value(0)).current
+    const translateY = useRef(new Animated.Value(0)).current
+
     console.log(emploee);
+
+    const onChange = (event, selectedDate) => {
+      const currentDate = selectedDate || date;
+      setShow(Platform.OS === 'ios');
+      setDate(currentDate);
+      dispatch(updateUserShift(emploee, currentDate.getTime()), emploeeId)
+      
+    }
+    
+    const showMode = (currentMode) => {
+      setShow(true);
+      setMode(currentMode);
+    }
+    const showTimepicker = () => {
+      
+
+      showMode('time');
+
+    }
+
     const updatedUserPrivileg =  useCallback(() => {
       dispatch(updateUserPrivileg(emploee))
     }, [dispatch, emploee])
     if (!emploee) {
       return null
     }
-    const scale = useRef(new Animated.Value(1)).current
-    const translateX = useRef(new Animated.Value(0)).current
-    const translateY = useRef(new Animated.Value(0)).current
+    
     const handlePan = Animated.event([
       {
         nativeEvent: {
@@ -63,10 +95,8 @@ export const EmploeeScreen = ({navigation}) => {
       listener: e => console.log(e.nativeEvent),
       useNativeDriver: true
     })
-    const handlePinch = Animated.event([ { nativeEvent: { scale } } ])
-    useEffect(() => {
-      console.log("CLICK ON ZOOM")
-    }, [zoomable])
+    const handlePinch = Animated.event([ { nativeEvent: { scale } } ], {useNativeDriver: true})
+    
     return <React.Fragment><View style={{flex: 1, backgroundColor: '#000'}}>
         <ScrollView>
         <View style={styles.container, styles.center}>
@@ -86,7 +116,6 @@ export const EmploeeScreen = ({navigation}) => {
         <View>
   <Text style={{color: '#fff', textAlign:'center'}}>{emploee.position}</Text>
         </View>
-    
     </View>
    
 </View>
@@ -99,6 +128,7 @@ export const EmploeeScreen = ({navigation}) => {
     radio_props.map((obj, i) => (
       <RadioButton labelHorizontal={true} key={i} >
         {/*  You can set RadioButtonLabel before RadioButtonInput */}
+        
         <RadioButtonInput
           obj={obj}
           index={i}
@@ -132,14 +162,27 @@ export const EmploeeScreen = ({navigation}) => {
     ))
   }  
         </RadioForm>
+        <View>
+        {!show && (<Button onPress = {showTimepicker} title = 'Время начала смен'/>)}
+        </View>
+        {show && <DateTimePicker
+          style={{color:"red"}}
+          testID   = "dateTimePicker"
+          value    = {date}
+          mode     = {mode}
+          is24Hour = {true}
+          display  = "default"
+          onChange = {onChange}
+        />}
       </View>
+    
 </View>
 </ScrollView>
 <Button title='Удалить' color={HEADER_FOOTER.DANGER_COLOR} onPress={() => removeHandler(emploee, dispatch, navigation)}/>
 {/* <Footer/> */}
 </View>
-<Modal visible={zoomable} animated>
-  <View style={{paddingTop: '15%', backgroundColor: '#000', position: 'relative', paddingLeft: '90%'}}>
+<Modal visible={zoomable} animationType='slide' animated>
+  <View style={{ backgroundColor: '#000', position: 'relative', paddingTop: 30, paddingLeft: '90%'}}>
   <TouchableOpacity onPress={() => setZoomable(false)}>
     <ArrowRight/>
   </TouchableOpacity>
@@ -157,7 +200,7 @@ export const EmploeeScreen = ({navigation}) => {
 const styles = StyleSheet.create({
     image: {
         width: '100%',
-        height: 300
+        height: 400
     },
     userCard: {
         // flex: 1,

@@ -78,13 +78,13 @@ export class DB {
             })
         })
     }
-    static createUser({id, surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date, start_shift}) {
-        console.log(surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date, start_shift)
+    static createUser(data) {
+        console.log(data, 'User_New_Create')
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_USER,
-                    [id, surname, name, lastname, position, email, privileg, key_auth, status=0, img, create_user_date, start_shift],
+                    [data.id, data.surname, data.name, data.lastname, data.position, data.email, data.privileg, data.key_auth, 0, data.img, data.create_user_date, data.start_shift],
                     resolve,
                     (_, error) => reject(error)
                 )
@@ -613,6 +613,18 @@ export class DB {
                     "SELECT img FROM component WHERE id=?;",
                     [id],
                     (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static updateUserShift(id, newTimeShift) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "UPDATE user_local SET start_shift = ? WHERE id = ?;",
+                    [newTimeShift, id],
+                    resolve,
                     (_, error) => reject(error)
                 )
             })

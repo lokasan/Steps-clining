@@ -17,8 +17,8 @@ export const loadComponentRank = component_id => {
         // })
     }
 }
-export const removeComponentRank = (id, component_id) => async dispatch=> {
-    await UploadDataToServer.removeComponentRank(id, component_id)
+export const removeComponentRank = (id) => async dispatch=> {
+    await UploadDataToServer.removeComponentRank(id)
     await DB.removeComponentRank(id)
     
     dispatch({

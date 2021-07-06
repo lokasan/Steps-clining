@@ -52,8 +52,10 @@ export const addEmploee = emploee => async dispatch => {
     const id         = Date.now()
           payload.id = id
     //
-    await UploadDataToServer.addUser(newPath, payload)
     await DB.createUser(payload)
+
+    await UploadDataToServer.addUser(newPath, payload)
+    console.log(payload, ' test payload')
     
 
     dispatch({
@@ -83,9 +85,26 @@ export const loadUserExists = email => {
 
 export const updateUser = (user) => async dispatch => {
     await DB.updateUserAuthorize(user.status === 0 ? 1 : 0, user.email)
+    if (user.status) {
+        await UploadDataToServer.userLogout(user)
+    } else {
+        await UploadDataToServer.addActiveUser(user.id)
+    }
     dispatch({
         type   : UPDATE_USER_AUTHORIZE,
         payload: user
+    })
+}
+export const getUserShift = emploeeId => async () => {
+    await UploadDataToServer.getUserShift(emploeeId)
+}
+
+export const updateUserShift = (emploee, newTimeShift, emploeeId) => async dispatch => {
+    await UploadDataToServer.createUserShift(emploee.id, newTimeShift)
+    await DB.updateUserShift(emploee.id, newTimeShift)
+    dispatch({
+        type: 'UPDATE_USER_SHIFT',
+        payload: {...emploee, start_shift: newTimeShift}
     })
 }
 
@@ -98,4 +117,10 @@ export const hideLoaderEmpDouble = () => async dispatch => {
     dispatch({
         type: HIDE_LOADER
     })
+}
+export const sendMessageToMail = (data) => async dispatch => {
+    await UploadDataToServer.sendMessageToMail(data)
+}
+export const getAccess = (email, password) => async dispatch => {
+    await UploadDataToServer.checkAuthentication(email, password)
 }

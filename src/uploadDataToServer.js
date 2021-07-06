@@ -19,6 +19,7 @@ import { hideLoaderComponent } from './store/actions/component';
 import { hideLoaderPost } from './store/actions/post';
 import { hideLoaderComponentRank } from './store/actions/componentRank';
 import { msToTime } from './utils/msToTime'
+import { updateUser } from './store/actions/empDouble';
 
 
 let ws            = new WebSocket('ws://192.168.1.4:8765');
@@ -27,6 +28,7 @@ let ws            = new WebSocket('ws://192.168.1.4:8765');
     socket_onmessage_callback(event.data)
     
 }
+
 ws.onclose = function(event) {
     if (event.wasClean) {
       alert('Соединение закрыто чисто');
@@ -173,6 +175,27 @@ async function socket_onmessage_callback(recv) {
             type: 'GET_ACTIVE_USERS',
             payload: data[MESSAGE]
         })
+    } else if(ACTION in data && data[ACTION] === 'GET_USER_SHIFT') {
+        console.log(data, 'user_shift')
+        dispatch({
+            type: 'GET_USER_SHIFT',
+            payload: data[MESSAGE]
+        })
+    } else if(ACTION in data && data[ACTION] === 'USER_LOGOUT') {
+        console.log(data[MESSAGE], ' USER TO EXIT IN APP')
+        dispatch({
+            type: 'REMOVE_ACTIVE_USER',
+            payload: data[MESSAGE]
+        })
+    } else if (ACTION in data && data[ACTION] === 'CHECK_AUTHENTICATION') {
+        console.log(data, 'AUTHENTICATION_INFO')
+        dispatch(updateUser({status: 0, email: data[MESSAGE]['email'], id: data[MESSAGE]['id']}))
+    } else if (ACTION in data && data[ACTION] === 'UPDATE_EMPLOEE_PRIVILEG') {
+        await DB.updateUserPrivileg(data[MESSAGE])
+        dispatch({
+            type: 'UPDATE_EMPLOEE_PRIVILEG',
+            payload: data[MESSAGE]
+        })
     }
     else if (ACTION in data && data[ACTION] === 'GET_USERS') {
         console.log(data['CREATE_ELEMENTS'])
@@ -187,7 +210,7 @@ async function socket_onmessage_callback(recv) {
             type: 'GET_USERS',
             payload: await DB.getUsers()
         })
-    }
+    } 
     // `data:image/jpeg;base64,${object.path}
     
 }
@@ -280,7 +303,7 @@ export class UploadDataToServer {
                     STATUS     : payload.status,
                     NAME_FILE  : String(Date.now()),
                     IMAGE      : payload.image,
-                    PASSWD_HASH: '12151',
+                    PASSWD_HASH: payload.password,
                     START_SHIFT: payload.start_shift,
                     PATH       : base64data
                     // NOTIFICATION_TOKEN: ''
@@ -432,12 +455,11 @@ export class UploadDataToServer {
         }
         
     }
-    static async removeComponentRank(id, component_id) {
+    static async removeComponentRank(id) {
         ws.send(JSON.stringify(
             {
                 ACTION           : REMOVE_COMPONENT_RANK,
-                ID: id,
-                COMPONENT_ID     : component_id
+                ID: id
             }))
     }
     static async addLinkPostWithComponent(id, postId, componentId) {
@@ -464,12 +486,11 @@ export class UploadDataToServer {
                 COMPONENT_ID: id
             }))
     }
-    static async removePost(id, building_id) {
+    static async removePost(id) {
         ws.send(JSON.stringify(
             {
                 ACTION     : REMOVE_POST,
-                POST_ID    : id,
-                BUILDING_ID: building_id
+                POST_ID    : id
             }))
     }
     static async removeObject(id) {
@@ -673,6 +694,44 @@ export class UploadDataToServer {
         ws.send(JSON.stringify({
             ACTION: UPDATE_EMPLOEE_PRIVILEG,
             EMPLOEE: emploee
+        }))
+    }
+    static async createUserShift(id, start_shift) {
+        ws.send(JSON.stringify({
+            ACTION: 'CREATE_USER_SHIFT',
+            USER_ID: id,
+            START_SHIFT: start_shift
+        }))
+    }
+    static async getUserShift(id) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_USER_SHIFT',
+            USER_ID: id
+        }))
+    }
+    static async userLogout(emploee) {
+       console.log(ws, 'IP ADDR')
+        ws.send(JSON.stringify({
+            ACTION: 'USER_LOGOUT',
+            EMAIL: emploee.email,
+        }))
+    }
+    static async sendMessageToMail(data) {
+        ws.send(JSON.stringify({
+            ACTION: 'SEND_MESSAGE_TO_MAIL',
+            SURNAME: data.surname,
+            NAME: data.name,
+            LASTNAME: data.lastname,
+            EMAIL: data.email,
+            PASSWORD: data.password,
+            START_SHIFT: data.start_shift
+        }))
+    }
+    static async checkAuthentication(email, password) {
+        ws.send(JSON.stringify({
+            ACTION: 'CHECK_AUTHENTICATION',
+            EMAIL: email,
+            PASSWORD: password
         }))
     }
 }

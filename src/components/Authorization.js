@@ -8,7 +8,7 @@ import { GraphContext } from '../context/graph/graphContext'
 import * as Google from 'expo-google-app-auth'
 import { CreateUserInLocalBase } from './CreateUserInLocalBase'
 import { DB } from '../db'
-import { addEmploee, getUsersServer, loadEmploeeDouble, updateUser } from '../store/actions/empDouble'
+import { addEmploee, getAccess, getUsersServer, loadEmploeeDouble, updateUser } from '../store/actions/empDouble'
 import { UploadDataToServer } from '../uploadDataToServer'
 const IOS_CLIENT = '393783114907-tanuhn4qqds9vr7o58ksn58okss0qs5v.apps.googleusercontent.com'
 const ANDROID_CLIENT = '393783114907-jrgn1caq85o8ns7bfe6reorj0vcjg7u4.apps.googleusercontent.com'
@@ -35,6 +35,7 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
             // DB.createAlter()
             // onChangeP('')
             dispatch(getUsersServer())
+            dispatch(getAccess(value, valueP))
         } else {
             Alert.alert('Данные пусты')
         }
@@ -102,6 +103,7 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
             // })
             if ((users.filter(e => e.email === result.user.email)).length) {
                 dispatch(updateUser((users.filter(e => e.email === result.user.email))[0]))
+                
             } else {
                 dispatch(addEmploee(userEmp))
             }
@@ -143,7 +145,13 @@ export const Authorization = ({navigation, onSubmit, onOpen}) => {
         </AppCard>
         <View style={styles.buttonsStyle}>
         <TouchableOpacity style={styles.buttonGoggle} onPress={() => signInWithGoogleAsync()}><Image style={{height: 30, width: 30, opacity: 1}} source={require('../images/Gauth.png')}/></TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={pressHandler}><Text style={styles.textB}>Войти</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => {
+
+            pressHandler()
+            navigation.navigate('App')
+        }
+            
+            }><Text style={styles.textB}>Войти</Text></TouchableOpacity>
         
         {/* <TouchableOpacity style={styles.button} onPress={() => onOpen('true')}><Text style={styles.textB}>QR Scanner</Text></TouchableOpacity> */}
         </View>
