@@ -10,11 +10,11 @@ import { getPostAll } from '../store/actions/post';
 import QRCode from 'react-native-qrcode-generator'
 import {Cycle, Clock, Rank, QRIcon, StepsIcon, PeopleIcon} from '../components/ui/imageSVG/circle'
 import { useState, useRef } from 'react';
-import { clearBypassUsers, clearBypassUsersDetail, loadBypassGetter, loadBypassPosts, loadBypassUsers, loadBypassUsersDetail } from '../store/actions/bypass';
+import { clearBypassObjectDetail, clearBypassUsers, clearBypassUsersDetail, loadBypassGetter, loadBypassObjectDetail, loadBypassPosts, loadBypassUsers, loadBypassUsersDetail } from '../store/actions/bypass';
 import { msToTime } from '../utils/msToTime';
 // import { Circle } from 'react-native-svg';
 // import Shares from 'react-native-share'
-
+const NORMAL_RANK = 3
 
 export const StatusObject = () => {
   const dispatch = useDispatch()
@@ -27,14 +27,21 @@ export const StatusObject = () => {
   const [flagArrayObjects, setFlagArrayObjects]         = useState([])
   const [flagArrayPosts, setFlagArrayPosts]             = useState([])
   const [flagArrayUsersDetail, setFlagArrayUsersDetail] = useState([])
+  const [flagArrayObjectDetail, setFlagArrayObjectDetail] = useState([])
   const loading                                         = useSelector(state => state.bypass.loading)
   const loaderIcon = useSelector(state => state.bypass.loaderIcon)
   const DATA_POSTS                                      = useSelector(state => state.bypass.bypassPostsList)
   const DATA_USERS                                      = useSelector(state => state.bypass.bypassUsersList)
   const DATA_USERS_DETAIL                               = useSelector(state => state.bypass.bypassUsersListDetail)
+  const DATA_OBJECT_DETAIL = useSelector(state => state.bypass.bypassObjectDetail)
+  const USERS_LIST = useSelector(state => state.empDouble.empServer)
   console.log(DATA_POSTS)
   console.log(DATA_USERS, 'userss');
   console.log(DATA_USERS_DETAIL, 'DETAILS')
+  console.log(DATA_OBJECT_DETAIL, 'OBJECTS_TES')
+  console.log(USERS_LIST, 'USERS _ LIST')
+  const choiseObject = useRef(null)
+  const [choiseObjectS, setChoiseObjectS] = useState('')
       const Item = ({item, index}) => {
         const inputRange = [
           -1,
@@ -59,15 +66,34 @@ export const StatusObject = () => {
           return <TouchableOpacity onPress={() => {
             if (flagArrayObjects.indexOf(item.title) !== -1) {
               dispatch(loadBypassPosts(period, 'tropic'))
+              
               setFlagArrayObjects(flagArrayObjects.filter(e => e !== item.title))
+              
             }
             else {
               dispatch(loadBypassPosts(period, item.title))
+              
               setFlagArrayObjects([...flagArrayObjects, item.title])
+              
             }
             
+            }} onLongPress={() => {
+              if (flagArrayObjectDetail.indexOf(item.title) !== -1) {
+                // dispatch(loadBypassUsers(period, 'tropic'))
+                dispatch(clearBypassObjectDetail(DATA_OBJECT_DETAIL, item.title))
+                setFlagArrayObjectDetail(flagArrayObjectDetail.filter(e => e !== item.title))
+                choiseObject.current = null
+              }
+              else {
+                dispatch(loadBypassObjectDetail(period, item.title))
+                setFlagArrayObjectDetail([...flagArrayObjectDetail, item.title])
+                choiseObject.current = item.title
+                setChoiseObjectS(choiseObject.current)
+              }
             }}>
-          <Animated.View style = {flagArrayObjects.length && flagArrayObjects.indexOf(item.title) === -1 ? {display: 'none'} : styles.item}>
+         
+          <Animated.View style = {(flagArrayObjects.length && flagArrayObjects.indexOf(item.title) === -1) || 
+            (flagArrayObjectDetail.length && flagArrayObjectDetail.indexOf(item.title) !== -1  && !loaderIcon) ? {display: 'none'} : styles.item}>
            
               <View style = {{...styles.wrapperFirstLine}}>
                 <View>
@@ -155,12 +181,177 @@ export const StatusObject = () => {
               })()}
               
               </View>
+              {  choiseObject.current === item.title && loaderIcon ? <View style={{position: 'absolute', justifyContent: 'center', alignItems: 'center', width: '100%', height: 100, opacity: 1}}>
+              <ActivityIndicator color  = "#0000ff"/>
+              </View> : null}
               </View>
           </Animated.View>
           </TouchableOpacity>
       }
       const choisePost = useRef(null)
       
+      const createViewDataComponentObject = (item, index) => {
+        let createViewData = []
+        if (item?.data?.length !== 0) {
+          
+          for (let el in item.data) {
+            const dateBypassEnd = new Date(+item.data[el].end_time)
+            const dateBypassStart = new Date(+item.data[el].start_time)
+            
+            createViewData.push(<View>
+              <Text style={styles.beastAndBad}>{`${dateBypassEnd.getDate() / 10 >= 1? dateBypassEnd.getDate(): '0' + dateBypassEnd.getDate()}.${(dateBypassEnd.getMonth() + 1) / 10 >= 1? dateBypassEnd.getMonth() + 1: '0' + (dateBypassEnd.getMonth() + 1)}`}</Text>
+              <TouchableOpacity onLongPress={() => alertStatus(item.data[el].weather)}><Image style = {{marginLeft: 20, height: 25, width: 20, top: 3}} source={item.data?.length !== 0 ? {uri: `http://openweathermap.org/img/wn/${item.data[el].icon}@2x.png`} : null}/></TouchableOpacity>
+              <Text style={styles.beastAndBad}>{item.data[el].temperature}</Text>
+              <Text style={styles.beastAndBad}>{item.data[el].post_name.slice(0, 4)}</Text>
+              <Image style={{width: 20, height: 20, marginLeft: 22, marginTop: 11, borderRadius: 50}} source={{uri: USERS_LIST.map(els => {
+                if (els.email === item?.data[el]?.email) {
+                  return els.img
+                }
+                }).join('')}}/>
+              <Text style={styles.beastAndBad}>{item.data[el].avg_rank.toFixed(2)}</Text>
+
+              
+              <Text style={styles.beastAndBad}>{
+              dateBypassStart.getHours() / 10 >= 1? 
+              dateBypassStart.getHours() : 
+              '0' + dateBypassStart.getHours()}:{
+              dateBypassStart.getMinutes() / 10 >= 1? 
+              dateBypassStart.getMinutes() : 
+              '0' + dateBypassStart.getMinutes()
+              }
+              {/* :{
+                dateBypassStart.getSeconds() / 10 > 1? 
+                dateBypassStart.getSeconds() : 
+                '0' + dateBypassStart.getSeconds()
+              } */}
+              </Text>
+              <Text style={styles.beastAndBad}>{
+              dateBypassEnd.getHours() / 10 >= 1? 
+              dateBypassEnd.getHours() : 
+              '0' + dateBypassEnd.getHours()
+              }:{
+                dateBypassEnd.getMinutes() / 10 >= 1? 
+                dateBypassEnd.getMinutes() : 
+                '0' + dateBypassEnd.getMinutes()
+              }
+              {/* :{
+                dateBypassEnd.getSeconds() / 10 > 1? 
+                dateBypassEnd.getSeconds() : 
+                '0' + dateBypassEnd.getSeconds()
+              } */}
+              </Text>
+              <Text style={styles.beastAndBad}>{msToTime(dateBypassEnd - dateBypassStart).slice(0, 5)}</Text>
+              {/* <Text></Text> */}
+              </View>)
+          }
+        }
+        return createViewData
+      }
+      const ItemObjectDetail = ({item, index}) => {
+        const inputRange = [
+          -1,
+          0,
+          ITEM_SIZE * index,
+          ITEM_SIZE * (index + 2)
+        ]
+        const opacityInputRange = [
+          -1,
+          0,
+          ITEM_SIZE * index,
+          ITEM_SIZE * (index + 1)
+        ]
+        const scale = scrollY.interpolate({
+          inputRange,
+          outputRange: [1, 1, 1, 0]
+        })
+        console.log(JSON.stringify(item))
+        const opacity = scrollY.interpolate({
+          inputRange : opacityInputRange,
+          outputRange: [1, 1, 1, 0]
+        })
+        // let textComponent = createTextComponent(item).textComponent
+        let existsComponents
+        console.log(item, 'object_detail data item')
+        console.log(choiseObject.current)
+        // const comparePosts = choisePost.current?.email === item.data[0]?.email && choisePost.current?.post === item.data[0]?.post_name
+        const compareObject = choiseObjectS.current === item?.data[0]?.object_name
+        console.log(compareObject, 'compare_obj')
+        console.log(loaderIcon, 'loaderIcons')
+        
+        // choisePost.current?.email === item.data[0]?.email && choisePost.current?.post === item.data[0]?.post_name
+        
+          return         <Animated.View style = {  compareObject && loaderIcon ? {display: 'none'} : styles.itemUD}>
+           
+              <View style = {{...styles.wrapperFirstLine}}>
+                <View> 
+                    <View style = {styles.wrapperFirstLine}>
+                        <View>
+                          <TouchableOpacity onPress={() => {
+                            setFlagArrayObjectDetail(flagArrayObjectDetail.filter(el => !(el=== item?.data[0]?.object_name)))
+                            dispatch(clearBypassObjectDetail(DATA_OBJECT_DETAIL, item?.data[0]?.object_name))}}><Text style = {styles.headTitle}>{item?.data[0]?.object_name}</Text></TouchableOpacity>
+                        </View>
+                      
+                    </View>
+                    <View style = {styles.wrapperSecondLine}>
+                      <View>
+                        <Text style={styles.beastAndBad}>Дата</Text>
+                        <Text style={styles.beastAndBad}>Погода</Text>
+                        <Text style={styles.beastAndBad}>Температура</Text>
+                        <Text style={styles.beastAndBad}>Пост</Text>
+                        <Text style={styles.beastAndBad}>Сотрудник</Text>
+                        <Text style={styles.beastAndBad}>Рейтинг</Text>
+                        <Text style={styles.beastAndBad}>Вр. нач. обх.</Text>
+                        <Text style={styles.beastAndBad}>Вр. кон. обх.</Text>
+                        <Text style={styles.beastAndBad}>Длит. обх.</Text>
+                      </View>
+                      <ScrollView vertical={false} horizontal={true} showsHorizontalScrollIndicator={false} style={{display: 'flex', flexDirection: 'row', width: '75%'}}>
+                      {createViewDataComponentObject(item)}
+                      </ScrollView>
+                        {/* <Image style = {{...styles.beastAndBad, height: 32, width: 20}} source={item.data?.length !== 0 ? {uri: `http://openweathermap.org/img/wn/${item.data[0].icon}@2x.png`} : null}/> */}
+                      
+                     
+                    </View>
+                </View>
+                <View style = {{flexDirection: 'column', justifyContent: 'space-between', width: '45%'}}>
+                {/* <View style = {{...styles.sticker, backgroundColor: '#867A64'}}> */}
+              
+              
+              {(() => {
+                switch (item.trand) {
+                  case 1: return (
+                  <>
+                    <View  style  = {{alignItems: 'center'}}><Text style = {{fontSize: 10}}>Линия тренда возрастает</Text></View>
+                    <View  style  = {{alignItems: 'center'}}>
+                    <Image source = {require('../images/ArrowUp.png')}/>
+                    </View>
+                  </>
+                  )
+                  case 0: return (
+                    <>
+                    <View  style  = {{alignItems: 'center'}}><Text style = {{fontSize: 10}}>Линия тренда без изменений</Text></View>
+                    <View  style  = {{alignItems: 'center'}}>
+                    <Image source = {require('../images/stability.jpg')}/>
+                    </View>
+                  </>
+                  )
+                  case -1: return (
+                  <>
+                    <View  style  = {{alignItems: 'center'}}><Text style = {{fontSize: 10}}>Линия тренда убывает</Text></View>
+                    <View  style  = {{alignItems: 'center'}}>
+                    <Image source = {require('../images/ArrowDown.png')}/>
+                    </View>
+                  </>
+                  )
+                }
+              })()}
+              
+              </View>
+              
+              </View>
+              
+          </Animated.View> 
+      }
+
       const ItemPosts = ({item, index}) => {
         const inputRange = [
           -1,
@@ -213,8 +404,10 @@ export const StatusObject = () => {
                           <Text style = {styles.beastAndBad}>Худш. комп.</Text>
                       </View>
                       <View>
-                          <Text style = {styles.beastAndBadNames}>{item.bestComponent} {item.bestComponentRank}</Text>
-                          <Text style = {styles.beastAndBadNames}>{item.badComponent} {item.badComponentRank}</Text>
+                      <Text style = {styles.beastAndBadNames}>
+                            <Text>{item.bestComponent}</Text> <Text style={item.bestComponentRank > NORMAL_RANK ? {fontWeight: 'bold'} : {fontWeight: 'bold', color: 'red'}}>{item.bestComponentRank}</Text></Text>
+                            <Text style = {styles.beastAndBadNames}>
+                            <Text>{item.badComponent}</Text> <Text style={item.badComponentRank > NORMAL_RANK ? {fontWeight: 'bold'} : {fontWeight: 'bold', color: 'red'}}>{item.badComponentRank}</Text></Text>
                       </View>
                     </View>
                 </View>
@@ -326,6 +519,7 @@ export const StatusObject = () => {
             }
             else {
               dispatch(loadBypassUsersDetail(period, item.email, item.post_name))
+              
               choisePost.current = {email: item.email, post: item.post_name}
               setChoisePostS(choisePost.current)
               
@@ -348,7 +542,7 @@ export const StatusObject = () => {
                 <View> 
                     <View style = {styles.wrapperFirstLine}>
                         <View>
-                          <Text style = {styles.headTitle}>{item?.title?.substr(0, 19)}</Text>
+                          <Text style = {styles.headTitle}>{item?.title.split(' ').map((el, idx) => idx === 0? el : el.slice(0, 1) + '.').join(' ')}</Text>
                         </View>
                       
                     </View>
@@ -358,8 +552,10 @@ export const StatusObject = () => {
                           <Text style = {styles.beastAndBad}>Худш. комп.</Text>
                       </View>
                       <View>
-                          <Text style = {styles.beastAndBadNames}>{item.bestComponent} {item.bestComponentRank}</Text>
-                          <Text style = {styles.beastAndBadNames}>{item.badComponent} {item.badComponentRank}</Text>
+                          <Text style = {styles.beastAndBadNames}>
+                            <Text>{item.bestComponent}</Text> <Text style={item.bestComponentRank > NORMAL_RANK ? {fontWeight: 'bold'} : {fontWeight: 'bold', color: 'red'}}>{item.bestComponentRank}</Text></Text>
+                            <Text style = {styles.beastAndBadNames}>
+                            <Text>{item.badComponent}</Text> <Text style={item.badComponentRank > NORMAL_RANK ? {fontWeight: 'bold'} : {fontWeight: 'bold', color: 'red'}}>{item.badComponentRank}</Text></Text>
                       </View>
                     </View>
                 </View>
@@ -679,11 +875,17 @@ export const StatusObject = () => {
       const ITEM_SIZE  = 100
       const renderItem = ({ item, index }) => {
           
-          return <><Item item = {item} index = {index}/>{ flagArrayObjects.indexOf(item.title) !== -1 ? <Animated.FlatList showsVerticalScrollIndicator = {false}
+          return <><Item item = {item} index = {index}/>
+          {flagArrayObjectDetail.indexOf(item.title) !== -1 ? <Animated.FlatList showsVerticalScrollIndicator = {false}
+          data = {[{id: String(Date.now()), data: DATA_OBJECT_DETAIL.filter(el => el.object_name === item.title )}]} onScroll = {Animated.event(
+[{nativeEvent: {contentOffset: {y: scrollY}}}],
+{ useNativeDriver: true}
+)} renderItem={renderItemObjectDetails} keyExtractor={item => item.id}/> : null}
+          { flagArrayObjects.indexOf(item.title) !== -1 ? <Animated.FlatList showsVerticalScrollIndicator = {false}
           data = {DATA_POSTS} onScroll = {Animated.event(
 [{nativeEvent: {contentOffset: {y: scrollY}}}],
 { useNativeDriver: true}
-)} renderItem={renderItemPosts} keyExtractor={item => item.id}/> : null}</>
+)} renderItem={renderItemPosts} keyExtractor={item => item.id} listKey={String(Date.now())}/> : null}</>
          
         }
       const renderItemPosts = ({ item, index }) => {
@@ -692,7 +894,7 @@ export const StatusObject = () => {
         data = {DATA_USERS.filter(el => el.post_name === item.title)} onScroll = {Animated.event(
 [{nativeEvent: {contentOffset: {y: scrollY}}}],
 { useNativeDriver: true}
-)} renderItem={renderItemUsers} keyExtractor={item => item.id}/> : null}</>
+)} renderItem={renderItemUsers} keyExtractor={item => item.id} listKey={String(Date.now())}/> : null}</>
          
       }
       const renderItemUsers = ({ item, index }) => {
@@ -707,6 +909,9 @@ export const StatusObject = () => {
 
       const renderItemUsersDetails = ({ item, index }) => {
         return <ItemUsersDetails item = {item} index = {index}/>
+      }
+      const renderItemObjectDetails = ({ item, index }) => {
+        return <ItemObjectDetail item = {item} index = {index}/>
       }
       
       const listMenu = () => (<View style={{height: 30, marginHorizontal: '5%', marginTop: 15, borderRadius: 5, alignItems: 'center', flexDirection: 'row', borderWidth: 1, borderColor: '#dedede'}}>

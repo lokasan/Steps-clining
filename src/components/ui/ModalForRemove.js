@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import {StyleSheet, Modal, View, Text, Pressable, Image} from 'react-native'
 
-export const ModalForRemove = ({TEXT_TITLE, TEXT_ACTION, remove, modalVisible, setModalVisible, myObject, isOnline}) => {
+export const ModalForRemove = ({TEXT_TITLE, TEXT_ACTION, remove, modalVisible, setModalVisible, myObject, isOnline, componentRankAll, updateComponentRank}) => {
     const dispatch = useDispatch()
 
     return <Modal
@@ -29,7 +29,12 @@ export const ModalForRemove = ({TEXT_TITLE, TEXT_ACTION, remove, modalVisible, s
           </Pressable>
           <Pressable
             style={({ pressed }) => [styles.button, pressed ? styles.buttonDeletePressed : styles.buttonDelete]}
-            onPress={() => {setModalVisible(!modalVisible); dispatch(remove(myObject.id))}}>
+            onPress={() => {
+              setModalVisible(!modalVisible)
+              if (componentRankAll !== undefined && updateComponentRank !== undefined) {
+                dispatch(updateComponentRank(componentRankAll.filter(e => e.id !== myObject.id), componentRankAll.length -1, count=1))
+              }
+               dispatch(remove(myObject.id))}}>
               <Text style={styles.textStyle}>Удалить</Text>
           
           </Pressable>

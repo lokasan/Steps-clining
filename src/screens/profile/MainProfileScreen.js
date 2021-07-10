@@ -20,16 +20,25 @@ export const MainProfileScreen = ({navigation}) => {
     }
     let privileg = resultNo
     dispatch = useDispatch()
-    result = useSelector(state => state.empDouble.empAll.find(e => e.status === 1))
-    const allPostResult = useSelector(state => state.post.postAlls)
-    if (typeof result !== 'object') {
-        result = resultNo
-    }
-    privileg = result.privileg
+    
+    // if (typeof result !== 'object') {
+    //     result = resultNo
+    // }
+    // privileg = result.privileg
     useEffect(() =>{
         dispatch(loadEmploeeDouble())
         dispatch(getPostAll())
     }, [dispatch])
+    let result = useSelector(state => state.empDouble.empAll.find(e => e.status === 1))
+    const allPostResult = useSelector(state => state.post.postAlls)
+    const emploeeAll   = useSelector(state => state.empDouble.empAll)
+    let   tempPrivileg = false
+    console.log(emploeeAll, 'Алл сотрудники');
+    
+        if (result.status && result.privileg && result.privileg > 1) {
+            tempPrivileg = true
+        }
+    
     async function calculate() {
         let html = ''
         for (let el of allPostResult) {
@@ -110,7 +119,7 @@ export const MainProfileScreen = ({navigation}) => {
                
             </View>
             </TouchableOpacity>
-        {privileg > 1 && <View style={styles.menuCard}>
+        {tempPrivileg && <View style={styles.menuCard}>
         <TouchableOpacity onPress={execute}>
             <View style={styles.actionMenu}>
                 <ProfileQRCode/>

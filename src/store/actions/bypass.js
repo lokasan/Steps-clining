@@ -2,8 +2,8 @@ import { CREATE_NEW_BYPASS, LOAD_BYPASS, SHOW_LOADER, HIDE_LOADER, UPDATE_BYPASS
 import { DB } from '../../db'
 import { UploadDataToServer } from '../../uploadDataToServer'
 
-export const createBypass = (userId, postId, weather, temperature, icon) => async dispatch => {
-    let id = Date.now()
+export const createBypass = (id, userId, postId, weather, temperature, icon) => async dispatch => {
+    
     console.log(id, 'BYPASS_ID_CREATE')
     await DB.createBypass(id, userId, postId, weather, temperature, icon)
     await UploadDataToServer.addBypass(id, userId, postId, weather, temperature, icon)
@@ -18,7 +18,9 @@ export const loadBypass = (userId, postId) => async dispatch => {
     console.log(bypassId, 'Массив объектов');
     dispatch({
         type: LOAD_BYPASS,
-        payload: bypassId.length ? bypassId[0].id : undefined
+        payload: bypassId.length ? 
+        {bypassId: bypassId[0].id, cleanerStatus: bypassId[0].cleaner } : 
+        {bypassId: -1, cleanerStatus: undefined } 
     })
 
 }
@@ -103,4 +105,15 @@ export const clearBypassUsersDetail = (data, user_email, post_name) => async () 
 export const loadBypassUsersDetail = (period, user_email, post_name) => async () => {
     dispatch(showLoaderBypassIcon())
     await UploadDataToServer.getBypassUsersDetail(period, user_email, post_name)
+}
+export const loadBypassObjectDetail = (period, object_name) => async () => {
+    dispatch(showLoaderBypassIcon())
+    await UploadDataToServer.getBypassObjectDetail(period, object_name)
+}
+export const clearBypassObjectDetail = (data, object_name) => async () => {
+    // dispatch(showLoaderBypassIcon())
+    dispatch({
+        type: 'CLEAR_BYPASS_OBJECT_DETAIL',
+        payload:  {data, object_name}
+    })
 }

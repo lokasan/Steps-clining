@@ -27,7 +27,7 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
     let componentsFinished = useSelector(state => state.bypassRank.bypassComponents)
     
     const postId         = post.id
-    const bypassId       = useSelector(state => state.bypass.bypassNumber)
+    const {bypassId}       = useSelector(state => state.bypass.bypassNumber)
     const position       = Animated.subtract( index * HEIGHT, y)
     const isDisappearing = -HEIGHT
     const isLeft         = 0

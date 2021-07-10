@@ -15,7 +15,7 @@ import { Directions, FlingGestureHandler, State } from 'react-native-gesture-han
 export const BypassScreen = ({navigation}) => {
     const dispatch = useDispatch()
     const post = navigation.getParam('element')
-    const bypassId = useSelector(state => state.bypass.bypassNumber)
+    const {bypassId} = useSelector(state => state.bypass.bypassNumber)
     let components = useSelector(state => state.postWithComponent.postWithComponentAll)
     const startedBypassRanks = useSelector(state => state.bypassRank.bypassRankIsStarted)
     let componentsFinished = useSelector(state => state.bypassRank.bypassComponents)

@@ -31,9 +31,9 @@ export const ComponentRankCard = ({componentRank, dispatch, componentRankAll, na
           
     }
     return <Fragment>
-        <ModalForRemove TEXT_TITLE={TEXT_TITLE} TEXT_ACTION={TEXT_ACTION} remove={removeComponentRank}  modalVisible={modalVisible} setModalVisible={setModalVisible} myObject={componentRank} />
+        <ModalForRemove TEXT_TITLE={TEXT_TITLE} TEXT_ACTION={TEXT_ACTION} remove={removeComponentRank}  modalVisible={modalVisible} setModalVisible={setModalVisible} myObject={componentRank} componentRankAll={componentRankAll} updateComponentRank={updateComponentRank}/>
     <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('EditComponentRank', {componentRank})} onLongPress={() => {
-        dispatch(updateComponentRank(componentRankAll.filter(e => e.id !== componentRank.id), componentRankAll.length -1, count=1))
+        
         setModalVisible(true)
         }}>
     <View style={styles.actionMenu}>

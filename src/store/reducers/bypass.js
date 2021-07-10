@@ -3,6 +3,7 @@ import { CREATE_NEW_BYPASS, LOAD_BYPASS, SHOW_LOADER, HIDE_LOADER, LOAD_BYPASS_S
 const initialState = {
     bypassNumber: [],
     bypassGetter: [],
+    bypassObjectDetail: [],
     bypassUsersList: [],
     loading: true,
     loaderIcon: false,
@@ -18,7 +19,7 @@ export const bypassReducer = (state = initialState, action) => {
         }
         case LOAD_BYPASS: return {
             ...state,
-            bypassNumber: typeof action.payload === 'number' ? action.payload : -1
+            bypassNumber: {bypassId: action.payload.bypassId, cleanerStatus: action.payload.cleanerStatus}
         }
         case SHOW_LOADER: return {
             ...state,
@@ -69,6 +70,16 @@ export const bypassReducer = (state = initialState, action) => {
         case 'CLEAR_BYPASS_USERS_DETAIL': return {
             ...state,
             bypassUsersListDetail: [...action.payload.data.filter(el => !(el.post_name === action.payload.post && el.email === action.payload.user))],
+            loading: false
+        }
+        case 'LOAD_BYPASS_STATUS_OBJECT_DETAIL': return {
+            ...state,
+            bypassObjectDetail: [...state.bypassObjectDetail, ...action.payload],
+            loaderIcon: false
+        }
+        case 'CLEAR_BYPASS_OBJECT_DETAIL': return {
+            ...state,
+            bypassObjectDetail: [...action.payload.data.filter(el => !(el.object_name === action.payload.object_name))],
             loading: false
         }
         default: return state

@@ -97,7 +97,14 @@ async function socket_onmessage_callback(recv) {
             type   : LOAD_BYPASS_STATUS_OBJECT,
             payload: data[MESSAGE]
         })
-    } else if (ACTION in data && data[ACTION] === GET_BYPASS_STATUS_POSTS) {
+    } else if(ACTION in data && data[ACTION] === 'GET_BYPASS_STATUS_OBJECT_DETAIL') {
+        dispatch(hideLoaderBypassIcon())
+        dispatch({
+            type: 'LOAD_BYPASS_STATUS_OBJECT_DETAIL',
+            payload: data[MESSAGE]
+        })
+    }
+    else if (ACTION in data && data[ACTION] === GET_BYPASS_STATUS_POSTS) {
         data[MESSAGE].map((el) => el['countTime'] = msToTime(el['countTime']))
         dispatch(hideLoaderBypass())
         dispatch({
@@ -559,7 +566,7 @@ export class UploadDataToServer {
     static async isCleanerOnBypass(cleaner, bypassId) {
         ws.send(JSON.stringify(
             {
-                ACTION           : CLEANER_ON_BYPASS,
+                ACTION           : 'CLEANER_ON_BYPASS',
                 CLEANER_ON_BYPASS: cleaner,
                 BYPASS_ID        : bypassId
             }))
@@ -732,6 +739,13 @@ export class UploadDataToServer {
             ACTION: 'CHECK_AUTHENTICATION',
             EMAIL: email,
             PASSWORD: password
+        }))
+    }
+    static async getBypassObjectDetail(period, object_name) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_BYPASS_STATUS_OBJECT_DETAIL',
+            PERIOD: period,
+            OBJECT_NAME: object_name
         }))
     }
 }
