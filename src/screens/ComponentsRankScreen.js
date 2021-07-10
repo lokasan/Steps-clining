@@ -25,7 +25,7 @@ export const ComponentsRankScreen = ({ navigation }) => {
     const createdBypassRank = useSelector(state => state.bypassRank.bypassRankId)
     const component         = navigation.getParam('item')
     // console.log(createdBypassRank, 'СОЗДАННЫЙ РАНК')
-    const bypassId       = useSelector(state => state.bypass.bypassNumber)
+    const {bypassId}       = useSelector(state => state.bypass.bypassNumber)
     const post           = navigation.getParam('post')
     const bypassDispatch = navigation.getParam('dispatch')
     // const bypassRankId = navigation.getParam('startedBypassRank')

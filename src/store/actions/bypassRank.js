@@ -3,8 +3,10 @@ import { DB } from '../../db'
 import { UploadDataToServer } from '../../uploadDataToServer'
 
 export const createBypassRank = (bypassId, component_id) => async dispatch => {
-    const id = await DB.createBypassRank(bypassId, component_id)
-    await UploadDataToServer.addBypassRank(id, bypassId, component_id)
+    const id = String(Date.now())
+    const start_time = id
+    await DB.createBypassRank(id, bypassId, component_id, start_time)
+    await UploadDataToServer.addBypassRank(id, bypassId, component_id, start_time)
     dispatch({
         type: CREATE_NEW_BYPASS_RANK,
         payload: {id, component_id}

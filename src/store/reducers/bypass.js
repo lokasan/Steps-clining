@@ -15,7 +15,7 @@ export const bypassReducer = (state = initialState, action) => {
     switch (action.type) {
         case CREATE_NEW_BYPASS: return {
             ...state,
-            bypassNumber: action.payload
+            bypassNumber: {bypassId: action.payload, cleanerStatus: action.payload.cleanerStatus}
         }
         case LOAD_BYPASS: return {
             ...state,

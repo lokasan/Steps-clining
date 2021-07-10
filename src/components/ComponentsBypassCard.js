@@ -23,6 +23,7 @@ export const ComponentsBypassCard = ({index, y, item, navigation, post, startedB
     
     // console.log(item, 'что происходит', startedBypassRank)
     const {bypassId} = useSelector(state => state.bypass.bypassNumber)
+    console.log(bypassId, 'BYPASS YOU LIVE OR DIE?')
     const position = Animated.subtract( index * HEIGHT, y)
     const isDisappearing = -HEIGHT
     const isLeft = 0

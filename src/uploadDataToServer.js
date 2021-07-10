@@ -527,14 +527,14 @@ export class UploadDataToServer {
                 ICON: icon
             }))
     }
-    static async addBypassRank(id, bypassId, component_id) {
+    static async addBypassRank(id, bypassId, component_id, start_time) {
         ws.send(JSON.stringify(
             {
                 ACTION      : CREATE_BYPASS_RANK,
                 ID          : id,
                 BYPASS_ID   : bypassId,
                 COMPONENT_ID: component_id,
-                START_TIME  : String(Date.now())
+                START_TIME  : start_time
             }))
     }
     static async editBypassRank(componentRankId, id) {

@@ -510,13 +510,13 @@ export class DB {
             })
         })
     }
-    static createBypassRank(bypass_id, component_id) {
+    static createBypassRank(id, bypass_id, component_id, start_time) {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
                 CREATE_NEW_BYPASS_RANK,
-                [Date.now(), bypass_id, component_id, String(Date.now())],
-                (_, result) => resolve(result.insertId),
+                [id, bypass_id, component_id, start_time],
+                resolve,
                 (_, error) => reject(error)
                 )
             })

@@ -16,6 +16,7 @@ export const BypassScreen = ({navigation}) => {
     const dispatch = useDispatch()
     const post = navigation.getParam('element')
     const {bypassId} = useSelector(state => state.bypass.bypassNumber)
+    console.log(bypassId, 'BYPASSSCREEN YOU LIVE?')
     let components = useSelector(state => state.postWithComponent.postWithComponentAll)
     const startedBypassRanks = useSelector(state => state.bypassRank.bypassRankIsStarted)
     let componentsFinished = useSelector(state => state.bypassRank.bypassComponents)

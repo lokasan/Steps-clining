@@ -216,7 +216,8 @@ const styles = StyleSheet.create({
     },
     privateData: {
         flexDirection: 'column',
-        justifyContent: 'space-evenly'
+        justifyContent: 'space-evenly',
+        width: '60%'
     },
     textStyle: {
         color: '#fff', 
