@@ -42,7 +42,7 @@ export const ComponentsRankScreen = ({ navigation }) => {
     const bypassRankId     = bypassRank.length ? bypassRank[0].id : null
     const componentId      = component.id
     const componentRankAll = useSelector(state => state.componentRank.componentRankAll)
-    
+    console.log(componentRankAll, 'Component Rank all my is component')
     const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
     const y                = new Animated.Value(0)
     const onScroll         = Animated.event([{ nativeEvent: { contentOffset: { y } }}], { useNativeDriver: true })
@@ -64,6 +64,8 @@ export const ComponentsRankScreen = ({ navigation }) => {
                     bypassRankId    = {bypassRankId}
                     componentsValid = {componentsValid}
                     target          = {target}
+                    componentRankAll = {componentRankAll}
+                
                     />
                     )}  
                     keyExtractor = {(item) => String(item.id)}

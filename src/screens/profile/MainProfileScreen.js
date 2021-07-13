@@ -40,7 +40,11 @@ export const MainProfileScreen = ({navigation}) => {
         }
     
     async function calculate() {
-        let html = ''
+        let html = `<head>
+        <meta name="viewport" content ="width=device-width,initial-scale=1,user-scalable=yes" />
+      </head>
+      <body>
+        <div style="display: flex; flex-direction: row; justify-content: space-around; flex-wrap: wrap;">`
         for (let el of allPostResult) {
             console.log(el);
             // const data = await FileSystem.readAsStringAsync(el.img, {
@@ -53,16 +57,18 @@ export const MainProfileScreen = ({navigation}) => {
             // <img src="${imageData}" width="100%"/>
             // </div>`;
             
-            html += `<head>
-            <meta name="viewport" content ="width=device-width,initial-scale=1,user-scalable=yes" />
-          </head>
-          <body>
-            <div>
-            <img style="display: block; margin: auto" src="${el.qrcode_img}" height='70%'/>
+            html += `
+            <div style="width: 20%; box-sizing: border-box;">
+            <div style="text-align: center;">
+            <img src="${el.qrcode_img}" width='76px' height='76px'/>
+            
+            <h1 style="font-size: 12px;"> ${el.name} </h1>
             </div>
-            <h1 style="text-align: center; margin-bottom: 178px;"> ${el.name} </h1></body>`;
+            </div>`
+            ;
         }
-        
+        html += `</div>
+        </body>`
         return html
         
         

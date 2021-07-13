@@ -32,6 +32,17 @@ export const loadStartedBypassRank = bypassId => async dispatch => {
    
 }
 
+export const updateBypassRankWithPhoto = (image, itemComponentRank, bypassId, bypassRankId) => async dispatch => {
+    await UploadDataToServer.editBypassRankAndImage(image, itemComponentRank.id, bypassId, bypassRankId)
+    await DB.updateBypassRank(itemComponentRank.id, bypassRankId)
+    const componentRank = await DB.getComponentRankForId(itemComponentRank.id)
+
+    dispatch({
+        type: UPDATE_BYPASS_RANK,
+        payload: componentRank
+    })
+}
+
 export const updateBypassRank = (componentRankId, id) => async dispatch => {
     await UploadDataToServer.editBypassRank(componentRankId, id)
     await DB.updateBypassRank(componentRankId, id)

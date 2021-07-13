@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, Fragment } from 'react'
 import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert, Animated, Dimensions} from 'react-native'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
 import { Extrapolate } from 'react-native-reanimated'
@@ -10,6 +10,10 @@ import { updateBypassRank } from '../store/actions/bypassRank'
 import { finishedBypass } from '../store/actions/bypass'
 import { loadFinishedBypassComponents } from '../store/actions/bypassRank'
 import { loadPostWithComponent } from '../store/actions/postWithComponent'
+import { PhotoPickerBypass } from './PhotoPickerBypass'
+import * as ImagePicker from 'expo-image-picker'
+import * as Permissions from 'expo-permissions'
+
 
 
 const  { width }                      = Dimensions.get("window");
@@ -20,12 +24,12 @@ export const MARGIN                   = 16
 export const HEIGHT                   = CARD_HEIGHT + MARGIN * 2
 const  { height: wHeight }            = Dimensions.get("window")
 const  height                         = wHeight - 64
-export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypassRankId, componentsValid, target}) => {
+export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypassRankId, componentsValid, target, componentRankAll}) => {
     const dispatch = useDispatch()
     
     let components         = useSelector(state => state.postWithComponent.postWithComponentAll)
     let componentsFinished = useSelector(state => state.bypassRank.bypassComponents)
-    
+    const componentReload = JSON.parse(JSON.stringify(componentRankAll))
     const postId         = post.id
     const {bypassId}       = useSelector(state => state.bypass.bypassNumber)
     const position       = Animated.subtract( index * HEIGHT, y)
@@ -33,6 +37,7 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
     const isLeft         = 0
     const isRight        = height - HEIGHT
     const isAppearing    = height
+    const [modalVisible, setModalVisible] = useState(false)
     const translateY     = Animated.add(Animated.add(y, y.interpolate({
         inputRange      : [0, 0.0001 + index * HEIGHT],
         outputRange     : [0, -index * HEIGHT],
@@ -53,21 +58,66 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
         inputRange : [isDisappearing, isLeft, isRight, isAppearing],
         outputRange: [0.5, 1, 1, 0.5]
     })
-    return (
+    const [image, setImage] = useState([])
+    async function askForPermissions() {
+        const { status } = await Permissions.askAsync(
+            Permissions.CAMERA,
+            Permissions.CAMERA_ROLL
+        )
+        if (status !== 'granted') {
+            Alert.alert('Ошибка. Вы не дали прав на создание фото')
+            return false
+        }
+        return true
+    
+    }
+    const takePhoto = async () => {
+        const hasPermissions = await askForPermissions()
+        if (!hasPermissions) {
+            return 
+        }
+        const img = await ImagePicker.launchCameraAsync({
+            qulity: 0.7,
+            allowsEditing: true,
+            aspect: [16, 9]
+        })
+        myId = String(Date.now())
+        if (img.uri) {setImage([{
+            id: myId,
+            image: img.uri}])}
+        
+        setModalVisible(true)
+        console.log(img)
+    }
+    return (<Fragment>
+        <PhotoPickerBypass target={target} componentsFinished={componentsFinished} components={components} dispatch={dispatch} bypassId={bypassId} bypassRankId={bypassRankId} itemComponentRank={item} image={image} setImage={setImage} navigation={navigation} modalVisible={modalVisible} setModalVisible={setModalVisible} />
         <Animated.View    style         = {[styles.card]} key = {String(item.id)}>
         <TouchableOpacity activeOpacity = {0.5} onPress       = {() => {
                 console.log(item.id, " Я Улетаю в базу", ' ', bypassRankId)
-                dispatch(updateBypassRank(item.id, bypassRankId))
-                dispatch(clearComponentRank())
+                console.log(componentReload, 'Component Reload')
+                maxElement = componentReload.filter(el => el.rank == Math.max(...componentReload.map(e => e.rank))  ? el : null)
+                minElement = componentReload.filter(el => el.rank == Math.min(...componentReload.map(e => e.rank))  ? el : null)
+                if (maxElement.length) {
+                    if (maxElement[0].id === item.id || minElement[0].id === item.id) {
+                        takePhoto()
+                    } else {
+                        dispatch(updateBypassRank(item.id, bypassRankId))
+                        dispatch(clearComponentRank())
+                        navigation.navigate('BypassScreen')
+                    }
+                }
+                
+                // dispatch(updateBypassRank(item.id, bypassRankId))
+                // dispatch(clearComponentRank())
                 // console.log(componentsFinished.length, '===', components.length, 'общая длина')
-                if ((componentsFinished.length + 1) === components.length) {
+                if ((componentsFinished.length + 1) === components.length && !(maxElement[0].id === item.id || minElement[0].id === item.id)) {
                     // console.log(bypassId, "я байпас")
                     // dispatch(updateBypassRank(item.id, bypassRankId))
                     dispatch(finishedBypass(1, bypassId)) 
                     target()
                     dispatch(clearPostWithComponent())
                     navigation.navigate('QRCode')
-                } else navigation.navigate('BypassScreen')
+                } else if(modalVisible) {navigation.navigate('BypassScreen')}
                 
             }}>
             <Image style = {styles.image} source = {{uri: item.img}}/>
@@ -76,6 +126,7 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
             <Text style = {{textAlign: 'center'}}>{item.name}</Text>
             
         </Animated.View>
+        </Fragment>
     )
 }
 const styles = StyleSheet.create({

@@ -537,6 +537,35 @@ export class UploadDataToServer {
                 START_TIME  : start_time
             }))
     }
+    
+    static async editBypassRankAndImage(image, componentRankId, bypassId, bypassRankId) {
+        console.log('Third images', image)
+        const imageArray = []
+        for (const el of image) {
+            const blob = await this.getBlob(el.image)
+            let reader = new FileReader()
+            reader.readAsDataURL(blob)
+            reader.onloadend = async function() {
+                imageArray.push({
+                    id: el.id,
+                    image: reader.result
+                })
+                if (imageArray.length === image.length) {
+                    ws.send(JSON.stringify({
+                        ACTION: 'EDIT_BYPASSRANK_AND_IMAGE',
+                        COMPONENT_RANK_ID: componentRankId,
+                        BYPASS_RANK_ID: bypassRankId,
+                        BYPASS_ID: bypassId,
+                        PATH: imageArray,
+                        END_TIME: String(Date.now())
+                    }))
+                }
+            }
+        }
+        
+        
+    }
+
     static async editBypassRank(componentRankId, id) {
         ws.send(JSON.stringify(
             {
