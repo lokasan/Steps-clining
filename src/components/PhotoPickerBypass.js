@@ -50,7 +50,7 @@ export const PhotoPickerBypass = ({target, componentsFinished, components, dispa
             return 
         }
         const img = await ImagePicker.launchCameraAsync({
-            qulity: 0.2,
+            qulity: 0.1,
             allowsEditing: true,
             aspect: [16, 9]
         })

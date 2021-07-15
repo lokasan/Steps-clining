@@ -217,7 +217,21 @@ async function socket_onmessage_callback(recv) {
             type: 'GET_USERS',
             payload: await DB.getUsers()
         })
-    } 
+    } else if (ACTION in data && data[ACTION] === 'GET_IMAGE_FOR_BYPASS') {
+        const myListBypassRankImage = []
+        for (var i=0; i < data['CONTENT'].length; i++) {
+            const filename = FileSystem.cacheDirectory + data['BYPASS_RANK_ID'] + '_' + String(i) + '.jpeg'
+            await FileSystem.writeAsStringAsync(filename, data['CONTENT'][i], {
+                encoding: FileSystem.EncodingType.Base64
+            })
+            myListBypassRankImage.push(filename)
+        }
+        dispatch({
+            type: 'GET_IMAGE_BYPASS_RANK',
+            payload: myListBypassRankImage
+        })
+        
+    }
     // `data:image/jpeg;base64,${object.path}
     
 }
@@ -562,8 +576,13 @@ export class UploadDataToServer {
                 }
             }
         }
-        
-        
+    }
+
+    static async getBypassPhoto(bypass_rank_id) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_IMAGE_FOR_BYPASS',
+            BYPASS_RANK_ID: bypass_rank_id
+        }))
     }
 
     static async editBypassRank(componentRankId, id) {

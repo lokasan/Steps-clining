@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react'
-import { Text, View, Share, TouchableOpacity, FlatList, StyleSheet, Image, ActivityIndicator, Animated, Alert, ScrollView } from 'react-native'
+import React, {useEffect, Fragment} from 'react'
+import { Text, View, Share, Dimensions, TouchableOpacity, FlatList, StyleSheet, Image, ActivityIndicator, Animated, Alert, ScrollView, Modal } from 'react-native'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import {AppHeaderIcon} from '../components/AppHeaderIcon'
 import * as Print from 'expo-print';
@@ -8,14 +8,17 @@ import * as FileSystem from 'expo-file-system';
 import {useDispatch, useSelector} from 'react-redux'
 import { getPostAll } from '../store/actions/post';
 import QRCode from 'react-native-qrcode-generator'
-import {Cycle, Clock, Rank, QRIcon, StepsIcon, PeopleIcon} from '../components/ui/imageSVG/circle'
+import {Cycle, Clock, Rank, QRIcon, StepsIcon, PeopleIcon, ArrowRight} from '../components/ui/imageSVG/circle'
 import { useState, useRef } from 'react';
 import { clearBypassObjectDetail, clearBypassUsers, clearBypassUsersDetail, loadBypassGetter, loadBypassObjectDetail, loadBypassPosts, loadBypassUsers, loadBypassUsersDetail } from '../store/actions/bypass';
 import { msToTime } from '../utils/msToTime';
+import { UploadDataToServer } from '../uploadDataToServer';
+import { clearBypassRankImage } from '../store/actions/bypassRank';
+import CarouselItem from '../components/ui/CarouselItem'
 // import { Circle } from 'react-native-svg';
 // import Shares from 'react-native-share'
 const NORMAL_RANK = 3
-
+const {width, height} = Dimensions.get("window")
 export const StatusObject = () => {
   const dispatch = useDispatch()
   const existsComponents = useRef([])
@@ -34,6 +37,9 @@ export const StatusObject = () => {
   const DATA_USERS                                      = useSelector(state => state.bypass.bypassUsersList)
   const DATA_USERS_DETAIL                               = useSelector(state => state.bypass.bypassUsersListDetail)
   const DATA_OBJECT_DETAIL = useSelector(state => state.bypass.bypassObjectDetail)
+  const DATA_IMAGE_BYPASS_RANK = useSelector(state => state.bypassRank.bypassRankImage)
+
+  console.log(DATA_IMAGE_BYPASS_RANK, 'DATA_IMAGE_BYPASS_RANK')
   const USERS_LIST = useSelector(state => state.empDouble.empServer)
   console.log(DATA_POSTS)
   console.log(DATA_USERS, 'userss');
@@ -42,6 +48,7 @@ export const StatusObject = () => {
   console.log(USERS_LIST, 'USERS _ LIST')
   const choiseObject = useRef(null)
   const [choiseObjectS, setChoiseObjectS] = useState('')
+  const [modalVisible, setModalVisible] = useState(false)
       const Item = ({item, index}) => {
         const inputRange = [
           -1,
@@ -665,7 +672,22 @@ export const StatusObject = () => {
           for (let cmp of existsComponents.current) {
             let keyByValue = getKeyByValue(item, cmp)
             if (keyByValue) {
-              createdElements.push(<TouchableOpacity onLongPress={() => alertStatus(item[keyByValue + '_name_c_r'])}><Text style = {styles.beastAndBad}>{item[keyByValue + '_rank']}</Text></TouchableOpacity>)
+              console.log(item.is_image)
+              createdElements.push(<TouchableOpacity 
+                style={item[keyByValue + '_is_image'] ? {...styles.beastAndBad} : styles.beastAndBad }
+              onLongPress={() => alertStatus(item[keyByValue + '_name_c_r'])}
+              onPress={() => {
+                console.log(keyByValue)
+                if (item[keyByValue + '_is_image']) {
+                  UploadDataToServer.getBypassPhoto(keyByValue)
+                  setModalVisible(true)
+                }
+              }}>
+                
+                <Text style={item[keyByValue + '_is_image'] ? {fontSize: 10, fontFamily: 'open-bold', color: '#e4a010'} : {fontSize: 10, fontFamily: 'open-bold'}}>{item[keyByValue + '_rank']}
+                </Text>
+               
+                </TouchableOpacity>)
             } else {
               createdElements.push(<Text style = {styles.beastAndBad}>-</Text>)
             }
@@ -978,8 +1000,63 @@ export const StatusObject = () => {
       <ActivityIndicator color  = "#0000ff"/>
         </View>
       const scrollY = useRef(new Animated.Value(0)).current
+      const scrollXGallery = new Animated.Value(0)
+      let position = Animated.divide(scrollXGallery, width)
+      const testData = [{id: 1, img: 'sdfds'}]
+    return <Fragment>
+      <Modal
+      animationType="fade"
+      transparent={true}
+      visible={modalVisible}>
+        <View style={{ backgroundColor: '#000', position: 'relative', paddingTop: 30, paddingLeft: '90%'}}>
+  <TouchableOpacity onPress={() => {
+    setModalVisible(false);
+    dispatch(clearBypassRankImage())
+    }}>
+    <ArrowRight/>
+  </TouchableOpacity>
+  </View>
+  
+      <View style={{backgroundColor: '#000', flex: 1, justifyContent: 'space-between', alignItems: 'center'}}>
+  
+        <FlatList
+          data={DATA_IMAGE_BYPASS_RANK}
+          keyExtractor={(item, index) => 'key' + index}
+          horizontal
+          pagingEnabled
+          scrollEnabled
+          snapToAlignment="center"
+          scrollEventThrottle={16}
+          decelerationRate={"fast"}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => (
+                              <CarouselItem item={item} />
+                          )}
+          onScroll={Animated.event(
+            [{nativeEvent: {contentOffset: {x: scrollXGallery}}}]
+          )}/>
+    {/* <Image source={{uri: USERS_LIST[0]['img']}} style={styles.image}/> */}
+        <View style={styles.dotView}>
+          {DATA_IMAGE_BYPASS_RANK.map((_, i) => {
+              let opacity = position.interpolate({
+                inputRange: [i - 1, i, i + 1],
+                outputRange: [0.3, 1, 0.3],
+                extrapolate: 'clamp'
+              }
+            
+              )
+              return(
+                <Animated.View
+                key = {i}
+                style = {{opacity, height: 10, width: 10, backgroundColor: '#4d5d53', margin: 8, borderRadius: 5}}
+                >
+                </Animated.View>
+              )
+          })}
+          </View>
+        </View>
+      </Modal>
       
-    return <>
         {/* <Image source = {{uri: 'https://www.alllessons.ru/wp-content/uploads/files/hello_html_m25c160ca.jpg'}} style = {StyleSheet.absoluteFillObject} blurRadius = {50}/> */}
         {listMenu()}
         
@@ -990,7 +1067,7 @@ export const StatusObject = () => {
           )} renderItem={renderItem} keyExtractor={item => item.id}/>
           </>}
           {DATA2.length ?  null : <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', textAlign: 'center'}}><Text style={{fontSize: 18, textAlign: 'center'}}>Статистика по объекту за выбранный период пуста</Text></View>}
-        </>
+        </Fragment>
 }
 StatusObject.navigationOptions = ({navigation}) => ({
     headerTitle: 'Состояние объекта',
@@ -1123,5 +1200,13 @@ StatusObject.navigationOptions = ({navigation}) => ({
 
            elevation: 5,
        }, 
+       image: {
+        width: '100%',
+        height: 400
+      },
+      dotView: {
+        flexDirection: 'row',
+        justifyContent: 'center'
+      }
       
   })

@@ -53,6 +53,12 @@ export const updateBypassRank = (componentRankId, id) => async dispatch => {
         payload: componentRank
     })
 }
+export const clearBypassRankImage = () => async dispatch => {
+    dispatch({
+        type: 'CLEAR_BYPASS_RANK_IMAGE'
+    })
+}
+
 export const showLoaderBypassRank = () => async dispatch => {
     dispatch({
         type: SHOW_LOADER
