@@ -33,7 +33,7 @@ export const MainScreen = ({navigation}) => {
   }
   const db = SQLite.openDatabase('dbas.db')
   console.log('I`m in mainscreen')
-  function buildQ ()  {
+  async function buildQ ()  {
     
      return new Promise(resolve => {
        db.transaction((tx) => { 

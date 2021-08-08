@@ -31,9 +31,9 @@ export const PhotoPickerBypass = ({target, componentsFinished, components, dispa
             return 
         }
         const img = await ImagePicker.launchCameraAsync({
-            qulity: 0.7,
+            qulity       : 0.7,
             allowsEditing: true,
-            aspect: [16, 9]
+            aspect       : [16, 9]
         })
         myId = String(Date.now())
         if (img.uri) {
@@ -50,13 +50,13 @@ export const PhotoPickerBypass = ({target, componentsFinished, components, dispa
             return 
         }
         const img = await ImagePicker.launchCameraAsync({
-            qulity: 0.1,
+            qulity       : 0.1,
             allowsEditing: true,
-            aspect: [16, 9]
+            aspect       : [16, 9]
         })
         myId = String(Date.now())
         if (img.uri) {setImage([...image, {
-            id: myId,
+            id   : myId,
             image: img.uri}])}
         
         
@@ -66,15 +66,12 @@ export const PhotoPickerBypass = ({target, componentsFinished, components, dispa
             "Редактирование вложения",
             "Вы хотите удалить фото или заменить ?",
             [
-              
               {
-                text: "Заменить",
-                
-                style: "cancel",
+                text   : "Заменить",
+                style  : "cancel",
                 onPress: () => {
                     changePhoto(item)
                 }
-        
               },
               { text: "Удалить", style: 'destructive', onPress: () => {
                 setImage(image.filter(el => {
@@ -82,13 +79,10 @@ export const PhotoPickerBypass = ({target, componentsFinished, components, dispa
                         return el
                     } else {
                         FileSystem.deleteAsync(item.image)
-                    }
-                    
+                    }  
                 }
-                ))
-                
-                  
-                } }
+                ))  
+                }}
             ],
             { cancelable: false }
           )
@@ -96,16 +90,16 @@ export const PhotoPickerBypass = ({target, componentsFinished, components, dispa
 
     const Item = ({ item }) => (
         <><TouchableOpacity>
-            <View style={{display: 'absolute', width: 74, height: 100, top: 10}}>
+            <View style = {{display: 'absolute', width: 74, height: 100, top: 10}}>
             
-            <View style={{zIndex: 1000, marginLeft: 'auto', marginTop: -5, marginRight: -5}}>
-            <TouchableOpacity onPress={() => removeHandler(item)}>
+            <View             style   = {{zIndex: 1000, marginLeft: 'auto', marginTop: -5, marginRight: -5}}>
+            <TouchableOpacity onPress = {() => removeHandler(item)}>
             <RemoveBypassRankPhoto />
             </TouchableOpacity>
             </View>
             
-            <View style={{position: 'absolute', height: 74}}>
-            <Image style={{zIndex: 0, height: 64, width: 64, borderRadius: 15, marginLeft: 10}} source={{uri: item.image}}/>
+            <View  style = {{position: 'absolute', height: 74}}>
+            <Image style = {{zIndex: 0, height: 64, width: 64, borderRadius: 15, marginLeft: 10}} source = {{uri: item.image}}/>
             </View>
             </View>
         </TouchableOpacity>
@@ -114,46 +108,46 @@ export const PhotoPickerBypass = ({target, componentsFinished, components, dispa
             takePhoto()
         }}
         >
-            <View style={{ marginTop: 10, marginLeft: 10}}>
+            <View style = {{ marginTop: 10, marginLeft: 10}}>
             <AddNewBypassRankPhoto/>
             </View>
         </TouchableOpacity>}</>
         
     )
     const renderItem = ({ item }) => (
-        <Item item={item}/>
+        <Item item = {item}/>
     )
     console.log(image, 'Image photo picker')
     return <Fragment>
         <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}>
-            <View style={styles.centeredView}>
-                <View style={styles.modalView}>
+              animationType = "fade"
+              transparent   = {true}
+              visible       = {modalVisible}>
+        <View style         = {styles.centeredView}>
+        <View style         = {styles.modalView}>
                     
-                    <Text style={styles.modalTitle}>Выбранная оценка: {JSON.stringify(itemComponentRank.name)}</Text>
-                    <Text style={styles.modalText}>Посмотрите содержимое и измените при необходимости</Text>
+                    <Text style = {styles.modalTitle}>Выбранная оценка: {JSON.stringify(itemComponentRank.name)}</Text>
+                    <Text style = {styles.modalText}>Посмотрите содержимое и измените при необходимости</Text>
                     {image.length == 0 && <TouchableOpacity
                         onPress={() => {
                             takePhoto()
                         }}
                                             >
-                    <View style={{ marginTop: 10, marginLeft: 10}}>
+                    <View style = {{ marginTop: 10, marginLeft: 10}}>
                     <AddNewBypassRankPhoto/>
                     </View>
                 </TouchableOpacity>}
                     <FlatList
-                    horizontal={true}
-                    vertical={false}
-                    showsHorizontalScrollIndicator={false}
-                    data={image}
-                    renderItem={renderItem}
-                    keyExtractor={item => item.id}/>
-                <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                          horizontal                     = {true}
+                          vertical                       = {false}
+                          showsHorizontalScrollIndicator = {false}
+                          data                           = {image}
+                          renderItem                     = {renderItem}
+                          keyExtractor                   = {item => item.id}/>
+                    <View style                          = {{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                 <Pressable
-                style={({ pressed }) => [styles.button, !image.length ? styles.buttonEmailSend : styles.buttonClose]}
-                onPress={() => {
+                style   = {({ pressed }) => [styles.button, !image.length ? styles.buttonEmailSend : styles.buttonClose]}
+                onPress = {() => {
                     setModalVisible(!modalVisible)
                     dispatch(updateBypassRankWithPhoto(image, itemComponentRank, bypassId, bypassRankId))
                     
@@ -166,8 +160,8 @@ export const PhotoPickerBypass = ({target, componentsFinished, components, dispa
                         navigation.navigate('BypassScreen')
                     }
                 }}
-                disabled={!image.length}>
-                    <Text style={styles.textStyle}>Отправить</Text>
+                      disabled = {!image.length}>
+                <Text style    = {styles.textStyle}>Отправить</Text>
                 </Pressable>
                 </View>
                 </View>
@@ -179,25 +173,25 @@ export const PhotoPickerBypass = ({target, componentsFinished, components, dispa
 }
 const styles = StyleSheet.create({
     modalView: {
-      margin: 20,
+      margin         : 20,
       backgroundColor: "white",
-      borderRadius: 20,
-      padding:35,
-      paddingBottom: 10,
-      height: '40%',
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
+      borderRadius   : 20,
+      padding        : 35,
+      paddingBottom  : 10,
+      height         : '40%',
+      shadowColor    : '#000',
+      shadowOffset   : {
+        width : 0,
         height: 2
       },
       shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5
+      shadowRadius : 4,
+      elevation    : 5
     },
     button: {
       borderRadius: 20,
-      padding: 10,
-      elevation: 2
+      padding     : 10,
+      elevation   : 2
     },
     buttonClosePressed: {
       backgroundColor: '#000'
@@ -212,30 +206,30 @@ const styles = StyleSheet.create({
       backgroundColor: 'red',
     },
     textStyle: {
-      color: 'white',
+      color     : 'white',
       fontWeight: 'bold',
-      textAlign: 'center'
+      textAlign : 'center'
     },
     modalText: {
       marginBottom: 15,
-      textAlign: 'center'
+      textAlign   : 'center'
     },
     modalTitle: {
       marginBottom: 15,
-      textAlign: 'center',
-      fontWeight: 'bold'
+      textAlign   : 'center',
+      fontWeight  : 'bold'
     },
     centeredView: {
-      flex: 1,
+      flex          : 1,
       justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 22
+      alignItems    : 'center',
+      marginTop     : 22
     },
     buttonClose: {
         backgroundColor: '#303f9f',
       },
       buttonEmailSend: {
         backgroundColor: '#303f9f',
-        opacity: 0.4
+        opacity        : 0.4
       },
 })

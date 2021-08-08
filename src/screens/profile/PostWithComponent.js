@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react'
-import {View, Text, StyleSheet, Image, Button, ScrollView, Alert, FlatList} from 'react-native'
+import React, {useCallback, useEffect, useState, Fragment} from 'react'
+import {View, Text, StyleSheet, Image, Button, TouchableOpacity, ScrollView, Alert, FlatList} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import { DATA } from '../../testData'
@@ -12,12 +12,13 @@ import { loadPost } from '../../store/actions/post'
 import { ComponentCardToPost } from '../../components/ComponentCardToPost'
 import { loadComponent, removeComponent, updateComponent } from '../../store/actions/component'
 import { loadPostWithComponent } from '../../store/actions/postWithComponent'
+import { ModalZoomable } from '../../components/ui/ModalZoomable'
 
 export const PostWithComponent = ({navigation}) => {
     
     const dispatch = useDispatch()
   
-    
+    const [zoomable, setZoomable] = useState(false)
     const post = navigation.getParam('post')
     const postWithComponent = useSelector(state => state.post.postAll.find(e => e.id === post.id))
     const componentAll = useSelector(state => state.component.componentAll)
@@ -31,12 +32,14 @@ export const PostWithComponent = ({navigation}) => {
     if (!postWithComponent) {
       return null
     }
-    return <View style={{flex: 1, backgroundColor: '#000'}}>
+    return <Fragment><View style={{flex: 1, backgroundColor: '#000'}}>
        
         <View style={styles.container}>
     <View style={styles.userCard}>
     <View>
-        <Image style={{height: 150, width: 150}} source={{uri: post.img}}/>
+        <TouchableOpacity onPress={() => setZoomable(true)}>
+            <Image style={{height: 150, width: 150}} source={{uri: post.img}}/>
+        </TouchableOpacity>
     </View>
     <View style={styles.privateData}>
         <View style={styles.textStyle}>
@@ -63,6 +66,8 @@ export const PostWithComponent = ({navigation}) => {
 
 {/* <Footer/> */}
 </View>
+<ModalZoomable zoomable={zoomable} setZoomable={setZoomable} pathImg={post.img}/>
+</Fragment>
 }
 const styles = StyleSheet.create({
     image: {

@@ -10,6 +10,7 @@ import { getUserShift, removeEmploee, updateUserPrivileg, updateUserShift } from
 import {PinchGestureHandler, PanGestureHandler} from 'react-native-gesture-handler'
 import { ArrowRight } from '../../components/ui/imageSVG/circle'
 import { UploadDataToServer } from '../../uploadDataToServer'
+import { ModalZoomable } from '../../components/ui/ModalZoomable'
 var radio_props = [
     {label: 'Без прав', value: 0 },
     {label: 'Только чтение', value: 1 },
@@ -52,9 +53,6 @@ export const EmploeeScreen = ({navigation}) => {
     useEffect(() => {
       dispatch(getUserShift(emploeeId))
     }, [])
-    const scale = useRef(new Animated.Value(1)).current
-    const translateX = useRef(new Animated.Value(0)).current
-    const translateY = useRef(new Animated.Value(0)).current
 
     console.log(emploee);
 
@@ -84,18 +82,6 @@ export const EmploeeScreen = ({navigation}) => {
       return null
     }
     
-    const handlePan = Animated.event([
-      {
-        nativeEvent: {
-          translationX: translateX,
-          translationY: translateY
-        },
-      },
-    ], {
-      listener: e => console.log(e.nativeEvent),
-      useNativeDriver: true
-    })
-    const handlePinch = Animated.event([ { nativeEvent: { scale } } ], {useNativeDriver: true})
     
     return <React.Fragment><View style={{flex: 1, backgroundColor: '#000'}}>
         <ScrollView>
@@ -181,7 +167,8 @@ export const EmploeeScreen = ({navigation}) => {
 <Button title='Удалить' color={HEADER_FOOTER.DANGER_COLOR} onPress={() => removeHandler(emploee, dispatch, navigation)}/>
 {/* <Footer/> */}
 </View>
-<Modal visible={zoomable} animationType='slide' animated>
+<ModalZoomable zoomable={zoomable} setZoomable={setZoomable} pathImg={emploee.img}/>
+{/* <Modal visible={zoomable} animationType='slide' animated>
   <View style={{ backgroundColor: '#000', position: 'relative', paddingTop: 30, paddingLeft: '90%'}}>
   <TouchableOpacity onPress={() => setZoomable(false)}>
     <ArrowRight/>
@@ -194,7 +181,7 @@ export const EmploeeScreen = ({navigation}) => {
 </PinchGestureHandler>
 </Animated.View>
 </PanGestureHandler>
-</Modal>
+</Modal> */}
 </React.Fragment>
 }
 const styles = StyleSheet.create({

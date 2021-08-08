@@ -294,8 +294,11 @@ export const StatusObject = () => {
                     <View style = {styles.wrapperFirstLine}>
                         <View>
                           <TouchableOpacity onPress={() => {
+                            choiseObject.current = null
                             setFlagArrayObjectDetail(flagArrayObjectDetail.filter(el => !(el=== item?.data[0]?.object_name)))
-                            dispatch(clearBypassObjectDetail(DATA_OBJECT_DETAIL, item?.data[0]?.object_name))}}><Text style = {styles.headTitle}>{item?.data[0]?.object_name}</Text></TouchableOpacity>
+                            dispatch(clearBypassObjectDetail(DATA_OBJECT_DETAIL, item?.data[0]?.object_name))}}>
+                              <Text style = {styles.headTitle}>{item?.data[0]?.object_name}</Text>
+                              </TouchableOpacity>
                         </View>
                       
                     </View>
@@ -627,7 +630,9 @@ export const StatusObject = () => {
               })()}
               
               </View>
-              {  choisePost.current?.email === item.email && choisePost.current?.post === item.post_name && loaderIcon ? <View style={{position: 'absolute', justifyContent: 'center', alignItems: 'center', width: '100%', height: 100, opacity: 1}}>
+              {  choisePost.current?.email === item.email && choisePost.current?.post === item.post_name && loaderIcon ? 
+              <View 
+              style={{position: 'absolute', justifyContent: 'center', alignItems: 'center', width: '100%', height: 100, opacity: 1}}>
               <ActivityIndicator color  = "#0000ff"/>
               </View> : null}
               </View>
@@ -821,7 +826,11 @@ export const StatusObject = () => {
                       <Text style={styles.beastAndBad}>Вр. кон. обх.</Text>
                       <Text style={styles.beastAndBad}>Длит. обх.</Text>
                       </View>
-                      <ScrollView vertical={false} horizontal={true} showsHorizontalScrollIndicator={false} style={{display: 'flex', flexDirection: 'row', width: '75%'}}>
+                      <ScrollView 
+                      vertical={false} 
+                      horizontal={true} 
+                      showsHorizontalScrollIndicator={false} 
+                      style={{display: 'flex', flexDirection: 'row', width: '75%'}}>
                       {createViewDataComponent(item)}
                       </ScrollView>
                         {/* <Image style = {{...styles.beastAndBad, height: 32, width: 20}} source={item.data?.length !== 0 ? {uri: `http://openweathermap.org/img/wn/${item.data[0].icon}@2x.png`} : null}/> */}
@@ -1033,7 +1042,8 @@ export const StatusObject = () => {
                               <CarouselItem item={item} />
                           )}
           onScroll={Animated.event(
-            [{nativeEvent: {contentOffset: {x: scrollXGallery}}}]
+            [{nativeEvent: {contentOffset: {x: scrollXGallery}}}],
+            { useNativeDriver: false}
           )}/>
     {/* <Image source={{uri: USERS_LIST[0]['img']}} style={styles.image}/> */}
         <View style={styles.dotView}>

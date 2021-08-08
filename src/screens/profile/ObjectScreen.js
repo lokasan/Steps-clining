@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react'
-import {View, Text, StyleSheet, Image, Button, ScrollView, Alert, FlatList, SafeAreaView, ActivityIndicator} from 'react-native'
+import React, {useCallback, useEffect, useState, Fragment} from 'react'
+import {View, Text, StyleSheet, Image, Button, TouchableOpacity, ScrollView, Alert, FlatList, SafeAreaView, ActivityIndicator} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import { DATA } from '../../testData'
@@ -10,10 +10,11 @@ import { removeObject, updateObject } from '../../store/actions/object'
 import {AppHeaderIcon} from '../../components/AppHeaderIcon'
 import { loadPost } from '../../store/actions/post'
 import { PostCard } from '../../components/PostCard'
+import { ModalZoomable } from '../../components/ui/ModalZoomable'
 
 
 export const ObjectScreen = ({navigation}) => {
-
+    const [zoomable, setZoomable] = useState(false)
     const dispatch = useDispatch()
     const objectId = navigation.getParam('objectId')
     const object = useSelector(state => state.object.objAll.find(e => e.id === objectId))
@@ -30,12 +31,14 @@ export const ObjectScreen = ({navigation}) => {
       return null
     }
     
-    return <ScrollView style={{flex: 1, backgroundColor: '#000'}}>
+    return <Fragment><ScrollView style={{flex: 1, backgroundColor: '#000'}}>
         
         <View style={styles.container}>
     <View style={styles.userCard}>
     <View>
-        <Image style={{height: 150, width: 150}} source={{uri: object.img}}/>
+        <TouchableOpacity onPress={() => setZoomable(true)}>
+            <Image style={{height: 150, width: 150}} source={{uri: object.img}}/>
+        </TouchableOpacity>
     </View>
     <View style={styles.privateData}>
         <View style={styles.textStyle}>
@@ -67,6 +70,8 @@ export const ObjectScreen = ({navigation}) => {
 
 {/* <Footer/> */}
 </ScrollView>
+<ModalZoomable zoomable={zoomable} setZoomable={setZoomable} pathImg={object.img}/>
+</Fragment>
 }
 const styles = StyleSheet.create({
     item: {

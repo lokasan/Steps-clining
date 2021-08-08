@@ -22,7 +22,7 @@ import { msToTime } from './utils/msToTime'
 import { updateUser } from './store/actions/empDouble';
 
 
-let ws            = new WebSocket('ws://192.168.1.4:8765');
+let ws            = new WebSocket('ws://192.168.1.6:8765');
     ws.binaryType = 'arraybuffer'
     ws.onmessage  = function(event) {
     socket_onmessage_callback(event.data)

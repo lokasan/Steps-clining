@@ -35,13 +35,13 @@ export const MainEmploeeListScreen = ( {navigation}) => {
         for (el of buildings) {
             dispatch(loadPost(el.id)) 
           }
-          for (el of components) {
-            dispatch(loadComponentRank(el.id))
-          }
-          for (el of posts) {
+        for (el of components) {
+          dispatch(loadComponentRank(el.id))
+        }
+        for (el of posts) {
 
-            dispatch(loadPostWithComponent(el.id))
-          }
+          dispatch(loadPostWithComponent(el.id))
+        }
     }, [])
     registerForPushNotificationsAsync = async () => {
         if (Constants.isDevice) {
@@ -101,7 +101,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
         }
     }
     return <View style = {{flex: 1}}>
-    <Image source      = {{uri: 'https://www.alllessons.ru/wp-content/uploads/files/hello_html_m25c160ca.jpg'}} style = {StyleSheet.absoluteFillObject} blurRadius = {15}/>
+    {/* <Image source      = {{uri: 'https://www.alllessons.ru/wp-content/uploads/files/hello_html_m25c160ca.jpg'}} style = {StyleSheet.absoluteFillObject} blurRadius = {15}/> */}
     { loading ? 
         <View              style = {styles.center}>
         <ActivityIndicator size  = "small" color = "#0000ff"/>
