@@ -47,15 +47,19 @@ export const EmploeeCard = ({emploee, onOpen, isOnline}) => {
 <View style={{ display: 'flex', justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center'}}>
 <View>
 {Rank('#000', 25, 24)}
+<Text style={{textAlign: 'center', paddingTop: 10}}>0</Text>
 </View>
 <View>
 {Cycle('#000', 25, 24)}
+<Text style={{textAlign: 'center', paddingTop: 10}}>{emploee.avg_rank ? emploee.avg_rank : 0}</Text>
 </View>
 <View>
 {QRIcon('#000', 25, 24)}
+<Text style={{textAlign: 'center', paddingTop: 10}}>0</Text>
 </View>
 <View>
 {Clock('#000', 25, 25)}
+<Text style={{textAlign: 'center', paddingTop: 10}}>0</Text>
 </View>
 
         <Image source={{uri: emploee.img}} style={isOnline?.filter(el => el == emploee.id).length ? {borderRadius: 50, borderWidth: 1, width: 60, height: 60, borderColor: 'rgba(0, 255, 0, 1)'} : {borderRadius: 50, borderWidth: 1, width: 60, height: 60, borderColor: 'rgba(255, 0, 0, 1)'}}/>

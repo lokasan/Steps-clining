@@ -20,9 +20,10 @@ import { hideLoaderPost } from './store/actions/post';
 import { hideLoaderComponentRank } from './store/actions/componentRank';
 import { msToTime } from './utils/msToTime'
 import { updateUser } from './store/actions/empDouble';
+import { hideLoaderBypassRank } from './store/actions/bypassRank';
 
 
-let ws            = new WebSocket('ws://192.168.1.6:8765');
+let ws            = new WebSocket('ws://192.168.1.2:8760');
     ws.binaryType = 'arraybuffer'
     ws.onmessage  = function(event) {
     socket_onmessage_callback(event.data)
@@ -52,7 +53,6 @@ async function socket_onmessage_callback(recv) {
     if (ACTION in data && data[ACTION] === GET_OBJECTS) {
         data[MESSAGE].map((el, id) => el['path'] = data['CONTENT'][id])
         dispatch(hideLoaderBypass())
-        console.log(data, 'DATA GET_OBJ');
         dispatch({
             type   : LOAD_OBJECT,
             payload: data[MESSAGE]
@@ -65,7 +65,6 @@ async function socket_onmessage_callback(recv) {
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === GET_COMPONENTS) {
-        // console.log(data['CONTENT'].length)
         data[MESSAGE].map((el, id) => el['path'] = data['CONTENT'][id])
         dispatch(hideLoaderComponent())
         dispatch({
@@ -73,6 +72,7 @@ async function socket_onmessage_callback(recv) {
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === GET_COMPONENT_RANKS) {
+        // dispatch(hideLoaderComponentRank())
         dispatch({
             type   : LOAD_COMPONENT_RANK,
             payload: data[MESSAGE]
@@ -89,7 +89,6 @@ async function socket_onmessage_callback(recv) {
         })
 
     } else if (ACTION in data && data[ACTION] === GET_BYPASS_STATUS_OBJECT) {
-        console.log(data);
         data[MESSAGE].map((el) => el['countTime'] = msToTime(el['countTime']))
         
         dispatch(hideLoaderBypass())
@@ -155,7 +154,6 @@ async function socket_onmessage_callback(recv) {
             DB.editComponentRank,
             DB.updateComponentRank)
         dispatch(hideLoaderComponentRank())
-        console.log('Привет, ядома', data['TARGET_ID'])
         dispatch({
             type   : LOAD_COMPONENT_RANK,
             payload: await DB.getComponentRankId(data['TARGET_ID'])
@@ -166,13 +164,11 @@ async function socket_onmessage_callback(recv) {
             payload: data[MESSAGE]
         })
     } else if(ACTION in data && data[ACTION] === 'ADD_ACTIVE_USER') {
-        console.log(data[MESSAGE], 'ACTIVE_USER')
         dispatch({
             type: 'ADD_ACTIVE_USER',
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === 'REMOVE_ACTIVE_USER') {
-        console.log(data[MESSAGE], 'REMOVE_ACTIVE_USER')
         dispatch({
             type: 'REMOVE_ACTIVE_USER',
             payload: data[MESSAGE]
@@ -183,20 +179,17 @@ async function socket_onmessage_callback(recv) {
             payload: data[MESSAGE]
         })
     } else if(ACTION in data && data[ACTION] === 'GET_USER_SHIFT') {
-        console.log(data, 'user_shift')
         dispatch({
             type: 'GET_USER_SHIFT',
             payload: data[MESSAGE]
         })
     } else if(ACTION in data && data[ACTION] === 'USER_LOGOUT') {
-        console.log(data[MESSAGE], ' USER TO EXIT IN APP')
         dispatch({
             type: 'REMOVE_ACTIVE_USER',
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === 'CHECK_AUTHENTICATION') {
-        console.log(data, 'AUTHENTICATION_INFO')
-        dispatch(updateUser({status: 0, email: data[MESSAGE]['email'], id: data[MESSAGE]['id']}))
+        dispatch(updateUser({status: 0, email: data[MESSAGE]['email'], id: data[MESSAGE]['id'], isAccess: data[MESSAGE]['email'] ? 1 : -1}))
     } else if (ACTION in data && data[ACTION] === 'UPDATE_EMPLOEE_PRIVILEG') {
         await DB.updateUserPrivileg(data[MESSAGE])
         dispatch({
@@ -205,7 +198,6 @@ async function socket_onmessage_callback(recv) {
         })
     }
     else if (ACTION in data && data[ACTION] === 'GET_USERS') {
-        console.log(data['CREATE_ELEMENTS'])
         await doCreateAndRemoveLocalStoreAndBase(
             data,
             DB.getUserById,
@@ -215,22 +207,33 @@ async function socket_onmessage_callback(recv) {
         // data[MESSAGE].map((el, id) => el['path'] = data['CONTENT'][id])
         dispatch({
             type: 'GET_USERS',
-            payload: await DB.getUsers()
+            payload: (await DB.getUsers()).map((el) => ({...el, test_name: 'Roboto'}))
         })
     } else if (ACTION in data && data[ACTION] === 'GET_IMAGE_FOR_BYPASS') {
         const myListBypassRankImage = []
         for (var i=0; i < data['CONTENT'].length; i++) {
-            const filename = FileSystem.cacheDirectory + data['BYPASS_RANK_ID'] + '_' + String(i) + '.jpeg'
+            const filename = FileSystem.cacheDirectory + data['BYPASS_RANK_ID'] + '_' + Date.now().toString() + i.toString() + + '.jpeg'
             await FileSystem.writeAsStringAsync(filename, data['CONTENT'][i], {
                 encoding: FileSystem.EncodingType.Base64
             })
             myListBypassRankImage.push(filename)
         }
+        dispatch(hideLoaderBypassRank())
         dispatch({
             type: 'GET_IMAGE_BYPASS_RANK',
             payload: myListBypassRankImage
         })
         
+    } else if (ACTION in data && data[ACTION] === 'GET_BYPASS_RANK_IMAGE_COUNT') {
+        dispatch({
+            type: 'GET_BYPASS_RANK_IMAGE_COUNT',
+            payload: data['LENGTH']
+        })
+    } else if (ACTION in data && data[ACTION] === 'GET_SINGLE_USER_STAT') {
+        dispatch({
+            type: 'GET_SINGLE_USER_STAT',
+            payload: data[MESSAGE]
+        })
     }
     // `data:image/jpeg;base64,${object.path}
     
@@ -241,7 +244,6 @@ export async function doCreateAndRemoveLocalStoreAndBase(data, get, create, remo
         data['CREATE_ELEMENTS'].map((el, id) => el['path'] = data['CONTENT'][id])
         for (el of data['CREATE_ELEMENTS']) {
            const filename = FileSystem.documentDirectory + el['image'].match(/\d+.jpeg/g)
-           console.log(`${filename} filename`)
            await FileSystem.writeAsStringAsync(filename, el['path'], {
                encoding: FileSystem.EncodingType.Base64
            })
@@ -254,11 +256,9 @@ export async function doCreateAndRemoveLocalStoreAndBase(data, get, create, remo
     }
     if (data['REMOVE_ELEMENTS'].length) {
         for (el of data['REMOVE_ELEMENTS']) {
-            console.log(data, 'data-transfer-of-server')
             const obj = await get(el['id'])
             if (obj.length) {
                 await remove(el['id'])
-                console.log(obj, 'data-uri');
                 const exists = await FileSystem.getInfoAsync(obj[0].img)
                 if (exists.exists) {
                     await FileSystem.deleteAsync(obj[0].img)
@@ -275,21 +275,12 @@ export async function doCreateAndRemoveLocalStoreAndBase(data, get, create, remo
         // }
     }
     if (data['UPDATE_ELEMENTS'].length) {
-        console.log(data['UPDATE_ELEMENTS'], 'UPDATEDELEMENTS')
         data['UPDATE_ELEMENTS'].map((el, id) => el['path'] = data['CONTENT_UPDATE'][id])
         for (el of data['UPDATE_ELEMENTS']) {
             const obj = await get(el['id'])
-            console.log(obj, 'KAKOYTOOBJ');
             if (obj.length) {
                 const filename = FileSystem.documentDirectory + el['image'].match(/\d+.jpeg/g)
-                console.log(`${filename} filename`)
                 await FileSystem.writeAsStringAsync(filename, el['path'], {encoding: FileSystem.EncodingType.Base64})
-                console.log(obj, 'obj rank')
-                // const exists = await FileSystem.getInfoAsync(obj[0].img)
-                // if (exists.exists) {
-                //     await FileSystem.deleteAsync(obj[0].img)
-                // }
-                console.log(el)
                 el.img = filename
                 await edit(el)
             }
@@ -338,9 +329,7 @@ export class UploadDataToServer {
     static async addObject(path, payload) { 
         const blob   = await this.getBlob(path)
         let   reader = new FileReader()
-        console.log(payload, 'Мой объект')
         const testOb = await DB.getObjects()
-        console.log(testOb, 'My res and ov')
         reader.readAsDataURL(blob)
         reader.onloadend = function() {
             let base64data = reader.result
@@ -553,7 +542,6 @@ export class UploadDataToServer {
     }
     
     static async editBypassRankAndImage(image, componentRankId, bypassId, bypassRankId) {
-        console.log('Third images', image)
         const imageArray = []
         for (const el of image) {
             const blob = await this.getBlob(el.image)
@@ -578,10 +566,19 @@ export class UploadDataToServer {
         }
     }
 
-    static async getBypassPhoto(bypass_rank_id) {
+    static async getBypassPhotoCount(bypass_rank_id) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_IMAGE_FOR_BYPASS_COUNT',
+            BYPASS_RANK_ID: bypass_rank_id
+        }))
+    }
+
+    static async getBypassPhoto(bypass_rank_id, offset) {
         ws.send(JSON.stringify({
             ACTION: 'GET_IMAGE_FOR_BYPASS',
-            BYPASS_RANK_ID: bypass_rank_id
+            BYPASS_RANK_ID: bypass_rank_id,
+            LIMIT: 1,
+            OFFSET: offset
         }))
     }
 
@@ -765,7 +762,6 @@ export class UploadDataToServer {
         }))
     }
     static async userLogout(emploee) {
-       console.log(ws, 'IP ADDR')
         ws.send(JSON.stringify({
             ACTION: 'USER_LOGOUT',
             EMAIL: emploee.email,
@@ -794,6 +790,12 @@ export class UploadDataToServer {
             ACTION: 'GET_BYPASS_STATUS_OBJECT_DETAIL',
             PERIOD: period,
             OBJECT_NAME: object_name
+        }))
+    }
+    static async getSingleUserStat(user_id) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_SINGLE_USER_STAT',
+            USER_ID: user_id
         }))
     }
 }

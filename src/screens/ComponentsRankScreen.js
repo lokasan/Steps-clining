@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert, Animated, Dimensions, FlatList} from 'react-native'
+import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert, Animated, Dimensions, FlatList, ActivityIndicator} from 'react-native'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
 import { Extrapolate } from 'react-native-reanimated'
 import {useDispatch, useSelector} from 'react-redux'
@@ -20,7 +20,6 @@ export const ComponentsRankScreen = ({ navigation }) => {
     }, [dispatch])
     
     //// остановился тут
-    
     const target            = navigation.getParam('target')
     const createdBypassRank = useSelector(state => state.bypassRank.bypassRankId)
     const component         = navigation.getParam('item')
@@ -42,14 +41,15 @@ export const ComponentsRankScreen = ({ navigation }) => {
     const bypassRankId     = bypassRank.length ? bypassRank[0].id : null
     const componentId      = component.id
     const componentRankAll = useSelector(state => state.componentRank.componentRankAll)
+    const loader = useSelector(state => state.componentRank.loading)
     console.log(componentRankAll, 'Component Rank all my is component')
     const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
     const y                = new Animated.Value(0)
     const onScroll         = Animated.event([{ nativeEvent: { contentOffset: { y } }}], { useNativeDriver: true })
    
-    return <View style = {{flex: 1, backgroundColor: '#fff'}}>
+    return <View style = {{flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center'}}>
        
-                <View style = {styles.container, styles.centers}>
+                {loader ? <ActivityIndicator size="large" color="#0000ff"/> : <View style = {styles.container, styles.centers}>
                     <AnimatedFlatList 
                     scrollEventThrottle          = {16}
                     vertical                     = {true}
@@ -71,47 +71,7 @@ export const ComponentsRankScreen = ({ navigation }) => {
                     keyExtractor = {(item) => String(item.id)}
                     {...{onScroll}}     
                     />
-                </View>
-                <View             style   = {{flexDirection: 'row', justifyContent:'space-around', margin: 10}}>
-                <TouchableOpacity onPress = {() => {
-                return new Promise((resolve, reject) => {
-                    db.transaction(tx => {
-                        tx.executeSql(
-                            "SELECT * FROM bypass_rank ORDER BY id DESC LIMIT 5",
-                            [],
-                            (_, result) => {
-                                console.log(result, "ЗАПРОС");
-                                resolve(result.rows._array)
-                            },
-                            (_, error) => reject(error)
-    
-                        )
-                    })
-                })
-                
-            }}><Text>Показать оценки</Text>
-
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => {
-                return new Promise((resolve, reject) => {
-                    db.transaction(tx => {
-                        tx.executeSql(
-                            "SELECT * FROM bypass ORDER BY id DESC LIMIT 5",
-                            [],
-                            (_, result) => {
-                                console.log(result, "ЗАПРОС");
-                                resolve(result.rows._array)
-                            },
-                            (_, error) => reject(error)
-    
-                        )
-                    })
-                })
-                
-            }}><Text>Показать обходы</Text>
-            
-            </TouchableOpacity>
-            </View>
+                </View>}
             </View>
 }
 const styles = StyleSheet.create({

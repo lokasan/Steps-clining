@@ -8,7 +8,8 @@ const initialState = {
     existsUser: [],
     isOnlineEmp: [],
     loading: false,
-    error: null
+    error: null,
+    isAccess: ''
 }
 // const handlers = {
 //     [LOAD_EMPLOEE]: state => ({...state,
@@ -44,7 +45,8 @@ export const empDoubleReducer = (state = initialState, action) => {
                 e.status === 0 ? e.status = 1 : e.status = 0
                 }
                 return e
-            })
+            }),
+            isAccess: action.payload.isAccess
         }
         case SHOW_LOADER: return {
             ...state,
@@ -98,6 +100,10 @@ export const empDoubleReducer = (state = initialState, action) => {
                 }
                 return el
             } )]
+        }
+        case 'CLEAR_IS_ACCESS': return {
+            ...state,
+            isAccess: action.payload
         }
 
         default: return state

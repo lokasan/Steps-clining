@@ -41,11 +41,11 @@ export const componentRankReducer = (state = initialState, action) => {
                 return item.id === action.payload.id ? action.payload : item;
             })
          }
-         case SHOW_LOADER: return {
+        case 'SHOW_LOADER_COMPONENT_RANK': return {
             ...state,
             loading: true
         }
-        case HIDE_LOADER: return {
+        case 'HIDE_LOADER_COMPONENT_RANK': return {
             ...state,
             loading: false
         }

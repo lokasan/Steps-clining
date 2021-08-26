@@ -6,6 +6,7 @@ const initialState = {
     bypassComponents: [],
     bypassRankIsStarted: [],
     bypassRankImage: [],
+    bypassRankImageCount: 0,
     loading: false,
     error: null
 }
@@ -32,17 +33,25 @@ export const bypassRankReducer = (state = initialState, action) => {
         }
         case 'GET_IMAGE_BYPASS_RANK': return {
             ...state,
-            bypassRankImage: action.payload
+            bypassRankImage: [...state.bypassRankImage, ...action.payload]
         }
         case 'CLEAR_BYPASS_RANK_IMAGE': return {
             ...state,
             bypassRankImage: []
         }
-        case SHOW_LOADER: return {
+        case 'GET_BYPASS_RANK_IMAGE_COUNT': return {
+            ...state,
+            bypassRankImageCount: action.payload
+        }
+        case 'CLEAR_BYPASS_RANK_IMAGE_COUNT': return {
+            ...state,
+            bypassRankImageCount: 0
+        }
+        case 'SHOW_LOADER_BYPASS_RANK': return {
             ...state,
             loading: true
         }
-        case HIDE_LOADER: return {
+        case 'HIDE_LOADER_BYPASS_RANK': return {
             ...state,
             loading: false
         }

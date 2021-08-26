@@ -8,6 +8,7 @@ const initialState = {
     loading: true,
     loaderIcon: false,
     bypassUsersListDetail: [],
+    userSingleStat: [],
     error: null
 }
 
@@ -81,6 +82,11 @@ export const bypassReducer = (state = initialState, action) => {
             ...state,
             bypassObjectDetail: [...action.payload.data.filter(el => !(el.object_name === action.payload.object_name))],
             loading: false
+        }
+        case 'GET_SINGLE_USER_STAT': return {
+            ...state,
+            userSingleStat: action.payload
+
         }
         default: return state
     }

@@ -19,9 +19,9 @@ export const ObjectScreen = ({navigation}) => {
     const objectId = navigation.getParam('objectId')
     const object = useSelector(state => state.object.objAll.find(e => e.id === objectId))
     
-    useEffect(() => {
-        dispatch(loadPost(objectId))
-    }, [dispatch])
+    // useEffect(() => {
+    //     dispatch(loadPost(objectId))
+    // }, [])
     const postAll = useSelector(state => state.post.postAll)
     const loading = useSelector(state => state.post.loading)
     const updatedUserPrivileg =  useCallback(() => {

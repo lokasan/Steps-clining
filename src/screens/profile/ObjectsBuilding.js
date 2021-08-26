@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo, useCallback } from 'react'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
-import {View, Text, StyleSheet, FlatList, Alert, ActivityIndicator} from 'react-native'
+import {View, Text, StyleSheet, FlatList, ActivityIndicator} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import { ObjectCard } from '../../components/ObjectCard'
 import {AppHeaderIcon} from '../../components/AppHeaderIcon'
@@ -17,7 +17,7 @@ export const ObjectsBuilding = ({navigation}) => {
     useEffect(() => {
         dispatch(loadObject())
     }, [dispatch])
-
+    
     const objectsAll = useSelector(state => state.object.objAll)
     const loading = useSelector(state => state.object.loading)
     // console.log(objectsAll, 'Алл сотрудники');
@@ -26,7 +26,7 @@ export const ObjectsBuilding = ({navigation}) => {
             <ActivityIndicator color="#0000ff"/>
         </View>
     }
-
+    
     return <View style={{flex: 1, backgroundColor: '#000'}}>
     <View style={styles.container, styles.centers}>
     
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#000'
+        backgroundColor: '#1C1B1B'
     },
     centers: {
         flex: 1,

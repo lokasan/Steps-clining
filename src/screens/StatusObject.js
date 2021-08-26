@@ -1,5 +1,5 @@
-import React, {useEffect, Fragment} from 'react'
-import { Text, View, Share, Dimensions, TouchableOpacity, FlatList, StyleSheet, Image, ActivityIndicator, Animated, Alert, ScrollView, Modal } from 'react-native'
+import React, {useEffect, Fragment, useCallback, useMemo} from 'react'
+import { Text, View, Share, Dimensions, TouchableOpacity, FlatList, StyleSheet, Image, ActivityIndicator, Animated, Alert, ScrollView, Modal, SafeAreaView, StatusBar, Platform } from 'react-native'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import {AppHeaderIcon} from '../components/AppHeaderIcon'
 import * as Print from 'expo-print';
@@ -13,7 +13,7 @@ import { useState, useRef } from 'react';
 import { clearBypassObjectDetail, clearBypassUsers, clearBypassUsersDetail, loadBypassGetter, loadBypassObjectDetail, loadBypassPosts, loadBypassUsers, loadBypassUsersDetail } from '../store/actions/bypass';
 import { msToTime } from '../utils/msToTime';
 import { UploadDataToServer } from '../uploadDataToServer';
-import { clearBypassRankImage } from '../store/actions/bypassRank';
+import { clearBypassRankImage, clearBypassRankImageCount, showLoaderBypassRank } from '../store/actions/bypassRank';
 import CarouselItem from '../components/ui/CarouselItem'
 // import { Circle } from 'react-native-svg';
 // import Shares from 'react-native-share'
@@ -25,6 +25,7 @@ export const StatusObject = () => {
   useEffect(() => {
     dispatch(loadBypassGetter('today'))
   }, [])
+  const bypassKeyByValueRef = useRef(null)
   const DATA2                                           = useSelector(state => state.bypass.bypassGetter)
   const [period, setPeriod]                             = useState('today')
   const [flagArrayObjects, setFlagArrayObjects]         = useState([])
@@ -33,13 +34,24 @@ export const StatusObject = () => {
   const [flagArrayObjectDetail, setFlagArrayObjectDetail] = useState([])
   const loading                                         = useSelector(state => state.bypass.loading)
   const loaderIcon = useSelector(state => state.bypass.loaderIcon)
+  const loaderPhotos = useSelector(state => state.bypassRank.loading)
   const DATA_POSTS                                      = useSelector(state => state.bypass.bypassPostsList)
   const DATA_USERS                                      = useSelector(state => state.bypass.bypassUsersList)
   const DATA_USERS_DETAIL                               = useSelector(state => state.bypass.bypassUsersListDetail)
   const DATA_OBJECT_DETAIL = useSelector(state => state.bypass.bypassObjectDetail)
   const DATA_IMAGE_BYPASS_RANK = useSelector(state => state.bypassRank.bypassRankImage)
+  const COUNT_IMAGE_TO_BYPASS_RANK = useSelector(state => state.bypassRank.bypassRankImageCount)
+  console.log('Count of photos: ', COUNT_IMAGE_TO_BYPASS_RANK)
 
-  console.log(DATA_IMAGE_BYPASS_RANK, 'DATA_IMAGE_BYPASS_RANK')
+  let imageToBypassRankArray = []
+      
+  useEffect(()=> {
+    imageToBypassRankArray = []
+    for (let i; i < COUNT_IMAGE_TO_BYPASS_RANK; i++) {
+      imageToBypassRankArray.push(0)
+      console.log('test ', i)
+    }
+  }, [COUNT_IMAGE_TO_BYPASS_RANK])
   const USERS_LIST = useSelector(state => state.empDouble.empServer)
   console.log(DATA_POSTS)
   console.log(DATA_USERS, 'userss');
@@ -49,7 +61,7 @@ export const StatusObject = () => {
   const choiseObject = useRef(null)
   const [choiseObjectS, setChoiseObjectS] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
-      const Item = ({item, index}) => {
+      const Item = useCallback(({item, index}) => {
         const inputRange = [
           -1,
           0,
@@ -194,7 +206,7 @@ export const StatusObject = () => {
               </View>
           </Animated.View>
           </TouchableOpacity>
-      }
+      })
       const choisePost = useRef(null)
       
       const createViewDataComponentObject = (item, index) => {
@@ -254,7 +266,7 @@ export const StatusObject = () => {
         }
         return createViewData
       }
-      const ItemObjectDetail = ({item, index}) => {
+      const ItemObjectDetail = useCallback(({item, index}) => {
         const inputRange = [
           -1,
           0,
@@ -360,9 +372,9 @@ export const StatusObject = () => {
               </View>
               
           </Animated.View> 
-      }
+      })
 
-      const ItemPosts = ({item, index}) => {
+      const ItemPosts = useCallback(({item, index}) => {
         const inputRange = [
           -1,
           0,
@@ -491,10 +503,10 @@ export const StatusObject = () => {
               
           </Animated.View>
           </TouchableOpacity>
-      }
+      })
       const [choisePostS, setChoisePostS] = useState(null)
       
-      const ItemUsers = ({item, index}) => {
+      const ItemUsers = useCallback(({item, index}) => {
         
         const inputRange = [
           -1,
@@ -638,7 +650,7 @@ export const StatusObject = () => {
               </View>
           </Animated.View>
           </TouchableOpacity>
-      }
+      })
       // let existsComponents = []gfhgh
       /// corrected / edited
       const createTextComponent = (item, index) => {
@@ -684,7 +696,11 @@ export const StatusObject = () => {
               onPress={() => {
                 console.log(keyByValue)
                 if (item[keyByValue + '_is_image']) {
-                  UploadDataToServer.getBypassPhoto(keyByValue)
+                  bypassKeyByValueRef.current = keyByValue
+                  dispatch(showLoaderBypassRank())
+                  UploadDataToServer.getBypassPhotoCount(keyByValue)
+
+                  UploadDataToServer.getBypassPhoto(keyByValue, DATA_IMAGE_BYPASS_RANK.length)
                   setModalVisible(true)
                 }
               }}>
@@ -767,8 +783,8 @@ export const StatusObject = () => {
         return createViewData
       }
       
-      const ItemUsersDetails = ({item, index}) => {
-       
+      const ItemUsersDetails = useCallback(({item, index}) => {
+        const randomColour = () => '#'+(Math.random()*0xFFFFFF<<0).toString(16);
         const inputRange = [
           -1,
           0,
@@ -800,7 +816,7 @@ export const StatusObject = () => {
         
         // choisePost.current?.email === item.data[0]?.email && choisePost.current?.post === item.data[0]?.post_name
         
-          return         <Animated.View style = {  comparePosts && loaderIcon ? {display: 'none'} : styles.itemUD}>
+          return         <Animated.View style = {  comparePosts && loaderIcon ? {display: 'none'} : {...styles.itemUD, backgroundColor: randomColour()}}>
            
               <View style = {{...styles.wrapperFirstLine}}>
                 <View> 
@@ -902,9 +918,16 @@ export const StatusObject = () => {
               </View>
           </Animated.View> 
           
-      }
+      })
       const ITEM_SIZE  = 100
-      const renderItem = ({ item, index }) => {
+      const [isRefreshing, setIsRefreshing] = useState(false)
+      const keyExtractors = useCallback(item => item.id)
+      function onRefresh() {
+        setIsRefreshing(true)
+        dispatch(loadBypassGetter(period))
+        setIsRefreshing(false)
+      }
+      const renderItem = useCallback(({ item, index }) => {
           
           return <><Item item = {item} index = {index}/>
           {flagArrayObjectDetail.indexOf(item.title) !== -1 ? <Animated.FlatList showsVerticalScrollIndicator = {false}
@@ -916,36 +939,39 @@ export const StatusObject = () => {
           data = {DATA_POSTS} onScroll = {Animated.event(
 [{nativeEvent: {contentOffset: {y: scrollY}}}],
 { useNativeDriver: true}
-)} renderItem={renderItemPosts} keyExtractor={item => item.id} listKey={String(Date.now())}/> : null}</>
+)} renderItem={renderItemPosts} keyExtractor={keyExtractors} listKey={String(Date.now())}
+refreshing={isRefreshing}
+onRefresh={onRefresh}
+/> : null}</>
          
-        }
-      const renderItemPosts = ({ item, index }) => {
+        })
+      const renderItemPosts = useCallback(({ item, index }) => {
           
         return <><ItemPosts item = {item} index = {index}/>{ flagArrayPosts.indexOf(item.title) !== -1 ? <Animated.FlatList showsVerticalScrollIndicator = {false}
         data = {DATA_USERS.filter(el => el.post_name === item.title)} onScroll = {Animated.event(
 [{nativeEvent: {contentOffset: {y: scrollY}}}],
 { useNativeDriver: true}
-)} renderItem={renderItemUsers} keyExtractor={item => item.id} listKey={String(Date.now())}/> : null}</>
+)} renderItem={renderItemUsers} keyExtractor={keyExtractors} listKey={String(Date.now())}/> : null}</>
          
-      }
-      const renderItemUsers = ({ item, index }) => {
+      })
+      const renderItemUsers = useCallback(({ item, index }) => {
         return <><ItemUsers item = {item} index = {index}/>
         { flagArrayUsersDetail.map(el => el.email === item.email && el.post === item.post_name).indexOf(true) !== -1 ? <Animated.FlatList showsVerticalScrollIndicator = {false}
         data = {[{id: String(Date.now()), data: DATA_USERS_DETAIL.filter(el => el.post_name === item.post_name && el.email === item.email)}]} onScroll = {Animated.event(
         [{nativeEvent: {contentOffset: {y: scrollY}}}],
         { useNativeDriver: true}
-        )} renderItem={renderItemUsersDetails} keyExtractor={item => item.id}/> : null}
+        )} renderItem={renderItemUsersDetails} keyExtractor={keyExtractors}/> : null}
         </>
-      }
+      })
 
-      const renderItemUsersDetails = ({ item, index }) => {
+      const renderItemUsersDetails = (({ item, index }) => {
         return <ItemUsersDetails item = {item} index = {index}/>
-      }
-      const renderItemObjectDetails = ({ item, index }) => {
+      })
+      const renderItemObjectDetails = (({ item, index }) => {
         return <ItemObjectDetail item = {item} index = {index}/>
-      }
+      })
       
-      const listMenu = () => (<View style={{height: 30, marginHorizontal: '5%', marginTop: 15, borderRadius: 5, alignItems: 'center', flexDirection: 'row', borderWidth: 1, borderColor: '#dedede'}}>
+      const listMenu = useCallback(() => (<View style={{height: 30, marginHorizontal: '5%', marginTop: 15, borderRadius: 5, alignItems: 'center', flexDirection: 'row', borderWidth: 1, borderColor: '#dedede'}}>
       <TouchableOpacity style={period === 'today' ? 
           {...styles.periodStatsActive, borderTopLeftRadius: 5, borderBottomLeftRadius: 5}: 
           {...styles.periodStats, borderTopLeftRadius: 5, borderBottomLeftRadius: 5}} disabled={period === 'today' ? true : false} onPress={() => {
@@ -1003,34 +1029,61 @@ export const StatusObject = () => {
             
           </View>
           </TouchableOpacity>
-      </View>)
+      </View>), [period])
 
-      const              loader = <View style = {styles.center}>
-      <ActivityIndicator color  = "#0000ff"/>
-        </View>
+      const loader = <ActivityIndicator color  = "#0000ff"/>
+       
       const scrollY = useRef(new Animated.Value(0)).current
       const scrollXGallery = new Animated.Value(0)
       let position = Animated.divide(scrollXGallery, width)
-      const testData = [{id: 1, img: 'sdfds'}]
-    return <Fragment>
+      function getDotesForImage() {
+        const data = []
+        for (let i = 0; i < COUNT_IMAGE_TO_BYPASS_RANK; i++) {
+          let opacity = position.interpolate({
+            inputRange: [i - 1, i, i + 1],
+            outputRange: [0.3, 1, 0.3],
+            extrapolate: 'clamp'
+          })
+          data.push(<Animated.View
+            key = {i}
+            style = {{opacity, height: 10, width: 10, backgroundColor: '#4d5d53', margin: 8, borderRadius: 5}}
+            >
+            </Animated.View>)
+        }
+        return data
+      }
+     
+
+      const onEndReached = useCallback(async () => {
+        if (DATA_IMAGE_BYPASS_RANK.length !== COUNT_IMAGE_TO_BYPASS_RANK) {
+          await UploadDataToServer.getBypassPhoto(bypassKeyByValueRef.current, DATA_IMAGE_BYPASS_RANK.length)
+        }
+        
+        // dispatch(getBypassPhoto())
+      })
+      const keyExtractorImage = useCallback((_, index) => 'key' + index)
+      const renderItemImage = useCallback( ({item}) => (<CarouselItem item={item} />))
+      const testCallbackForModal = useCallback(() => {
+        setModalVisible(false);
+        dispatch(clearBypassRankImage())
+        dispatch(clearBypassRankImageCount())
+      }, [modalVisible])
+    return <SafeAreaView style={styles.modalContainer}>
       <Modal
       animationType="fade"
       transparent={true}
       visible={modalVisible}>
         <View style={{ backgroundColor: '#000', position: 'relative', paddingTop: 30, paddingLeft: '90%'}}>
-  <TouchableOpacity onPress={() => {
-    setModalVisible(false);
-    dispatch(clearBypassRankImage())
-    }}>
+  <TouchableOpacity onPress={testCallbackForModal}>
     <ArrowRight/>
   </TouchableOpacity>
   </View>
   
-      <View style={{backgroundColor: '#000', flex: 1, justifyContent: 'space-between', alignItems: 'center'}}>
+      <View style={{backgroundColor: '#000', flex: 1, justifyContent: 'center', alignItems: 'center'}}>
   
-        <FlatList
+        {loaderPhotos ? loader : <><FlatList
           data={DATA_IMAGE_BYPASS_RANK}
-          keyExtractor={(item, index) => 'key' + index}
+          keyExtractor={keyExtractorImage}
           horizontal
           pagingEnabled
           scrollEnabled
@@ -1038,32 +1091,16 @@ export const StatusObject = () => {
           scrollEventThrottle={16}
           decelerationRate={"fast"}
           showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-                              <CarouselItem item={item} />
-                          )}
+          renderItem={renderItemImage}
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {x: scrollXGallery}}}],
             { useNativeDriver: false}
-          )}/>
-    {/* <Image source={{uri: USERS_LIST[0]['img']}} style={styles.image}/> */}
+          )}
+          onEndReached={onEndReached}
+          onEndReachedThreshold={0.20}/>
         <View style={styles.dotView}>
-          {DATA_IMAGE_BYPASS_RANK.map((_, i) => {
-              let opacity = position.interpolate({
-                inputRange: [i - 1, i, i + 1],
-                outputRange: [0.3, 1, 0.3],
-                extrapolate: 'clamp'
-              }
-            
-              )
-              return(
-                <Animated.View
-                key = {i}
-                style = {{opacity, height: 10, width: 10, backgroundColor: '#4d5d53', margin: 8, borderRadius: 5}}
-                >
-                </Animated.View>
-              )
-          })}
-          </View>
+          {getDotesForImage()}
+          </View></>}
         </View>
       </Modal>
       
@@ -1077,7 +1114,7 @@ export const StatusObject = () => {
           )} renderItem={renderItem} keyExtractor={item => item.id}/>
           </>}
           {DATA2.length ?  null : <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', textAlign: 'center'}}><Text style={{fontSize: 18, textAlign: 'center'}}>Статистика по объекту за выбранный период пуста</Text></View>}
-        </Fragment>
+        </SafeAreaView>
 }
 StatusObject.navigationOptions = ({navigation}) => ({
     headerTitle: 'Состояние объекта',
@@ -1135,6 +1172,10 @@ StatusObject.navigationOptions = ({navigation}) => ({
           //  elevation: 1,
           
           
+        },
+        modalContainer: {
+          flex: 1,
+          paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
         },
        textStyleInToolkit: {
          color     : '#ffffff',

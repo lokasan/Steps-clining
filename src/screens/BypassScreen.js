@@ -1,7 +1,7 @@
 
 import React, {useCallback, useEffect, useState, useRef} from 'react'
-import {View, Text, StyleSheet, Image, Button, ScrollView, Alert, FlatList, TouchableOpacity, Animated, StatusBar} from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import {View, Text, StyleSheet, Image, Button, ScrollView, SafeAreaView, Alert, FlatList, TouchableOpacity, Animated, StatusBar, ActivityIndicator} from 'react-native'
+
 import {useDispatch, useSelector} from 'react-redux'
 import { ComponentsBypassCard } from '../components/ComponentsBypassCard'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
@@ -24,9 +24,11 @@ export const BypassScreen = ({navigation}) => {
     // console.log(bypassId, 'АЙДИ ОБХОДА');
     
     useEffect(() => {
-       
+       (async () => {
         dispatch(loadFinishedBypassComponents(bypassId))
         dispatch(loadStartedBypassRank(bypassId))
+       })()
+        
         // dispatch(loadPostWithComponent(post.id))
         
     }, [bypassId])
@@ -35,28 +37,11 @@ export const BypassScreen = ({navigation}) => {
         return <AppLoader/>
     }
     let componentsValid = components
-    // console.log(components, 'components');
     const target = navigation.getParam('goBackQRScreen')
-    // console.log(target, 'target');
-    // console.log(`Components: ${components}\n componentsFinished: ${componentsFinished} \n`)
-    // if (componentsFinished.length === components.length) {
-    //     console.log(bypassId, "я байпас")
-        // dispatch(finishedBypass(1, bypassId))
-    //     navigation.pop()
     if (componentsFinished.length) {
             componentsValid = components.filter(e => componentsFinished.findIndex(i => i.id == e.id) === -1)
-            // console.log("PRIVETS", componentsValid)
-                // if (componentsValid.length === 0) {
-                //     console.log('Зашел сюда')
-                //     dispatch(finishedBypass(1, bypassId))
-                    
-                    
-                    
-                // }
         }
     const existsRank =  useSelector(state => state.componentRank.componentRankAll)
-    // console.log(existsRank, 'EXISTS_RANK')
-    // console.log(components, 'Мой вывод', componentsFinished);
     
     const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
     const y = new Animated.Value(0) 
@@ -74,92 +59,61 @@ export const BypassScreen = ({navigation}) => {
         setActiveIndex(newIndex)
         reactiveAnimated.setValue(newIndex)
     })
+    const keyExtractor = useCallback((item) => String(item.id))
+    const renderItem = useCallback(({ index, item: item }) => {
+        const inputRange = [index - 1, index, index + 1]
+        const translateYs = animatedValue.interpolate({
+            inputRange,
+            outputRange: [-30, 0, 30]
+        })
+        const opacitys = animatedValue.interpolate({
+            inputRange,
+            outputRange: [1 - 1 / 4, 1, 0]
+        })
+        const scales = animatedValue.interpolate({
+            inputRange,
+            outputRange: [0.92, 1, 1.2]
+        })
+        return <ComponentsBypassCard {...{ index, y, item, translateYs, opacitys, scales, activeIndex, componentsList: componentsValid}} 
+        navigation={navigation} 
+        post={post}
+        startedBypassRanks={startedBypassRanks} 
+        
+        target={target}/>
+    })
+    const loader = <View style = {styles.center}>
+      <ActivityIndicator color  = "#0000ff"/>
+        </View>
     const onScroll = Animated.event([{ nativeEvent: { contentOffset: { y } }}], { useNativeDriver: true })
     return (
-    <FlingGestureHandler 
-        key='UP' 
-        direction={Directions.UP} 
-        onHandlerStateChange={(ev) => {
-        if (ev.nativeEvent.state === State.END) {
-            if (activeIndex === componentsValid.length - 1) {
-                return
-            }
-            setActiveSlide(activeIndex + 1)
-        }
-    }}>
-        <FlingGestureHandler
-            key='DOWN' 
-            direction={Directions.DOWN} 
-            onHandlerStateChange={(ev) => {
-            if (ev.nativeEvent.state === State.END) {
-                if (activeIndex === 0) {
-                    return
-                }
-                setActiveSlide(activeIndex - 1)
-            }
-        }}>
+    
             <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
             {/* <View style={styles.container, styles.centers}> */}
             
-                <StatusBar hidden/>
-                <FlatList
-                data={componentsValid}
-                keyExtractor={(item) => String(item.id)}
-                scrollEnabled={false}
-                renderItem={({ index, item: item }) => {
-                    const inputRange = [index - 1, index, index + 1]
-                    const translateYs = animatedValue.interpolate({
-                        inputRange,
-                        outputRange: [-30, 0, 30]
-                    })
-                    const opacitys = animatedValue.interpolate({
-                        inputRange,
-                        outputRange: [1 - 1 / 4, 1, 0]
-                    })
-                    const scales = animatedValue.interpolate({
-                        inputRange,
-                        outputRange: [0.92, 1, 1.2]
-                    })
-                    return <ComponentsBypassCard {...{ index, y, item, translateYs, opacitys, scales, activeIndex, componentsList: componentsValid}} 
-                    navigation={navigation} 
-                    post={post}
-                    startedBypassRanks={startedBypassRanks} 
-                    
-                    target={target}/>
-                }}
                 
+                {false ? loader : <FlatList
+                data={componentsValid.length ? [componentsValid[0]] : []}
+                keyExtractor={keyExtractor}
+                scrollEnabled={false}
+                renderItem={renderItem}
                 contentContainerStyle={{
                     flex: 1,
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}
-                CellRendererComponent={({index, item, children, style, ...props}) => {
-                    const newStyle = [
-                        style,
-                        {
-                            zIndex: componentsValid.length - index,
-                            left: -400 / 2,
-                            top: -400 / 2
-                        }
-                    ]
-                    return <View index={index} {...props} style={newStyle}>
-                        {children}
-                    </View>
-                }}
+                
                 // {...{onScroll}}
-                />
+                />}
                 
                 {/* </View> */}
-            </SafeAreaView>
-    </FlingGestureHandler>
-    </FlingGestureHandler>)
+            </SafeAreaView>)
 }
 const styles = StyleSheet.create({
     center: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#000'
+        backgroundColor: '#fff'
     },
     centers: {
         flex: 1,

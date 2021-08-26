@@ -7,7 +7,7 @@ import { clearComponentRank, loadComponentRank } from '../store/actions/componen
 import { componentClear, removeComponent } from '../store/actions/component'
 import { clearPostWithComponent, deleteComponentToPostLink } from '../store/actions/postWithComponent'
 import { updateBypassRank } from '../store/actions/bypassRank'
-import { finishedBypass } from '../store/actions/bypass'
+import { finishedBypass, getSingleUserStat } from '../store/actions/bypass'
 import { loadFinishedBypassComponents } from '../store/actions/bypassRank'
 import { loadPostWithComponent } from '../store/actions/postWithComponent'
 import { PhotoPickerBypass } from './PhotoPickerBypass'
@@ -32,6 +32,8 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
     const componentReload = JSON.parse(JSON.stringify(componentRankAll))
     const postId         = post.id
     const {bypassId}       = useSelector(state => state.bypass.bypassNumber)
+    const userId = useSelector(state => state.empDouble.empAll.filter(e => e.status === 1))
+  
     const position       = Animated.subtract( index * HEIGHT, y)
     const isDisappearing = -HEIGHT
     const isLeft         = 0
@@ -90,7 +92,20 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
         console.log(img)
     }
     return (<Fragment>
-        <PhotoPickerBypass target={target} componentsFinished={componentsFinished} components={components} dispatch={dispatch} bypassId={bypassId} bypassRankId={bypassRankId} itemComponentRank={item} image={image} setImage={setImage} navigation={navigation} modalVisible={modalVisible} setModalVisible={setModalVisible} />
+        <PhotoPickerBypass 
+            userId={userId} 
+            target={target} 
+            componentsFinished={componentsFinished} 
+            components={components}
+            dispatch={dispatch} 
+            bypassId={bypassId} 
+            bypassRankId={bypassRankId} 
+            itemComponentRank={item} 
+            image={image} 
+            setImage={setImage} 
+            navigation={navigation} 
+            modalVisible={modalVisible} 
+            setModalVisible={setModalVisible} />
         <Animated.View    style         = {[styles.card]} key = {String(item.id)}>
         <TouchableOpacity activeOpacity = {0.5} onPress       = {() => {
                 console.log(item.id, " Я Улетаю в базу", ' ', bypassRankId)
@@ -114,6 +129,8 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
                     // console.log(bypassId, "я байпас")
                     // dispatch(updateBypassRank(item.id, bypassRankId))
                     dispatch(finishedBypass(1, bypassId)) 
+                    
+                    dispatch(getSingleUserStat(userId[0].id))
                     target()
                     dispatch(clearPostWithComponent())
                     navigation.navigate('QRCode')

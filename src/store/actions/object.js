@@ -73,3 +73,9 @@ export const hideLoaderObject = () => async dispatch => {
         type: HIDE_LOADER
     })
 }
+
+export const clearObjectState = () => async dispatch => {
+    dispatch({
+        type: 'CLEAR_OBJECTS_STATE'
+    })
+}

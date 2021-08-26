@@ -82,6 +82,12 @@ export const loadUserExists = email => {
         })
     }
 }
+export const clearIsAccess = () => async dispatch => {
+    dispatch({
+        type: 'CLEAR_IS_ACCESS',
+        payload: 0
+    })
+}
 
 export const updateUser = (user) => async dispatch => {
     await DB.updateUserAuthorize(user.status === 0 ? 1 : 0, user.email)

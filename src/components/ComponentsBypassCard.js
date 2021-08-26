@@ -5,7 +5,8 @@ import { Extrapolate } from 'react-native-reanimated'
 import {useDispatch, useSelector} from 'react-redux'
 // import { loadComponentRank } from '../store/actions/componentRank'
 // import { loadPostWithComponent } from '../store/actions/postWithComponent'
-import { createBypassRank, loadStartedBypassRank } from '../store/actions/bypassRank'
+import { createBypassRank, hideLoaderBypassRank, loadStartedBypassRank } from '../store/actions/bypassRank'
+import { clearComponentRank, showLoaderComponentRank } from '../store/actions/componentRank'
 // import { loadStartedBypassRank } from '../store/actions/bypassRank'
 const { width } = Dimensions.get("window");
 const CARD_ASPECT_RATIO = 1324 / 863;
@@ -29,6 +30,7 @@ export const ComponentsBypassCard = ({index, y, item, navigation, post, startedB
     const isLeft = 0
     const isRight = height - HEIGHT
     const isAppearing = height
+    const dispatch = useDispatch()
     const translateY = Animated.add(Animated.add(y, y.interpolate({
         inputRange: [0, 0.0001 + index * HEIGHT],
         outputRange: [0, -index * HEIGHT],
@@ -50,15 +52,18 @@ export const ComponentsBypassCard = ({index, y, item, navigation, post, startedB
         outputRange: [0.5, 1, 1, 0.5]
     })
     return (
-        <Animated.View style={{position: 'absolute', transform: [{translateY:translateYs}, {scale:scales}], opacity: opacitys}}  key={String(item.id)}>
+        <Animated.View style={{position: 'relative', opacity: opacitys}}  key={String(item.id)}>
             <TouchableOpacity activeOpacity={1} onPress={() => {
                 // dispatch(loadStartedBypassRank(bypassId, item.id))
                 
                 if (startedBypassRank.length) {
-                    Alert.alert('HI')
-                    
+                    dispatch(clearComponentRank())
+                    // dispatch(showLoaderComponentRank())
                     navigation.navigate('ComponentsRankScreen', {item: componentsList[activeIndex], post, componentsValid, target})
                 } else { 
+                    dispatch(clearComponentRank())
+                    // dispatch(showLoaderComponentRank())
+
                     dispatch(createBypassRank(bypassId, componentsList[activeIndex].id))
                     
                     navigation.navigate('ComponentsRankScreen', {item: componentsList[activeIndex], post, startedBypassRank: startedBypassRank, componentsValid, target})

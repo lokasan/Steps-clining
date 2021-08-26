@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import { Footer } from '../components/ui/Footer'
 import {View, Text, StyleSheet, FlatList, Alert, Platform, Image, ActivityIndicator} from 'react-native'
@@ -11,12 +11,14 @@ import { MyPedometer }from '../components/MyPedometer'
 import { getPostAll, loadPost } from '../store/actions/post'
 import * as Notifications from 'expo-notifications'
 import Constants from 'expo-constants';
-import { useState } from 'react'
 import { loadComponentRank } from '../store/actions/componentRank'
 import { loadPostWithComponent } from '../store/actions/postWithComponent'
 import { loadObject } from '../store/actions/object'
 import { loadComponent } from '../store/actions/component'
 import { getUsersServer } from '../store/actions/empDouble'
+import { BasicStatEmploee } from '../components/BasicStatEmploee'
+import { Cycle, QRIcon, Rank, StepsIcon } from '../components/ui/imageSVG/circle'
+import { getSingleUserStat } from '../store/actions/bypass'
 // import {loadEmploeeDouble} from '../../store/actions/empDouble'
 
 
@@ -26,23 +28,42 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     let   buildings                 = useSelector(state => state.object.objAll)
     let   components                = useSelector(state => state.component.componentAll)
     let   posts                     = useSelector(state => state.post.postAll)
+    let userStat = useSelector(state => state.bypass.userSingleStat)
     const isOnline = useSelector(state => state.empDouble.isOnlineEmp)
     console.log('MYOF', isOnline)
     const [pushToken, setPushToken] = useState()
+    const dispatch = useDispatch()
     console.log('buildings', buildings)
     useEffect(() => {
         registerForPushNotificationsAsync()
-        for (el of buildings) {
-            dispatch(loadPost(el.id)) 
-          }
-        for (el of components) {
-          dispatch(loadComponentRank(el.id))
-        }
-        for (el of posts) {
+        // for (el of buildings) {
+        //     dispatch(loadPost(el.id)) 
+        //   }
+        // for (el of components) {
+        //   dispatch(loadComponentRank(el.id))
+        // }
+        // for (el of posts) {
 
-          dispatch(loadPostWithComponent(el.id))
-        }
+        //   dispatch(loadPostWithComponent(el.id))
+        // }
     }, [])
+    useEffect(() => {
+      for (el of buildings) {
+        dispatch(loadPost(el.id)) 
+      }
+    }, [buildings])
+  
+    useEffect(() => {
+      for (el of components) {
+        dispatch(loadComponentRank(el.id))
+      }
+    }, [components])
+  
+    useEffect(() => {
+      for (el of posts) {
+        dispatch(loadPostWithComponent(el.id))
+      }
+    }, [posts])
     registerForPushNotificationsAsync = async () => {
         if (Constants.isDevice) {
           const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -78,7 +99,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     
     // получаю пустой промис исправить ошибку
     // console.log(result, 'раскрыл');
-    const dispatch = useDispatch()
+    
     // useEffect(() => {
     //     dispatch(loadEmploeeDouble())
     // }, [dispatch])
@@ -86,11 +107,24 @@ export const MainEmploeeListScreen = ( {navigation}) => {
         dispatch(getPostAll())
         // dispatch(loadObject()),
         // dispatch(loadComponent())
+        
     }, [dispatch])
     useEffect(() => {
       dispatch(getUsersServer())
   }, [dispatch])
-  const emplServer = useSelector(state => state.empDouble.empServer)
+  let serfIdUser = 0
+  // const [serfIdUser, setSerfIdUser] = useState(0)
+  let emplServer = useSelector(state => state.empDouble.empServer)
+  const analyticsEmploee = [{id: 1629054716555, avg_rank: 4.19, count_bypass: 14, cycle: 0}]
+  if (emplServer.length) {
+    emplServer = emplServer.map(el => {
+      if (analyticsEmploee.find(els => els.id === el.id)) {
+          return ({...el, ...analyticsEmploee.find(els => els.id === el.id)})
+      } else {
+          return el
+      }
+  })
+  }
   console.log(emplServer, 'emplServer')
     const emploeeAll   = useSelector(state => state.empDouble.empAll)
     let   tempPrivileg = false
@@ -98,24 +132,40 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     for (let i of emploeeAll) {
         if (i.status && i.privileg) {
             tempPrivileg = true
+            
+        }
+        if (i.status) {
+          serfIdUser = i.id
         }
     }
+    useEffect(() => {
+      if (serfIdUser) {
+        dispatch(getSingleUserStat(serfIdUser))
+      }
+      
+    }, [serfIdUser])
     return <View style = {{flex: 1}}>
     {/* <Image source      = {{uri: 'https://www.alllessons.ru/wp-content/uploads/files/hello_html_m25c160ca.jpg'}} style = {StyleSheet.absoluteFillObject} blurRadius = {15}/> */}
     { loading ? 
         <View              style = {styles.center}>
         <ActivityIndicator size  = "small" color = "#0000ff"/>
         </View>: null }
-    {tempPrivileg && 
+    {tempPrivileg ?
         <FlatList 
         data         = {emplServer}
         keyExtractor = {emploee => emploee.id.toString()}
         renderItem   = {({item}) => <EmploeeCard emploee={item} onOpen={openEmploeeHandler} isOnline={isOnline}/>}
-                />}
+                /> : <><Text style={styles.textDate}>Ваши данные на сегодня</Text>
+                <View style={{flexDirection: 'row', justifyContent: 'space-around', alignSelf: 'center'}}>
+                  <BasicStatEmploee width_svg={24} height_svg={25} color='red' max={3} percentage={userStat[0]?.avg_rank} svgRender={Rank} navigation={navigation}/>
+                  <BasicStatEmploee width_svg={24} height_svg={25} color='red' max={2}  percentage={userStat[0]?.cycle_bypass} delay={600} duration={600} svgRender={Cycle} navigation={navigation}/>
+                  <BasicStatEmploee width_svg={24} height_svg={25} color='red' max={24}  percentage={userStat[0]?.count_bypass}delay={650} duration={650} svgRender={QRIcon} navigation={navigation}/>
+                  {/* <BasicStatEmploee width_svg={24} height_svg={25} color='red' max={1000} percentage={1234} delay={700} duration={700} svgRender={StepsIcon} navigation={navigation}/> */}
+                  </View></>}
     
     
     {/* <Footer/> */}
-    <MyPedometer/>
+    {/* <MyPedometer/> */}
     
     </View>
 }
@@ -133,6 +183,13 @@ MainEmploeeListScreen.navigationOptions = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
+  textDate: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 10,
+    color: '#303f9f'
+},
     center: {
         flex          : 1,
         justifyContent: 'center',

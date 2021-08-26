@@ -24,7 +24,7 @@ export const loadFinishedBypassComponents = bypassId => async dispatch => {
 export const loadStartedBypassRank = bypassId => async dispatch => {
   
     const bypassRankIsStarted = await DB.loadStartedBypassRank(bypassId)
-   
+    
     dispatch({
         type: LOAD_STARTED_BYPASS_RANK,
         payload: bypassRankIsStarted
@@ -58,16 +58,21 @@ export const clearBypassRankImage = () => async dispatch => {
         type: 'CLEAR_BYPASS_RANK_IMAGE'
     })
 }
+export const clearBypassRankImageCount = () => async dispatch => {
+    dispatch({ 
+        type: 'CLEAR_BYPASS_RANK_IMAGE_COUNT'
+    })
+}
 
 export const showLoaderBypassRank = () => async dispatch => {
     dispatch({
-        type: SHOW_LOADER
+        type: 'SHOW_LOADER_BYPASS_RANK'
     })
 }
 
 export const hideLoaderBypassRank = () => async dispatch => {
     dispatch({
-        type: HIDE_LOADER
+        type: 'HIDE_LOADER_BYPASS_RANK'
     })
 }
 // Остановился на расчете avg rank для bypass // в редюсер включить суммирование ранка (оценок)

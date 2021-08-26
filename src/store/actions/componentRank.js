@@ -5,9 +5,9 @@ import { DB } from '../../db'
 import { UploadDataToServer } from '../../uploadDataToServer'
 
 export const loadComponentRank = component_id => {
-   
+    
     return async () => {
-        // dispatch(showLoaderComponentRank())
+        
         await UploadDataToServer.getComponentRanks(component_id)
         // const componentRank = await DB.getComponentRankId(component_id)
 
@@ -95,13 +95,13 @@ export const editComponentRank = (componentRank) => async dispatch => {
 
 export const showLoaderComponentRank = () => async dispatch => {
     dispatch({
-        type: SHOW_LOADER
+        type: 'SHOW_LOADER_COMPONENT_RANK'
     })
 }
 
 export const hideLoaderComponentRank = () => async dispatch => {
     dispatch({
-        type: HIDE_LOADER
+        type: 'HIDE_LOADER_COMPONENT_RANK'
     })
 }
 export const clearComponentRank = () => async dispatch => {

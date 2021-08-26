@@ -34,6 +34,7 @@ import { PostWithComponent } from '../screens/profile/PostWithComponent'
 import { MainEmploeeListScreen } from '../screens/MainEmploeeListScreen'
 import { BypassScreen } from '../screens/BypassScreen'
 import { ComponentsRankScreen } from '../screens/ComponentsRankScreen'
+import { BasicStatEmploeeDetail } from '../screens/BasicStatEmploeeDetail'
 const navigatorOptions = {
     defaultNavigationOptions: {
         headerStyle: {
@@ -48,6 +49,9 @@ const PostNavigator = createStackNavigator({
     MainProfile: {
         screen: MainEmploeeListScreen,  
     },
+    StatMainDetail: {
+        screen: BasicStatEmploeeDetail
+    }
     
 }, navigatorOptions)
 

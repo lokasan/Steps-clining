@@ -22,6 +22,7 @@ export const postReducer = (state = initialState, action) => {
     switch (action.type) {
         case LOAD_POST: return {...state, postAll: action.payload, loading: false}
         case GET_POSTS_ALL: return {...state, postAlls: action.payload}
+        case 'CLEAR_POST': return {...state, postAll: []}
         case REMOVE_POST: return {
             ...state, 
             postAll: state.postAll.filter(e => e.id !== action.payload),

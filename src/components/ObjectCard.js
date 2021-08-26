@@ -1,13 +1,16 @@
 import React, {Fragment, useState} from 'react'
 import { View, StyleSheet, ImageBackground, Text, Image, TouchableOpacity, Alert} from 'react-native'
+import { useDispatch } from 'react-redux'
 import {ArrowRight} from '../components/ui/imageSVG/circle'
 import { removeObject } from '../store/actions/object'
+import { loadPost, clearPost } from '../store/actions/post'
 import { ModalForRemove } from './ui/ModalForRemove'
 
 export const ObjectCard = ({object, onOpen}) => {
     const TEXT_TITLE = 'Удаление объекта'
     const TEXT_ACTION = 'Вы уверены, что хотите удалить объект'
     const [modalVisible, setModalVisible] = useState(false)
+    const dispatch = useDispatch()
     const removeHandler = (object) => {
         Alert.alert(
             "Удаление объекта",
@@ -31,7 +34,11 @@ export const ObjectCard = ({object, onOpen}) => {
     }
     return <Fragment>
     <ModalForRemove TEXT_TITLE={TEXT_TITLE} TEXT_ACTION={TEXT_ACTION} remove={removeObject}  modalVisible={modalVisible} setModalVisible={setModalVisible} myObject={object} />
-    <TouchableOpacity activeOpacity={0.7} onPress={() => onOpen(object)} onLongPress={() => setModalVisible(true)}>
+    <TouchableOpacity activeOpacity={0.7} onPress={() => {
+        dispatch(clearPost())
+        dispatch(loadPost(object.id))
+        onOpen(object)
+        }} onLongPress={() => setModalVisible(true)}>
     <View style = {styles.actionMenu}>
         <Image style = {styles.image} source = {{uri: object.img}}/>
         <View  style = {styles.privateData}>

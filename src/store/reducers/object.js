@@ -35,6 +35,10 @@ export const objectReducer = (state = initialState, action) => {
             ...state,
             loading: false
         }
+        case 'CLEAR_OBJECTS_STATE': return {
+            ...state,
+            objAll: []
+        }
         default: return state
     }
 }

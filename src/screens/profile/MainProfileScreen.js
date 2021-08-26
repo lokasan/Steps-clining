@@ -9,6 +9,7 @@ import { loadEmploeeDouble, updateUser } from '../../store/actions/empDouble'
 import { getPostAll } from '../../store/actions/post';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import { clearObjectState } from '../../store/actions/object'
 export const MainProfileScreen = ({navigation}) => {
     let resultNo = {
         surname: 'no',
@@ -25,10 +26,10 @@ export const MainProfileScreen = ({navigation}) => {
     //     result = resultNo
     // }
     // privileg = result.privileg
-    useEffect(() =>{
-        dispatch(loadEmploeeDouble())
-        dispatch(getPostAll())
-    }, [dispatch])
+    // useEffect(() =>{
+    //     dispatch(loadEmploeeDouble())
+    //     dispatch(getPostAll())
+    // }, [])
     let result = useSelector(state => state.empDouble.empAll.find(e => e.status === 1))
     const allPostResult = useSelector(state => state.post.postAlls)
     const emploeeAll   = useSelector(state => state.empDouble.empAll)
@@ -133,7 +134,10 @@ export const MainProfileScreen = ({navigation}) => {
                 <ArrowRight/>  
             </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('ObjectsBuildings')}>
+            <TouchableOpacity onPress={() => {
+                // dispatch(clearObjectState())
+                navigation.navigate('ObjectsBuildings')
+                }}>
             <View style={styles.actionMenu}>
                 <ObjectsIcon/>
                 <Text style={{color: '#fff'}}>Объекты</Text>

@@ -117,3 +117,6 @@ export const clearBypassObjectDetail = (data, object_name) => async () => {
         payload:  {data, object_name}
     })
 }
+export const getSingleUserStat = user_id => async () => {
+    await UploadDataToServer.getSingleUserStat(user_id)
+}

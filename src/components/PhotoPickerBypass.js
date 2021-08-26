@@ -6,10 +6,11 @@ import * as FileSystem from 'expo-file-system'
 import { AddNewBypassRankPhoto, RemoveBypassRankPhoto } from './ui/imageSVG/circle'
 import { UploadDataToServer } from '../uploadDataToServer'
 import {updateBypassRankWithPhoto} from '../store/actions/bypassRank'
-import { finishedBypass } from '../store/actions/bypass'
+import { finishedBypass, getSingleUserStat } from '../store/actions/bypass'
 import { clearPostWithComponent, deleteComponentToPostLink } from '../store/actions/postWithComponent'
+import { MAX_IMAGES_FOR_BYPASS } from './types'
 
-export const PhotoPickerBypass = ({target, componentsFinished, components, dispath, bypassId, bypassRankId, itemComponentRank, navigation, modalVisible, setModalVisible, image, setImage}) => {
+export const PhotoPickerBypass = ({userId, target, componentsFinished, components, dispath, bypassId, bypassRankId, itemComponentRank, navigation, modalVisible, setModalVisible, image, setImage}) => {
     
     
 
@@ -109,7 +110,7 @@ export const PhotoPickerBypass = ({target, componentsFinished, components, dispa
         }}
         >
             <View style = {{ marginTop: 10, marginLeft: 10}}>
-            <AddNewBypassRankPhoto/>
+            {image.length < MAX_IMAGES_FOR_BYPASS && <AddNewBypassRankPhoto/>}
             </View>
         </TouchableOpacity>}</>
         
@@ -153,6 +154,7 @@ export const PhotoPickerBypass = ({target, componentsFinished, components, dispa
                     
                     if ((componentsFinished.length + 1) === components.length) {
                         dispatch(finishedBypass(1, bypassId))
+                        dispatch(getSingleUserStat(userId[0].id))
                         target()
                         dispatch(clearPostWithComponent())
                         navigation.navigate('QRCode')

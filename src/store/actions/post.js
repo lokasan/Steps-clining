@@ -18,6 +18,11 @@ export const loadPost = building_id => {
         // })
     }
 }
+export const clearPost = () => async dispatch => {
+    dispatch({ 
+        type: 'CLEAR_POST'
+    })
+}
 export const getPostAll = () => {
    
     return async dispatch => {
