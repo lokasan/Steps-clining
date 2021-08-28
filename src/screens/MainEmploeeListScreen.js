@@ -18,7 +18,8 @@ import { loadComponent } from '../store/actions/component'
 import { getUsersServer } from '../store/actions/empDouble'
 import { BasicStatEmploee } from '../components/BasicStatEmploee'
 import { Cycle, QRIcon, Rank, StepsIcon } from '../components/ui/imageSVG/circle'
-import { getSingleUserStat } from '../store/actions/bypass'
+import { getSingleUserStat, getUsersBasicStat } from '../store/actions/bypass'
+import DateTimePicker from '@react-native-community/datetimepicker'
 // import {loadEmploeeDouble} from '../../store/actions/empDouble'
 
 
@@ -29,6 +30,28 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     let   components                = useSelector(state => state.component.componentAll)
     let   posts                     = useSelector(state => state.post.postAll)
     let userStat = useSelector(state => state.bypass.userSingleStat)
+    let usersBasicStat = useSelector(state => state.bypass.usersBasicStat)
+    const [date, setDate] = useState(new Date(Date.now()));
+    const [mode, setMode] = useState('date');
+    const [show, setShow] = useState(false);
+    const onChange = (event, selectedDate) => {
+      const currentDate = selectedDate || date;
+      setShow(Platform.OS === 'ios');
+      setDate(currentDate);
+    };
+  
+    const showMode = (currentMode) => {
+      setShow(true);
+      setMode(currentMode);
+    };
+  
+    const showDatepicker = () => {
+      showMode('date');
+    };
+  
+    const showTimepicker = () => {
+      showMode('time');
+    };
     const isOnline = useSelector(state => state.empDouble.isOnlineEmp)
     console.log('MYOF', isOnline)
     const [pushToken, setPushToken] = useState()
@@ -64,6 +87,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
         dispatch(loadPostWithComponent(el.id))
       }
     }, [posts])
+    
     registerForPushNotificationsAsync = async () => {
         if (Constants.isDevice) {
           const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -105,6 +129,8 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     // }, [dispatch])
     useEffect(() => {
         dispatch(getPostAll())
+        dispatch(getUsersBasicStat())
+        navigation.setParams({test: showDatepicker})
         // dispatch(loadObject()),
         // dispatch(loadComponent())
         
@@ -116,15 +142,19 @@ export const MainEmploeeListScreen = ( {navigation}) => {
   // const [serfIdUser, setSerfIdUser] = useState(0)
   let emplServer = useSelector(state => state.empDouble.empServer)
   const analyticsEmploee = [{id: 1629054716555, avg_rank: 4.19, count_bypass: 14, cycle: 0}]
-  if (emplServer.length) {
+  if (emplServer.length && usersBasicStat.length) {
     emplServer = emplServer.map(el => {
-      if (analyticsEmploee.find(els => els.id === el.id)) {
-          return ({...el, ...analyticsEmploee.find(els => els.id === el.id)})
+      if (usersBasicStat.find(els => els.id === el.id)) {
+          return ({...el, ...usersBasicStat.find(els => els.id === el.id)})
       } else {
           return el
       }
   })
   }
+  function testing() {
+    Alert.alert('hi')
+  }
+  
   console.log(emplServer, 'emplServer')
     const emploeeAll   = useSelector(state => state.empDouble.empAll)
     let   tempPrivileg = false
@@ -145,6 +175,17 @@ export const MainEmploeeListScreen = ( {navigation}) => {
       
     }, [serfIdUser])
     return <View style = {{flex: 1}}>
+      {show && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={date}
+          mode={mode}
+          is24Hour={true}
+          display="default"
+          onChange={onChange}
+          maximumDate={new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())}
+        />
+      )}
     {/* <Image source      = {{uri: 'https://www.alllessons.ru/wp-content/uploads/files/hello_html_m25c160ca.jpg'}} style = {StyleSheet.absoluteFillObject} blurRadius = {15}/> */}
     { loading ? 
         <View              style = {styles.center}>
@@ -160,6 +201,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
                   <BasicStatEmploee width_svg={24} height_svg={25} color='red' max={3} percentage={userStat[0]?.avg_rank} svgRender={Rank} navigation={navigation}/>
                   <BasicStatEmploee width_svg={24} height_svg={25} color='red' max={2}  percentage={userStat[0]?.cycle_bypass} delay={600} duration={600} svgRender={Cycle} navigation={navigation}/>
                   <BasicStatEmploee width_svg={24} height_svg={25} color='red' max={24}  percentage={userStat[0]?.count_bypass}delay={650} duration={650} svgRender={QRIcon} navigation={navigation}/>
+                  
                   {/* <BasicStatEmploee width_svg={24} height_svg={25} color='red' max={1000} percentage={1234} delay={700} duration={700} svgRender={StepsIcon} navigation={navigation}/> */}
                   </View></>}
     
@@ -171,8 +213,14 @@ export const MainEmploeeListScreen = ( {navigation}) => {
 }
 
 MainEmploeeListScreen.navigationOptions = ({navigation}) => {
-
     return {headerTitle: '',
+    headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+    <Item 
+    title='Private Account'
+    iconName='ios-calendar'
+    onPress={() => navigation.getParam('test')()}
+    />
+  </HeaderButtons>,
     headerLeft: () => <HeaderButtons HeaderButtonComponent = {AppHeaderIcon}>
     <Item 
     title    = 'toogle'

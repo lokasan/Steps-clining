@@ -120,3 +120,7 @@ export const clearBypassObjectDetail = (data, object_name) => async () => {
 export const getSingleUserStat = user_id => async () => {
     await UploadDataToServer.getSingleUserStat(user_id)
 }
+
+export const getUsersBasicStat = (start_time=null, end_time=null) => async () => {
+    await UploadDataToServer.getUsersBasicStat(start_time, end_time)
+}

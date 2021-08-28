@@ -234,6 +234,11 @@ async function socket_onmessage_callback(recv) {
             type: 'GET_SINGLE_USER_STAT',
             payload: data[MESSAGE]
         })
+    } else if (ACTION in data && data[ACTION] === 'GET_USERS_BASIC_STAT') {
+        dispatch({
+            type: 'GET_USERS_BASIC_STAT',
+            payload: data[MESSAGE]
+        })
     }
     // `data:image/jpeg;base64,${object.path}
     
@@ -796,6 +801,13 @@ export class UploadDataToServer {
         ws.send(JSON.stringify({
             ACTION: 'GET_SINGLE_USER_STAT',
             USER_ID: user_id
+        }))
+    }
+    static async getUsersBasicStat(start_time, end_time) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_USERS_BASIC_STAT',
+            START_TIME: start_time,
+            END_TIME: end_time
         }))
     }
 }

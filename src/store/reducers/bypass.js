@@ -9,6 +9,7 @@ const initialState = {
     loaderIcon: false,
     bypassUsersListDetail: [],
     userSingleStat: [],
+    usersBasicStat: [],
     error: null
 }
 
@@ -87,6 +88,10 @@ export const bypassReducer = (state = initialState, action) => {
             ...state,
             userSingleStat: action.payload
 
+        }
+        case 'GET_USERS_BASIC_STAT': return {
+            ...state,
+            usersBasicStat: action.payload
         }
         default: return state
     }
