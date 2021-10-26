@@ -1,7 +1,7 @@
 import * as FileSystem from 'expo-file-system'
 import { Alert } from 'react-native'
 import { ADD_EMPLOEE, LOAD_EMPLOEE, LOAD_EMPLOEES, REMOVE_EMPLOEE, UPDATE_EMPLOEE_PRIVILEG, 
-    UPDATE_USER_AUTHORIZE, LOAD_IF_EXISTS_USER, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
+    UPDATE_USER_AUTHORIZE, LOAD_IF_EXISTS_USER, SHOW_LOADER, HIDE_LOADER, CLEAR_IS_ACCESS, UPDATE_USER_SHIFT } from "../../components/types"
 import { DATA } from '../../testData'
 import { DB } from '../../db'
 
@@ -84,7 +84,7 @@ export const loadUserExists = email => {
 }
 export const clearIsAccess = () => async dispatch => {
     dispatch({
-        type: 'CLEAR_IS_ACCESS',
+        type: CLEAR_IS_ACCESS,
         payload: 0
     })
 }
@@ -109,7 +109,7 @@ export const updateUserShift = (emploee, newTimeShift, emploeeId) => async dispa
     await UploadDataToServer.createUserShift(emploee.id, newTimeShift)
     await DB.updateUserShift(emploee.id, newTimeShift)
     dispatch({
-        type: 'UPDATE_USER_SHIFT',
+        type: UPDATE_USER_SHIFT,
         payload: {...emploee, start_shift: newTimeShift}
     })
 }

@@ -1,4 +1,4 @@
-import { CREATE_COMPONENT_TO_POST_LINK, LOAD_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
+import { CREATE_COMPONENT_TO_POST_LINK, LOAD_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, SHOW_LOADER, HIDE_LOADER, CLEAR_POST_WITH_COMPONENT } from "../../components/types"
 const initialState = {
     postWithComponentAll: [],
     loading: false,
@@ -39,7 +39,7 @@ export const postWithComponentReducer = (state = initialState, action) => {
             ...state,
             loading: false
         }
-        case 'CLEAR_POST_WITH_COMPONENT': return {
+        case CLEAR_POST_WITH_COMPONENT: return {
             ...state,
             postWithComponentAll: []
         }

@@ -1,4 +1,4 @@
-import { ADD_EMPLOEE, LOAD_EMPLOEES, REMOVE_EMPLOEE, UPDATE_USER_AUTHORIZE, LOAD_IF_EXISTS_USER, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
+import { ADD_EMPLOEE, LOAD_EMPLOEES, REMOVE_EMPLOEE, UPDATE_USER_AUTHORIZE, LOAD_IF_EXISTS_USER, SHOW_LOADER, HIDE_LOADER, CLEAR_IS_ACCESS, UPDATE_EMPLOEE_PRIVILEG, UPDATE_USER_SHIFT, GET_USER_SHIFT, GET_ACTIVE_USERS, REMOVE_ACTIVE_USER, ADD_ACTIVE_USER, GET_USERS } from "../../components/types"
 const initialState = {
     empAll: [],
     empServer: [],
@@ -56,24 +56,24 @@ export const empDoubleReducer = (state = initialState, action) => {
             ...state,
             loading: false
         }
-        case 'GET_USERS': return {
+        case GET_USERS: return {
             ...state,
             empServer: action.payload
 
         }
-        case 'ADD_ACTIVE_USER': return {
+        case ADD_ACTIVE_USER: return {
             ...state,
             isOnlineEmp: [...action.payload, ...state.isOnlineEmp]
         }
-        case 'REMOVE_ACTIVE_USER': return {
+        case REMOVE_ACTIVE_USER: return {
             ...state,
             isOnlineEmp: state.isOnlineEmp.filter(el => el != action.payload)
         }
-        case 'GET_ACTIVE_USERS': return {
+        case GET_ACTIVE_USERS: return {
             ...state,
             isOnlineEmp: action.payload
         }
-        case 'GET_USER_SHIFT': return {
+        case GET_USER_SHIFT: return {
             ...state,
             empServer: state.empServer.map(el => {
                 if (el.id === action.payload.user_id) {
@@ -82,11 +82,11 @@ export const empDoubleReducer = (state = initialState, action) => {
                 return el
             })
         } 
-        case 'UPDATE_USER_SHIFT': return {
+        case UPDATE_USER_SHIFT: return {
             ...state,
             empServer: [...state.empServer.filter(el => el.id !== action.payload.id), action.payload]
         }
-        case 'UPDATE_EMPLOEE_PRIVILEG': return {
+        case UPDATE_EMPLOEE_PRIVILEG: return {
             ...state,
             empServer: [...state.empServer.map(el => {
                 if (el.id == action.payload.id) {
@@ -101,7 +101,7 @@ export const empDoubleReducer = (state = initialState, action) => {
                 return el
             } )]
         }
-        case 'CLEAR_IS_ACCESS': return {
+        case CLEAR_IS_ACCESS: return {
             ...state,
             isAccess: action.payload
         }

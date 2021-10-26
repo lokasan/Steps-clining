@@ -1,9 +1,39 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import {StyleSheet, Modal, View, Text, Pressable, Image} from 'react-native'
+import {StyleSheet, Modal, View, Text, Pressable, Image, Alert} from 'react-native'
 
 export const ModalForRemove = ({TEXT_TITLE, TEXT_ACTION, remove, modalVisible, setModalVisible, myObject, isOnline, componentRankAll, updateComponentRank}) => {
     const dispatch = useDispatch()
+
+    const removeHandler = () => {
+      Alert.alert(
+          `Подтверждение действия "${TEXT_TITLE}"`,
+          `${TEXT_ACTION}  ${myObject.name} ?`,
+          [
+            
+            {
+              text: "Отменить",
+              
+              style: "cancel",
+              onPress() {
+                setModalVisible(!modalVisible)
+              }
+            },
+            { text: "Удалить", style: 'destructive', onPress() {
+              
+              setModalVisible(!modalVisible)
+              if (componentRankAll !== undefined && updateComponentRank !== undefined) {
+                dispatch(updateComponentRank(componentRankAll.filter(e => e.id !== myObject.id), componentRankAll.length -1, count=1))
+              }
+               dispatch(remove(myObject.id))
+            } 
+          }
+          ],
+          { cancelable: false }
+        )
+        
+  
+  }
 
     return <Modal
     animationType='fade'
@@ -29,12 +59,7 @@ export const ModalForRemove = ({TEXT_TITLE, TEXT_ACTION, remove, modalVisible, s
           </Pressable>
           <Pressable
             style={({ pressed }) => [styles.button, pressed ? styles.buttonDeletePressed : styles.buttonDelete]}
-            onPress={() => {
-              setModalVisible(!modalVisible)
-              if (componentRankAll !== undefined && updateComponentRank !== undefined) {
-                dispatch(updateComponentRank(componentRankAll.filter(e => e.id !== myObject.id), componentRankAll.length -1, count=1))
-              }
-               dispatch(remove(myObject.id))}}>
+            onPress={removeHandler}>
               <Text style={styles.textStyle}>Удалить</Text>
           
           </Pressable>

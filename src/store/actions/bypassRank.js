@@ -1,4 +1,4 @@
-import { CREATE_NEW_BYPASS_RANK, UPDATE_BYPASS_RANK, LOAD_FINISHED_COMPONENTS_FOR_BYPASS, LOAD_STARTED_BYPASS_RANK, SHOW_LOADER, HIDE_LOADER, UPDATE_BYPASS_RANK_STATE } from '../../components/types'
+import { CREATE_NEW_BYPASS_RANK, UPDATE_BYPASS_RANK, LOAD_FINISHED_COMPONENTS_FOR_BYPASS, LOAD_STARTED_BYPASS_RANK, SHOW_LOADER, HIDE_LOADER, UPDATE_BYPASS_RANK_STATE, CLEAR_BYPASS_RANK_IMAGE, CLEAR_BYPASS_RANK_IMAGE_COUNT, SHOW_LOADER_BYPASS_RANK, HIDE_LOADER_BYPASS_RANK } from '../../components/types'
 import { DB } from '../../db'
 import { UploadDataToServer } from '../../uploadDataToServer'
 
@@ -55,24 +55,24 @@ export const updateBypassRank = (componentRankId, id) => async dispatch => {
 }
 export const clearBypassRankImage = () => async dispatch => {
     dispatch({
-        type: 'CLEAR_BYPASS_RANK_IMAGE'
+        type: CLEAR_BYPASS_RANK_IMAGE
     })
 }
 export const clearBypassRankImageCount = () => async dispatch => {
     dispatch({ 
-        type: 'CLEAR_BYPASS_RANK_IMAGE_COUNT'
+        type: CLEAR_BYPASS_RANK_IMAGE_COUNT
     })
 }
 
 export const showLoaderBypassRank = () => async dispatch => {
     dispatch({
-        type: 'SHOW_LOADER_BYPASS_RANK'
+        type: SHOW_LOADER_BYPASS_RANK
     })
 }
 
 export const hideLoaderBypassRank = () => async dispatch => {
     dispatch({
-        type: 'HIDE_LOADER_BYPASS_RANK'
+        type: HIDE_LOADER_BYPASS_RANK
     })
 }
 // Остановился на расчете avg rank для bypass // в редюсер включить суммирование ранка (оценок)

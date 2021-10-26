@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import { ADD_POST, LOAD_POST, REMOVE_POST, UPDATE_POST, GET_POSTS_ALL, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
+import { ADD_POST, LOAD_POST, REMOVE_POST, UPDATE_POST, GET_POSTS_ALL, SHOW_LOADER, HIDE_LOADER, CLEAR_POST } from "../../components/types"
 import { DATA } from '../../testData'
 import { DB } from '../../db'
 import { UploadDataToServer } from '../../uploadDataToServer'
@@ -20,7 +20,7 @@ export const loadPost = building_id => {
 }
 export const clearPost = () => async dispatch => {
     dispatch({ 
-        type: 'CLEAR_POST'
+        type: CLEAR_POST
     })
 }
 export const getPostAll = () => {

@@ -1,4 +1,4 @@
-import { ADD_POST, LOAD_POST, REMOVE_POST, GET_POSTS_ALL, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
+import { ADD_POST, LOAD_POST, REMOVE_POST, GET_POSTS_ALL, SHOW_LOADER, HIDE_LOADER, CLEAR_POST } from "../../components/types"
 // import * as firebase from 'firebase'
 const initialState = {
     postAll: [],
@@ -22,7 +22,7 @@ export const postReducer = (state = initialState, action) => {
     switch (action.type) {
         case LOAD_POST: return {...state, postAll: action.payload, loading: false}
         case GET_POSTS_ALL: return {...state, postAlls: action.payload}
-        case 'CLEAR_POST': return {...state, postAll: []}
+        case CLEAR_POST: return {...state, postAll: []}
         case REMOVE_POST: return {
             ...state, 
             postAll: state.postAll.filter(e => e.id !== action.payload),

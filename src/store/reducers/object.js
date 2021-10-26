@@ -1,4 +1,4 @@
-import { ADD_OBJECT, HIDE_LOADER, LOAD_OBJECT, REMOVE_OBJECT, SHOW_LOADER } from "../../components/types"
+import { ADD_OBJECT, CLEAR_OBJECTS_STATE, HIDE_LOADER, LOAD_OBJECT, REMOVE_OBJECT, SHOW_LOADER } from "../../components/types"
 const initialState = {
     objAll: [],
     loading: false,
@@ -35,7 +35,7 @@ export const objectReducer = (state = initialState, action) => {
             ...state,
             loading: false
         }
-        case 'CLEAR_OBJECTS_STATE': return {
+        case CLEAR_OBJECTS_STATE: return {
             ...state,
             objAll: []
         }

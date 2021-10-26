@@ -1,12 +1,12 @@
 import React, {useEffect} from 'react'
-import {View, Text, StyleSheet, Animated, TextInput, TouchableOpacity} from 'react-native'
+import {View, Text, StyleSheet, Animated, TextInput, TouchableOpacity, Alert, Pressable} from 'react-native'
 import Svg, {G, Circle, Path} from 'react-native-svg'
 import { QRIcon } from './ui/imageSVG/circle'
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle)
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput)
 
-export const BasicStatEmploee = ({
+export const FilterStat = ({
     percentage=0,
     radius=40,
     strokeWidth=10,
@@ -63,22 +63,24 @@ export const BasicStatEmploee = ({
     return (<>
     
     <View style={styles.container}>
-    <TouchableOpacity onPress={() => {}}>
+    
     <View>
+    <TouchableOpacity onPress={() => {Alert.alert('hi')}}>
         <Svg 
             width={radius * 2} 
             height={radius * 2} 
             viewBox={`0 0 ${halfCircle * 2} ${halfCircle * 2}`}>
+                
             <G rotation='-90' origin={`${halfCircle}, ${halfCircle}`}>
-                <Circle
+                {/* <Circle
                     cx='50%'
                     cy='50%'
-                    stroke={color}
+                    stroke={"white"}
                     strokeWidth={strokeWidth}
                     r={radius}
                     fill='transparent'
-                    strokeOpacity={0.2}
-                    />
+                    /> */}
+                    
                 <AnimatedCircle
                     ref={circleRef}
                     cx='50%'
@@ -89,7 +91,51 @@ export const BasicStatEmploee = ({
                     fill='transparent'
                     strokeDasharray={circleCircumference}
                     strokeDashoffset={circleCircumference}
-                    strokeLinecap='round'
+                />
+                
+                
+                
+                </G>
+                
+                </Svg> 
+        </TouchableOpacity>
+        </View>
+                    <View style={{position: 'absolute'}}>
+                <Svg >
+                <G rotation='0' origin={`${halfCircle}, ${halfCircle}`}>
+                <AnimatedCircle
+                    cx='50%'
+                    cy='50%'
+                    stroke={'green'}
+                    strokeWidth={strokeWidth}
+                    r={radius}
+                    fill='transparent'
+                    strokeDasharray={circleCircumference}
+                    strokeDashoffset={140 * 4}
+                />
+                </G>
+               <G rotation='90' origin={`${halfCircle}, ${halfCircle}`}>
+                <AnimatedCircle
+                    cx='50%'
+                    cy='50%'
+                    stroke={'red'}
+                    strokeWidth={strokeWidth}
+                    r={radius}
+                    fill='transparent'
+                    strokeDasharray={circleCircumference}
+                    strokeDashoffset={140 * 4}
+                />
+            </G>
+            <G rotation='180' origin={`${halfCircle}, ${halfCircle}`}>
+                <AnimatedCircle
+                    cx='50%'
+                    cy='50%'
+                    stroke={'yellow'}
+                    strokeWidth={strokeWidth}
+                    r={radius}
+                    fill='transparent'
+                    strokeDasharray={circleCircumference}
+                    strokeDashoffset={140 * 4}
                 />
             </G>
         </Svg>
@@ -105,7 +151,6 @@ export const BasicStatEmploee = ({
         </View>
         
         </View>
-        </TouchableOpacity>
         <AnimatedTextInput
             ref={inputRef}
             underlineColorAndroid="transparent"

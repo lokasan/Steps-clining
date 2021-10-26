@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import { ADD_OBJECT, LOAD_OBJECT, REMOVE_OBJECT, UPDATE_OBJECT, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
+import { ADD_OBJECT, LOAD_OBJECT, REMOVE_OBJECT, UPDATE_OBJECT, SHOW_LOADER, HIDE_LOADER, CLEAR_OBJECTS_STATE } from "../../components/types"
 import { DATA } from '../../testData'
 import { DB } from '../../db'
 import { UploadDataToServer } from '../../uploadDataToServer'
@@ -76,6 +76,6 @@ export const hideLoaderObject = () => async dispatch => {
 
 export const clearObjectState = () => async dispatch => {
     dispatch({
-        type: 'CLEAR_OBJECTS_STATE'
+        type: CLEAR_OBJECTS_STATE
     })
 }

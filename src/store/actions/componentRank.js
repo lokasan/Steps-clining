@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import { ADD_COMPONENT_RANK, ADD_POST, EDIT_COMPONENT_RANK, LOAD_COMPONENT_RANK, LOAD_POST, REMOVE_COMPONENT_RANK, REMOVE_POST, UPDATE_COMPONENT_RANK, UPDATE_POST, SHOW_LOADER, HIDE_LOADER } from "../../components/types"
+import { ADD_COMPONENT_RANK, ADD_POST, EDIT_COMPONENT_RANK, LOAD_COMPONENT_RANK, LOAD_POST, REMOVE_COMPONENT_RANK, REMOVE_POST, UPDATE_COMPONENT_RANK, UPDATE_POST, SHOW_LOADER, HIDE_LOADER, CLEAR_COMPONENT_RANK, HIDE_LOADER_COMPONENT_RANK, SHOW_LOADER_COMPONENT_RANK } from "../../components/types"
 import { DATA } from '../../testData'
 import { DB } from '../../db'
 import { UploadDataToServer } from '../../uploadDataToServer'
@@ -95,17 +95,17 @@ export const editComponentRank = (componentRank) => async dispatch => {
 
 export const showLoaderComponentRank = () => async dispatch => {
     dispatch({
-        type: 'SHOW_LOADER_COMPONENT_RANK'
+        type: SHOW_LOADER_COMPONENT_RANK
     })
 }
 
 export const hideLoaderComponentRank = () => async dispatch => {
     dispatch({
-        type: 'HIDE_LOADER_COMPONENT_RANK'
+        type: HIDE_LOADER_COMPONENT_RANK
     })
 }
 export const clearComponentRank = () => async dispatch => {
     dispatch({
-        type: 'CLEAR_COMPONENT_RANK'
+        type: CLEAR_COMPONENT_RANK
     })
 }

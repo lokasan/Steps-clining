@@ -12,7 +12,7 @@ import { ADD_OBJECT, ACTION, CREATE, MESSAGE, NAME_FILE, NAME, ADDRESS, DESCRIPT
     LOAD_COMPONENT_RANK, UPDATE_COMPONENT_RANK, LOAD_COMPONENT_TO_POST_LINK, GET_COMPONENT_TO_POST_LINK, IMAGE,
     GET_BYPASS_STATUS_OBJECT, LOAD_BYPASS_STATUS_OBJECT, REMOVE_POST, GET_OBJECTS_SYNCHRONIZE, GET_POSTS_SYNCHRONIZE, 
     GET_COMPONENTS_SYNCHRONIZE, GET_COMPONENTS_RANKS_SYNCHRONIZE, FINISHED_BYPASS, GET_BYPASS_STATUS_POSTS, 
-    LOAD_BYPASS_STATUS_POSTS, GET_BYPASS_STATUS_USERS, LOAD_BYPASS_STATUS_USERS, GET_BYPASS_STATUS_USERS_DETAIL, LOAD_BYPASS_STATUS_USERS_DETAIL, UPDATE_EMPLOEE_PRIVILEG} from './components/types'
+    LOAD_BYPASS_STATUS_POSTS, GET_BYPASS_STATUS_USERS, LOAD_BYPASS_STATUS_USERS, GET_BYPASS_STATUS_USERS_DETAIL, LOAD_BYPASS_STATUS_USERS_DETAIL, UPDATE_EMPLOEE_PRIVILEG, GET_LIST_USERS_AVERAGE_FOR_POST, GET_USERS_BASIC_STAT, GET_SINGLE_USER_STAT, GET_BYPASS_RANK_IMAGE_COUNT, ADD_ACTIVE_USER, GET_ACTIVE_USERS} from './components/types'
 import { DB } from './db';
 import { hideLoaderBypass, hideLoaderBypassIcon } from './store/actions/bypass';
 import { hideLoaderComponent } from './store/actions/component';
@@ -124,7 +124,15 @@ async function socket_onmessage_callback(recv) {
             type: LOAD_BYPASS_STATUS_USERS_DETAIL,
             payload: data[MESSAGE]
         })
-    } else if (ACTION in data && data[ACTION] === GET_OBJECTS_SYNCHRONIZE) {
+    } else if (ACTION in data && data[ACTION] === 'GET_BYPASS_STATUS_USERS_DETAIL_FOR_DAY') {
+        data[MESSAGE].map((el) => el['countTime'] = msToTime(el['end_time'] - el['start_time']))
+        dispatch(hideLoaderBypassIcon())
+        dispatch({
+            type: 'LOAD_BYPASS_STATUS_USERS_DETAIL_FOR_DAY',
+            payload: data[MESSAGE]
+        })
+    }
+    else if (ACTION in data && data[ACTION] === GET_OBJECTS_SYNCHRONIZE) {
         await doCreateAndRemoveLocalStoreAndBase(data, DB.getObjectById, DB.createObject, DB.removeObject)
         dispatch(hideLoaderBypass())
         dispatch({
@@ -216,7 +224,8 @@ async function socket_onmessage_callback(recv) {
             await FileSystem.writeAsStringAsync(filename, data['CONTENT'][i], {
                 encoding: FileSystem.EncodingType.Base64
             })
-            myListBypassRankImage.push(filename)
+            const spreadDataIfExists = data['DATA'] ? data['DATA'][i] : Object.create(null)
+            myListBypassRankImage.push({filename, ...spreadDataIfExists})
         }
         dispatch(hideLoaderBypassRank())
         dispatch({
@@ -224,20 +233,41 @@ async function socket_onmessage_callback(recv) {
             payload: myListBypassRankImage
         })
         
-    } else if (ACTION in data && data[ACTION] === 'GET_BYPASS_RANK_IMAGE_COUNT') {
+    } else if (ACTION in data && data[ACTION] === GET_BYPASS_RANK_IMAGE_COUNT) {
         dispatch({
-            type: 'GET_BYPASS_RANK_IMAGE_COUNT',
+            type: GET_BYPASS_RANK_IMAGE_COUNT,
             payload: data['LENGTH']
         })
-    } else if (ACTION in data && data[ACTION] === 'GET_SINGLE_USER_STAT') {
+    } else if (ACTION in data && data[ACTION] === GET_SINGLE_USER_STAT) {
         dispatch({
-            type: 'GET_SINGLE_USER_STAT',
+            type: GET_SINGLE_USER_STAT,
             payload: data[MESSAGE]
         })
-    } else if (ACTION in data && data[ACTION] === 'GET_USERS_BASIC_STAT') {
+    } else if (ACTION in data && data[ACTION] === GET_USERS_BASIC_STAT) {
         dispatch({
-            type: 'GET_USERS_BASIC_STAT',
+            type: GET_USERS_BASIC_STAT,
             payload: data[MESSAGE]
+        })
+    } else if (ACTION in data && data[ACTION] === GET_LIST_USERS_AVERAGE_FOR_POST) {
+        dispatch(hideLoaderBypass())
+        dispatch({
+            type: GET_LIST_USERS_AVERAGE_FOR_POST,
+            payload: data[MESSAGE]
+        })
+    } else if (ACTION in data && data[ACTION] === 'GET_STATUS_USER_WITH_TBR') {
+        dispatch({
+            type: 'GET_STATUS_USER_WITH_TBR',
+            payload: data[MESSAGE]
+        })
+    } else if (ACTION in data && data[ACTION] === 'GET_STATUS_USER_WITH_TBR_DETAIL') {
+        dispatch({
+            type: 'GET_STATUS_USER_WITH_TBR_DETAIL',
+            payload: data[MESSAGE]
+        })
+    } else if (ACTION in data && data[ACTION] === 'GET_IMAGE_BYPASS_USER_OF_POST_COUNT') {
+        dispatch({
+            type: GET_BYPASS_RANK_IMAGE_COUNT,
+            payload: data['LENGTH']
         })
     }
     // `data:image/jpeg;base64,${object.path}
@@ -719,13 +749,14 @@ export class UploadDataToServer {
             }
         ))
     }
-    static async getBypassUsersDetail(period, user_email, post_name) {
+    static async getBypassUsersDetail(period, user_email, post_name, start_time=null) {
         ws.send(JSON.stringify(
             {
                 ACTION: GET_BYPASS_STATUS_USERS_DETAIL,
                 PERIOD: period,
                 USER_EMAIL: user_email,
-                POST_NAME: post_name
+                POST_NAME: post_name,
+                START_TIME: start_time
             }
         ))
     }
@@ -738,13 +769,13 @@ export class UploadDataToServer {
 
     static async addActiveUser(id) {
         ws.send(JSON.stringify({
-            ACTION: 'ADD_ACTIVE_USER',
+            ACTION: ADD_ACTIVE_USER,
             ID: id
         }))
     }
     static async getActiveUsers() {
         ws.send(JSON.stringify({
-            ACTION: 'GET_ACTIVE_USERS'
+            ACTION: GET_ACTIVE_USERS
         }))
     }
     static async updateUserPrivileg(emploee) {
@@ -803,11 +834,63 @@ export class UploadDataToServer {
             USER_ID: user_id
         }))
     }
-    static async getUsersBasicStat(start_time, end_time) {
+    static async getUsersBasicStat(start_time=null, end_time=null) {
         ws.send(JSON.stringify({
             ACTION: 'GET_USERS_BASIC_STAT',
             START_TIME: start_time,
             END_TIME: end_time
+        }))
+    }
+    static async getListUsersAverageForPost(period=null, start_time=null, end_time=null, post_name) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_LIST_USERS_AVERAGE_FOR_POST',
+            START_TIME: start_time,
+            END_TIME: end_time,
+            POST_NAME: post_name,
+            PERIOD: period
+        }))
+    }
+    static async getStatusUserWithTbr(period=null, building_id=null, start_time=null, end_time=null) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_STATUS_USER_WITH_TBR',
+            START_TIME: start_time,
+            END_TIME: end_time,
+            BUILDING_ID: building_id,
+            PERIOD: period
+        }))
+    }
+    static async getStatusUsersWithTbrDetail(period=null, building_id=null, user_id=null, start_time=null, end_time=null) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_STATUS_USER_WITH_TBR_DETAIL',
+            START_TIME: start_time,
+            END_TIME: end_time,
+            USER_ID: user_id,
+            BUILDING_ID: building_id,
+            PERIOD: period
+        }))
+    }
+    static async getImageBypassUserOfPostCount(period, component_id, post_id, email, start_time=null, end_time=null) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_IMAGE_BYPASS_USER_OF_POST_COUNT',
+            PERIOD: period,
+            COMPONENT_ID: component_id,
+            POST_ID: post_id,
+            EMAIL: email,
+            START_TIME: start_time,
+            END_TIME: end_time
+        }))
+    }
+    static async getImageBypassUserOfPost(period, component_id, post_id, email, offset, start_time=null, end_time=null) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_IMAGE_BYPASS_USER_OF_POST',
+            PERIOD: period,
+            COMPONENT_ID: component_id,
+            POST_ID: post_id,
+            EMAIL: email,
+            START_TIME: start_time,
+            END_TIME: end_time,
+            LIMIT: 1,
+            OFFSET: offset
         }))
     }
 }

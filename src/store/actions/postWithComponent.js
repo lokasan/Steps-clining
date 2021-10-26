@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system'
-import { CREATE_COMPONENT_TO_POST_LINK, LOAD_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, SHOW_LOADER, HIDE_LOADER} from "../../components/types"
+import { CREATE_COMPONENT_TO_POST_LINK, LOAD_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, SHOW_LOADER, HIDE_LOADER, CLEAR_POST_WITH_COMPONENT} from "../../components/types"
 import { DATA } from '../../testData'
 import { DB } from '../../db'
 import { UploadDataToServer } from '../../uploadDataToServer'
@@ -57,6 +57,6 @@ export const hideLoaderPostWithComponents = () => async dispatch => {
 
 export const clearPostWithComponent = () => async dispatch => {
     dispatch({
-        type: 'CLEAR_POST_WITH_COMPONENT'
+        type: CLEAR_POST_WITH_COMPONENT
     })
 }

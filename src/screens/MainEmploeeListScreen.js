@@ -31,13 +31,16 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     let   posts                     = useSelector(state => state.post.postAll)
     let userStat = useSelector(state => state.bypass.userSingleStat)
     let usersBasicStat = useSelector(state => state.bypass.usersBasicStat)
-    const [date, setDate] = useState(new Date(Date.now()));
+    const [date, setDate] = useState(Platform.OS === 'ios' ? new Date(new Date().getTime() - (new Date().getTime()) % (24 * 60 * 60 * 1000) - (3 * 60 * 60 * 1000)) : new Date(new Date().getTime() - (new Date().getTime()) % (24 * 60 * 60 * 1000)));
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
     const onChange = (event, selectedDate) => {
       const currentDate = selectedDate || date;
       setShow(Platform.OS === 'ios');
       setDate(currentDate);
+      let start_time = currentDate.getTime()
+      // Alert.alert(String(currentDate.getTime()))
+      dispatch(getUsersBasicStat(Platform.OS === 'ios' ? start_time : start_time - (start_time) % (24 * 60 * 60 * 1000) - (3 * 60 * 60 * 1000)))
     };
   
     const showMode = (currentMode) => {
@@ -127,35 +130,6 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     // useEffect(() => {
     //     dispatch(loadEmploeeDouble())
     // }, [dispatch])
-    useEffect(() => {
-        dispatch(getPostAll())
-        dispatch(getUsersBasicStat())
-        navigation.setParams({test: showDatepicker})
-        // dispatch(loadObject()),
-        // dispatch(loadComponent())
-        
-    }, [dispatch])
-    useEffect(() => {
-      dispatch(getUsersServer())
-  }, [dispatch])
-  let serfIdUser = 0
-  // const [serfIdUser, setSerfIdUser] = useState(0)
-  let emplServer = useSelector(state => state.empDouble.empServer)
-  const analyticsEmploee = [{id: 1629054716555, avg_rank: 4.19, count_bypass: 14, cycle: 0}]
-  if (emplServer.length && usersBasicStat.length) {
-    emplServer = emplServer.map(el => {
-      if (usersBasicStat.find(els => els.id === el.id)) {
-          return ({...el, ...usersBasicStat.find(els => els.id === el.id)})
-      } else {
-          return el
-      }
-  })
-  }
-  function testing() {
-    Alert.alert('hi')
-  }
-  
-  console.log(emplServer, 'emplServer')
     const emploeeAll   = useSelector(state => state.empDouble.empAll)
     let   tempPrivileg = false
     console.log(emploeeAll, 'Алл сотрудники');
@@ -169,11 +143,43 @@ export const MainEmploeeListScreen = ( {navigation}) => {
         }
     }
     useEffect(() => {
+        dispatch(getPostAll())
+        dispatch(getUsersBasicStat())
+        navigation.setParams({test: showDatepicker, access: true})
+        // dispatch(loadObject()),
+        // dispatch(loadComponent())
+        
+    }, [dispatch])
+    useEffect(() => {
+      dispatch(getUsersServer())
+  }, [dispatch])
+  let serfIdUser = 0
+  // const [serfIdUser, setSerfIdUser] = useState(0)
+  let emplServer = useSelector(state => state.empDouble.empServer)
+  
+  if (emplServer.length && usersBasicStat.length) {
+    emplServer = emplServer.map(el => {
+      if (usersBasicStat.find(els => els.id === el.id)) {
+          return ({...el, ...usersBasicStat.find(els => els.id === el.id)})
+      } else {
+          return el
+      }
+  })
+  }
+    
+    useEffect(() => {
       if (serfIdUser) {
         dispatch(getSingleUserStat(serfIdUser))
       }
       
     }, [serfIdUser])
+    const [refresh, setRefresh] = useState(false)
+    const refreshEl = () => {
+      let start_time = date.getTime()
+      // Alert.alert(String(currentDate.getTime()))
+      dispatch(getUsersBasicStat(Platform.OS === 'ios' ? start_time : start_time - (start_time) % (24 * 60 * 60 * 1000) - (3 * 60 * 60 * 1000)))
+      setRefresh(true)
+    }
     return <View style = {{flex: 1}}>
       {show && (
         <DateTimePicker
@@ -196,6 +202,8 @@ export const MainEmploeeListScreen = ( {navigation}) => {
         data         = {emplServer}
         keyExtractor = {emploee => emploee.id.toString()}
         renderItem   = {({item}) => <EmploeeCard emploee={item} onOpen={openEmploeeHandler} isOnline={isOnline}/>}
+        refreshing={false}
+        onRefresh={refreshEl}
                 /> : <><Text style={styles.textDate}>Ваши данные на сегодня</Text>
                 <View style={{flexDirection: 'row', justifyContent: 'space-around', alignSelf: 'center'}}>
                   <BasicStatEmploee width_svg={24} height_svg={25} color='red' max={3} percentage={userStat[0]?.avg_rank} svgRender={Rank} navigation={navigation}/>
@@ -214,13 +222,13 @@ export const MainEmploeeListScreen = ( {navigation}) => {
 
 MainEmploeeListScreen.navigationOptions = ({navigation}) => {
     return {headerTitle: '',
-    headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+    headerRight: () => navigation.getParam('access') ? <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
     <Item 
     title='Private Account'
     iconName='ios-calendar'
     onPress={() => navigation.getParam('test')()}
     />
-  </HeaderButtons>,
+  </HeaderButtons> : null,
     headerLeft: () => <HeaderButtons HeaderButtonComponent = {AppHeaderIcon}>
     <Item 
     title    = 'toogle'
