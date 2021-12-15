@@ -9,12 +9,14 @@ import { addEmploee } from '../../store/actions/empDouble'
 import { addObject } from '../../store/actions/object'
 import { PhotoPicker } from '../../components/PhotoPicker'
 import findTrashSymbolsInfo from '../../utils/findTrashSymbolsInfo'
+import { addCorpus } from '../../store/actions/corpus'
 
-export const CreateNewObjects = ({navigation}) => {
+export const CreateNewCorpus= ({navigation}) => {
     const dispatch = useDispatch()
     
     const [name, setName]               = useState('')
     const [address, setAddress]         = useState('')
+    const [coords, setCoords] = useState('')
     const [description, setDescription] = useState('')
     const [borderBottomColor, setBorderBottomColor] = useState({
       name    : false,
@@ -26,22 +28,23 @@ export const CreateNewObjects = ({navigation}) => {
       imgRef.current = uri
       imgExtensionsRef.current = '.' + uri.split('.')[uri.split('.').length - 1]
     }
-    const createObjectHandler = () => {
-      const object = {
+    const createCorpusHandler = () => {
+      const corpus = {
         name,
         address,
+        coords,
         description,
         img: imgRef.current,
         extensions: imgExtensionsRef.current,
         
       }
-      dispatch(addObject(object))
-      navigation.navigate('ObjectsBuildings')
+      dispatch(addCorpus(corpus))
+      navigation.navigate('CorpusesBuilding')
     }
     return                    <ScrollView style = {styles.wrapper}>
     <TouchableWithoutFeedback onPress           = {() => Keyboard.dismiss()}>
             <View>
-        <Text style = {styles.title}>Создание нового участка</Text>
+        <Text style = {styles.title}>Создание нового объекта</Text>
         <AppCard>
         <Text style={{color: 'red'}}>{findTrashSymbolsInfo(name).status !== 200 ?
         `Некорректные символы: ${Array
@@ -50,7 +53,7 @@ export const CreateNewObjects = ({navigation}) => {
         ''}</Text>
         <TextInput
         style        = {styles.textarea}
-        placeholder  = 'Название участка'
+        placeholder  = 'Название объекта'
         value        = {name}
         onChangeText = {(text) => {
           findTrashSymbolsInfo(text).status !== 200 ?
@@ -62,7 +65,7 @@ export const CreateNewObjects = ({navigation}) => {
         
         <TextInput
         style        = {styles.textarea}
-        placeholder  = 'Адрес участка'
+        placeholder  = 'Адрес объекта'
         value        = {address}
         onChangeText = {setAddress}/>
         <TextInput
@@ -70,25 +73,31 @@ export const CreateNewObjects = ({navigation}) => {
         placeholder  = 'Описание'
         value        = {description}
         onChangeText = {setDescription}/>
+        <TextInput 
+        style = {styles.textarea}
+        placeholder = 'Координаты'
+        value = {coords}
+        onChangeText = {setCoords}
+        />
         </AppCard>
         <PhotoPicker onPick = {photoPickHandler}/>
         
      <Button 
-     title    = 'Создать участок'
-     onPress  = {createObjectHandler}
+     title    = 'Создать объект'
+     onPress  = {createCorpusHandler}
      color    = {HEADER_FOOTER.MAIN_COLOR}
      disabled = {!name || !address || !description || !borderBottomColor.name}/>
       </View>
       </TouchableWithoutFeedback>
     </ScrollView>
 }
-CreateNewObjects.navigationOptions = ({navigation}) => ({
-    headerTitle: 'Новый участок',
+CreateNewCorpus.navigationOptions = ({navigation}) => ({
+    headerTitle: 'Новый объект',
     headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
     <Item 
     title    = 'AddNewUser'
     iconName = 'ios-arrow-dropdown'
-    onPress  = {() => navigation.navigate('CreateObjects')}
+    onPress  = {() => navigation.navigate('CreateCorpus')}
     />
   </HeaderButtons>
 })

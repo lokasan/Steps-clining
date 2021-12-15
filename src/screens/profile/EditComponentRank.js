@@ -9,6 +9,7 @@ import { addEmploee } from '../../store/actions/empDouble'
 import { addPost } from '../../store/actions/post'
 import { PhotoPicker } from '../../components/PhotoPicker'
 import { editComponentRank } from '../../store/actions/componentRank'
+import findTrashSymbolsInfo from '../../utils/findTrashSymbolsInfo'
 
 export const EditComponentRank = ({navigation}) => {
     const dispatch = useDispatch()
@@ -22,11 +23,14 @@ export const EditComponentRank = ({navigation}) => {
     const componentRankComponentId = componentRank.component_id
     const [name, setName] = useState(componentRankName)
     const [rank, setRank] = useState(componentRankRank.toString())
-    
+    const [borderBottomColor, setBorderBottomColor] = useState({
+        name    : true,
+      })
     const imgRef = useRef(componentRankImg)
-    
+    const imgExtensionsRef = useRef()
     const photoPickHandler = uri => {
       imgRef.current = uri //path to img file
+      imgExtensionsRef.current = '.' + uri.split('.')[uri.split('.').length - 1]
     }
     const editComponentRankHandler = () => {
       const componentRank = {
@@ -35,6 +39,7 @@ export const EditComponentRank = ({navigation}) => {
         rank,
         component_id: componentRankComponentId,
         img: imgRef.current,
+        extensions: imgExtensionsRef.current
       }
       
       dispatch(editComponentRank(componentRank))
@@ -46,11 +51,22 @@ export const EditComponentRank = ({navigation}) => {
             <View>
         <Text style={styles.title}>Редактирование критерия оценки</Text>
         <AppCard>
+        <Text style={{color: 'red'}}>{findTrashSymbolsInfo(name).status !== 200 ?
+        `Некорректные символы: ${Array
+          .from(new Set(findTrashSymbolsInfo(name).error))
+          .join('')}` :
+        ''}</Text>
         <TextInput
         style={styles.textarea}
         placeholder='Название критерия'
         value={name}
-        onChangeText={setName}/>
+        onChangeText={(text) => {
+            findTrashSymbolsInfo(text).status !== 200 ?
+            setBorderBottomColor({...borderBottomColor, name: false}) : 
+            setBorderBottomColor({...borderBottomColor, name: true})
+            setName(text)
+            
+          }}/>
         
         <TextInput
         style={styles.textarea}
@@ -65,7 +81,7 @@ export const EditComponentRank = ({navigation}) => {
      title='Сохранить критерий оценки' 
      onPress={editComponentRankHandler} 
      color={HEADER_FOOTER.MAIN_COLOR}
-     disabled={!name || !rank}/>
+     disabled={!name || !rank || !borderBottomColor.name}/>
       </View>
       </TouchableWithoutFeedback>
     </ScrollView>

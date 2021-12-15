@@ -8,9 +8,9 @@ import * as FileSystem from 'expo-file-system';
 import {useDispatch, useSelector} from 'react-redux'
 import { getPostAll, loadPost } from '../store/actions/post';
 import QRCode from 'react-native-qrcode-generator'
-import {Cycle, Clock, Rank, QRIcon, StepsIcon, PeopleIcon, ArrowRight} from '../components/ui/imageSVG/circle'
+import {Cycle, Clock, Rank, QRIcon, StepsIcon, PeopleIcon, ArrowRight, TimeBetweenBypass} from '../components/ui/imageSVG/circle'
 import { useState, useRef } from 'react';
-import { clearBypassObjectDetail, clearBypassObjectDetailAll, clearBypassPosts, clearBypassUsers, clearBypassUsersAverage, clearBypassUsersAverageAll, clearBypassUsersDetail, clearBypassUsersDetailAll, clearBypassUsersDetailForDay, clearListUsersStaticTbr, clearListUsersStaticWithTbrDetailAll, getImageBypassUserOfPost, getImageBypassUserOfPostCount, getListUsersAverageForPost, getListUsersStaticTbr, getListUsersStaticWithTbrDetail, loadBypassGetter, loadBypassObjectDetail, loadBypassPosts, loadBypassUsers, loadBypassUsersDetail } from '../store/actions/bypass';
+import { clearBypassObjectDetail, clearBypassObjectDetailAll, clearBypassPosts, clearBypassUsers, clearBypassUsersAverage, clearBypassUsersAverageAll, clearBypassUsersDetail, clearBypassUsersDetailAll, clearBypassUsersDetailForDay, clearListUsersStaticTbr, clearListUsersStaticWithTbrDetailAll, getImageBypassUserOfPost, getImageBypassUserOfPostCount, getListUsersAverageForPost, getListUsersStaticTbr, getListUsersStaticWithTbrDetail, loadBypassGetter, loadBypassObjectDetail, loadBypassPosts, loadBypassUsers, loadBypassUsersDetail, getComponentForBuilding, clearComponentForBuilding } from '../store/actions/bypass';
 import { msToTime } from '../utils/msToTime';
 import { UploadDataToServer } from '../uploadDataToServer';
 import { clearBypassRankImage, clearBypassRankImageCount, showLoaderBypassRank } from '../store/actions/bypassRank';
@@ -21,6 +21,7 @@ import { FilterStat } from '../components/FilterStat';
 import * as Localization from 'expo-localization';
 import i18n from 'i18n-js';
 import { User } from './statistics/User';
+import { Attribute } from './statistics/Attribute';
 // import { Circle } from 'react-native-svg';
 // import Shares from 'react-native-share'
 const NORMAL_RANK = 3
@@ -55,6 +56,7 @@ export const StatusObject = ({navigation}) => {
   const DATA_IMAGE_BYPASS_RANK = useSelector(state => state.bypassRank.bypassRankImage)
   const COUNT_IMAGE_TO_BYPASS_RANK = useSelector(state => state.bypassRank.bypassRankImageCount)
   const DATA_USERS_TBR = useSelector(state => state.bypass.usersWithTbr)
+  const DATA_COMPONENT = useSelector(state => state.bypass.componentForBuilding)
   // const DATA_USERS_TBR_DETAIL = useSelector(state => state.bypass.userWithTbrDetail)
   const emploeeAll   = useSelector(state => state.empDouble.empAll)
   // console.log('Count of photos: ', COUNT_IMAGE_TO_BYPASS_RANK)
@@ -70,7 +72,9 @@ export const StatusObject = ({navigation}) => {
       // console.log('test ', i)
     }
   }, [COUNT_IMAGE_TO_BYPASS_RANK])
-  
+  useEffect(() => {
+    console.log(DATA_COMPONENT, 'DATA_COMPONENT')
+  }, [DATA_COMPONENT])
   const USERS_LIST = useSelector(state => state.empDouble.empServer)
   // console.log(DATA_POSTS)
   // console.log(DATA_USERS, 'data userss');
@@ -95,7 +99,7 @@ export const StatusObject = ({navigation}) => {
     employee: false,
   })
   i18n.translations = {
-    en: {posts: 'posts', building: 'building', employees: 'emploees', components: 'components'},
+    en: {posts: 'posts', building: 'building', employees: 'employees', components: 'components'},
     ru: {posts: 'Посты', building: 'Участки', employees: 'Сотрудники', components: 'Компоненты'}
   }
   i18n.locale = Localization.locale
@@ -125,6 +129,7 @@ export const StatusObject = ({navigation}) => {
             if (flagArrayObjects.indexOf(item.title) !== -1) {
               dispatch(loadBypassPosts(period, 'tropic'))
               dispatch(clearListUsersStaticTbr())
+              dispatch(clearComponentForBuilding())
               dispatch(clearListUsersStaticWithTbrDetailAll())
               clearAnalyticScreen()
               setFlagArrayObjects(flagArrayObjects.filter(e => e !== item.title))
@@ -144,6 +149,9 @@ export const StatusObject = ({navigation}) => {
               if (stateChartInnerRef.employee) {
                 dispatch(getListUsersStaticTbr(period, activeBuildingRef.current.building_id))
                 
+              }
+              if (stateChartInnerRef.components) {
+                dispatch(getComponentForBuilding(period, activeBuildingRef.current.building_id))
               }
               
               setFlagArrayObjects([...flagArrayObjects, item.title])
@@ -200,7 +208,7 @@ export const StatusObject = ({navigation}) => {
                 style = {{
                   position: 'relative',
                   justifyContent: 'flex-end', 
-                  width: '45%', bottom: 0, 
+                  width: '50%', bottom: 0, 
                   right: 0, 
                   height: '100%'}}>
                 <View 
@@ -217,7 +225,15 @@ export const StatusObject = ({navigation}) => {
                 
                   <View style = {styles.alignElementsCenter}>
                   {Rank()}
-                  <Text style = {styles.textStyleInToolkit}>{item.avgRanks}</Text>
+                  <Text style = {styles.textStyleInToolkit}>{item.avgRanks.toFixed(1)}</Text>
+                  </View>
+                  <View style = { stateChartInnerRef.employee ? styles.alignElementsCenter : {display: 'none'}}>
+                  {Cycle()}
+                  <Text style = {styles.textStyleInToolkit}>{item.cycle}</Text>
+                  </View>
+                  <View style = {stateChartInnerRef.employee ? styles.alignElementsCenter : {display: 'none'}}>
+                  {TimeBetweenBypass('#fff', 17, 16)}
+                  <Text style = {styles.textStyleInToolkit}>{msToTime(item.time_between_bypass)}</Text>
                   </View>
                   <View style = {styles.alignElementsCenter}>
                   {QRIcon()}
@@ -227,10 +243,10 @@ export const StatusObject = ({navigation}) => {
                   {Clock()}
                   <Text style = {styles.textStyleInToolkit}>{item.countTime}</Text>
                   </View>
-                  <View style = {styles.alignElementsCenter}>
+                  {/* <View style = {styles.alignElementsCenter}>
                   {StepsIcon()}
                   <Text style = {styles.textStyleInToolkit}>{item.steps}</Text>
-                  </View>
+                  </View> */}
                   <View style = {{...styles.alignElementsCenter, paddingTop: 20}}>
                     <ArrowTrand item={item}/>
                   </View>
@@ -403,7 +419,7 @@ export const StatusObject = ({navigation}) => {
                       </View>
                     </View> */}
                 </View>
-                <View style = {{flexDirection: 'column', justifyContent: 'space-between', width: '45%'}}>
+                <View style = {{flexDirection: 'column', justifyContent: 'space-between', width: '50%'}}>
                 <View 
                 style = {{
                   ...styles.sticker, 
@@ -424,7 +440,7 @@ export const StatusObject = ({navigation}) => {
                 
                   <View style = {styles.alignElementsCenter}>
                 
-                  <Text style = {{...styles.textStyleInToolkit, paddingTop: 0}}>{item.avgRanks}</Text>
+                  <Text style = {{...styles.textStyleInToolkit, paddingTop: 0}}>{item.avgRanks.toFixed(1)}</Text>
                   </View>
                  
                   <View style = {styles.alignElementsCenter}>
@@ -435,10 +451,10 @@ export const StatusObject = ({navigation}) => {
                   
                   <Text style = {{...styles.textStyleInToolkit, paddingTop: 0}}>{item.countTime}</Text>
                   </View>
-                  <View style = {styles.alignElementsCenter}>
+                  {/* <View style = {styles.alignElementsCenter}>
                   
                   <Text style = {{...styles.textStyleInToolkit, paddingTop: 0}}>{item.steps}</Text>
-                  </View>
+                  </View> */}
                   <ArrowTrand item={item}/>
                   
                 </View>
@@ -605,26 +621,24 @@ export const StatusObject = ({navigation}) => {
     
       const createTextComponent = (item, index) => {
         let createdComponent = []
-        let tempHelper = []
+        let uniqueComponent = {}
+        let valueOfKeyComponent = []
         if (item?.data?.length !== 0) {
-          let temp = item.data.map((el, idx) => {const tmp = {}; tmp[idx] = Object.keys(el).length; return tmp})
-          let maxKeysOfBypass = Math.max(...temp.map(el => Object.values(el)))
-          let objectWithMaxKeysOfBypass = {}
-          
-          for (el of temp) {
-            if (Object.values(el)[0] === maxKeysOfBypass) {
-              objectWithMaxKeysOfBypass = item.data[Object.keys(el)[0]]
-            }
-          }
-          for (let el in objectWithMaxKeysOfBypass) {
-            if (!isNaN(Number(el))) {
-              tempHelper.push(objectWithMaxKeysOfBypass[el])
-              createdComponent.push(<Text style ={styles.beastAndBad}>{objectWithMaxKeysOfBypass[el]}</Text>)
-              // console.log(objectWithMaxKeysOfBypass[el])
-            }
-          }
-          existsComponents.current = tempHelper
-          tempHelper = []
+          item.data.map(el => {
+            Object.keys(el).map(key => {
+              if (!isNaN(Number(key))) {
+                if (!uniqueComponent.hasOwnProperty(key)) {
+                  uniqueComponent[key] = el[key]
+                }
+              }
+            })
+          })
+      
+          valueOfKeyComponent.push(...Object.values(uniqueComponent))
+          valueOfKeyComponent.map(el => createdComponent.push(<Text style ={styles.beastAndBad}>{el}</Text>))
+      
+          existsComponents.current = valueOfKeyComponent
+          valueOfKeyComponent = []
         }
         return {textComponent: createdComponent, existsComponents}
       }
@@ -646,11 +660,11 @@ export const StatusObject = ({navigation}) => {
               onPress={() => {
                 // console.log(keyByValue)
                 if (item[keyByValue + '_is_image']) {
-                  bypassKeyByValueRef.current = keyByValue
+                  bypassKeyByValueRef.current = item[keyByValue + '_bypass_rank_id']
                   dispatch(showLoaderBypassRank())
-                  UploadDataToServer.getBypassPhotoCount(keyByValue)
+                  UploadDataToServer.getBypassPhotoCount(item[keyByValue + '_bypass_rank_id'])
 
-                  UploadDataToServer.getBypassPhoto(keyByValue, DATA_IMAGE_BYPASS_RANK.length)
+                  UploadDataToServer.getBypassPhoto(item[keyByValue + '_bypass_rank_id'], DATA_IMAGE_BYPASS_RANK.length)
                   setModalVisible(true)
                 }
               }}>
@@ -787,8 +801,8 @@ export const StatusObject = ({navigation}) => {
           }
           if (period === 'year' && monthRange === 'year') {
             for (let i = 12; i >= 0; i--) {
-              currentDate = new Date(new Date().setMonth(new Date().getMonth() - i))
-              console.log(currentDate)
+              let currentDate = new Date(new Date().getFullYear(), new Date().getMonth() - i)
+              console.log(currentDate, 'TEST My DATE', `[${i}]`)
               fullFillArray.push({date: String(currentDate.getFullYear()).slice(2) + '-' 
               + ((currentDate.getMonth() + 1) / 10 >= 1 ? 
               (currentDate.getMonth() + 1) : 
@@ -1012,7 +1026,10 @@ export const StatusObject = ({navigation}) => {
             bypassPhotoPostIdRef={bypassPhotoPostIdRef}
             bypassPhotoEmailRef={bypassPhotoEmailRef}
             DATA_IMAGE_BYPASS_RANK={DATA_IMAGE_BYPASS_RANK}
-            /> : null) )
+            /> : (stateChartInnerRef.components 
+              ? <Attribute
+
+                /> : null ))) 
           : null}</>
          
         })
@@ -1056,6 +1073,7 @@ export const StatusObject = ({navigation}) => {
       
       function clearAnalyticScreen() {
         dispatch(clearBypassUsersAverageAll())
+        dispatch(clearComponentForBuilding())
         dispatch(clearListUsersStaticWithTbrDetailAll())
         setFlagArrayPosts([])
         dispatch(clearBypassObjectDetailAll())
@@ -1203,7 +1221,7 @@ export const StatusObject = ({navigation}) => {
          <View style={styles.centeredView}>
         
             
-            <View style={DATA_POSTS.length === 0  && DATA_USERS_TBR.length === 0 ? {display: 'flex', flexDirection: 'row', justifyContent: 'space-between'} : {display: 'none'}}>
+            <View style={DATA_POSTS.length === 0  && DATA_USERS_TBR.length === 0  && DATA_COMPONENT.length === 0 ? {display: 'flex', flexDirection: 'row', justifyContent: 'space-between'} : {display: 'none'}}>
             <Pressable
               onPress={() => {
 
@@ -1236,7 +1254,7 @@ export const StatusObject = ({navigation}) => {
             >
               <Text style={{color: 'white'}}>{i18n.t('building')}</Text>
             </Pressable>
-            <Pressable
+            {/* <Pressable
               onPress={() => {
                 stateChart.components = true
                 setModalVisibleFilter(!modalVisibleFilter)
@@ -1244,10 +1262,10 @@ export const StatusObject = ({navigation}) => {
               style={{borderRadius: 20, padding: 10, elevation: 2}, stateChart.components ? {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: "black"} : {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: '#2196F3'}}
             >
               <Text style={{color: 'white'}}>{i18n.t('components')}</Text>
-            </Pressable>
+            </Pressable> */}
             </View>
 
-            <View style={DATA_POSTS.length || DATA_USERS_TBR.length ? {display: 'flex', flexDirection: 'row', justifyContent: 'space-between'} : {display: 'none'}}>
+            <View style={DATA_POSTS.length || DATA_USERS_TBR.length || DATA_COMPONENT.length ? {display: 'flex', flexDirection: 'row', justifyContent: 'space-between'} : {display: 'none'}}>
             <Pressable
               onPress={() => {
 
@@ -1280,17 +1298,20 @@ export const StatusObject = ({navigation}) => {
             >
               <Text style={{color: 'white'}}>{i18n.t('posts')}</Text>
             </Pressable>
-            <Pressable
+            {/* <Pressable
               onPress={() => {
                 stateChartInnerRef.components = true
+                dispatch(getComponentForBuilding(period, activeBuildingRef.current.building_id))
                 dispatch(clearListUsersStaticTbr())
                 dispatch(clearListUsersStaticWithTbrDetailAll())
+                setFlagArrayPosts([])
+                dispatch(clearBypassUsersAverageAll())
                 setModalVisibleFilter(!modalVisibleFilter)
               }}
               style={{borderRadius: 20, padding: 10, elevation: 2}, stateChartInnerRef.components ? {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: "black"} : {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: '#2196F3'}}
             >
               <Text style={{color: 'white'}}>{i18n.t('components')}</Text>
-            </Pressable>
+            </Pressable> */}
             </View>
             </View>
       </Modal>

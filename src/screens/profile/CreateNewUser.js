@@ -15,6 +15,7 @@ import { UploadDataToServer } from '../../uploadDataToServer'
 import {Cycle, Clock, Rank, QRIcon, StepsIcon, PeopleIcon, errorData, successData} from '../../components/ui/imageSVG/circle'
 import correctedTime, { msToTime } from '../../utils/msToTime'
 import { DB } from '../../db'
+import findTrashSymbolsInfo from '../../utils/findTrashSymbolsInfo'
 
 var radio_props = [
     {label: 'Без прав', value: 0 },
@@ -64,7 +65,9 @@ export const CreateNewUser = ( {navigation} ) => {
     const [password, setPassword] = useState('')
     const [accessMail, setAccessMail] = useState(true)
     const imgRef                                    = useRef()
+    const imgExtensionsRef = useRef()
     const paswdRef = useRef()
+    const isErrorInInput = useRef(false)
     const [borderBottomColor, setBorderBottomColor] = useState({
       surname : false,
       name    : false,
@@ -74,6 +77,7 @@ export const CreateNewUser = ( {navigation} ) => {
     const existsEmail      = useSelector(state => state.empList.existsEmail)
     const photoPickHandler = uri => {
       imgRef.current = uri
+      imgExtensionsRef.current = '.' + uri.split('.')[uri.split('.').length - 1]
     }
     async function calculate() {
       let html = `<head>
@@ -134,7 +138,6 @@ export const CreateNewUser = ( {navigation} ) => {
       return passwdGeneratedArray.join('')
     }
       
-    
     const createUserHandler = () => {
       const emploee = {
         surname,
@@ -148,7 +151,8 @@ export const CreateNewUser = ( {navigation} ) => {
         img             : imgRef.current,
         create_user_date: Date.now().toString(),
         start_shift     : date.getTime(),
-        password: paswdRef.current
+        password: paswdRef.current,
+        extensions: imgExtensionsRef.current
       }
       dispatch(addEmploee(emploee))
     }
@@ -219,22 +223,54 @@ export const CreateNewUser = ( {navigation} ) => {
             <View>
         <Text style = {styles.title}>Создание нового пользователя</Text>
         <AppCard>
+        <Text style={{color: 'red'}}>{findTrashSymbolsInfo(surname).status !== 200 ?
+        `Некорректные символы: ${Array
+          .from(new Set(findTrashSymbolsInfo(surname).error))
+          .join('')}` :
+        ''}</Text>
         <TextInput
         style        = {styles.textarea}
         placeholder  = 'Фамилия'
         value        = {surname}
-        onChangeText = {setSurName}/>
-        
+        onChangeText = {(text) => {
+          findTrashSymbolsInfo(text).status !== 200 ?
+          setBorderBottomColor({...borderBottomColor, surname: false}) : 
+          setBorderBottomColor({...borderBottomColor, surname: true})
+          setSurName(text)
+          
+        }}/>
+        <Text style={{color: 'red'}}>{findTrashSymbolsInfo(name).status !== 200 ?
+        `Некорректные символы: ${Array
+          .from(new Set(findTrashSymbolsInfo(name).error))
+          .join('')}` :
+        ''}</Text>
         <TextInput
         style        = {styles.textarea}
         placeholder  = 'Имя'
         value        = {name}
-        onChangeText = {setName}/>
+        onChangeText = {(text) => {
+          findTrashSymbolsInfo(text).status !== 200 ?
+          setBorderBottomColor({...borderBottomColor, name: false}) : 
+          setBorderBottomColor({...borderBottomColor, name: true})
+          setName(text)
+          
+        }}/>
+        <Text style={{color: 'red'}}>{findTrashSymbolsInfo(lastname).status !== 200 ?
+        `Некорректные символы: ${Array
+          .from(new Set(findTrashSymbolsInfo(lastname).error))
+          .join('')}` :
+        ''}</Text>
         <TextInput
         style        = {styles.textarea}
         placeholder  = 'Отчество'
         value        = {lastname}
-        onChangeText = {setLastName}/>
+        onChangeText = {(text) => {
+          findTrashSymbolsInfo(text).status !== 200 ?
+          setBorderBottomColor({...borderBottomColor, lastname: false}) : 
+          setBorderBottomColor({...borderBottomColor, lastname: true})
+          setLastName(text)
+          
+        }}/>
         <TextInput
         style        = {styles.textarea}
         placeholder  = 'Должность'
@@ -317,7 +353,7 @@ export const CreateNewUser = ( {navigation} ) => {
        setModalVisible(true)
       }}
      color    = {HEADER_FOOTER.MAIN_COLOR}
-     disabled = {!name || !surname || !lastname || !email || existsEmail || !borderBottomColor.email || !position}/>
+     disabled = {!name || !surname || !lastname || !email || existsEmail || !borderBottomColor.email || !borderBottomColor.surname || !borderBottomColor.name || !borderBottomColor.lastname || !position}/>
       </View>
       </TouchableWithoutFeedback>
     </ScrollView>
@@ -325,13 +361,13 @@ export const CreateNewUser = ( {navigation} ) => {
 }
 CreateNewUser.navigationOptions = ({navigation}) => ({
     headerTitle: 'Новый пользователь',
-    headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-    <Item 
-    title    = 'AddNewUser'
-    iconName = 'ios-arrow-dropdown'
-    onPress  = {() => navigation.navigate('CreateUser')}
-    />
-  </HeaderButtons>
+  //   headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+  //   <Item 
+  //   title    = 'AddNewUser'
+  //   iconName = 'ios-arrow-dropdown'
+  //   onPress  = {() => navigation.navigate('CreateUser')}
+  //   />
+  // </HeaderButtons>
 })
 
 const styles = StyleSheet.create({

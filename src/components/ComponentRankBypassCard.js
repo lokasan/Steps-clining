@@ -13,7 +13,7 @@ import { loadPostWithComponent } from '../store/actions/postWithComponent'
 import { PhotoPickerBypass } from './PhotoPickerBypass'
 import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
-
+import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator'
 
 
 const  { width }                      = Dimensions.get("window");
@@ -73,6 +73,18 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
         return true
     
     }
+    const compressedImage = async (img) => {
+        const manipResult = await manipulateAsync(
+            img.uri,
+            [
+                {
+                    resize: {height: 1024, width: 1024}
+                }],
+            {compress: 0.37, format: SaveFormat.JPEG}
+        )
+        console.log(manipResult)
+        setImage([{id: myId, image: manipResult.uri}])
+    }
     const takePhoto = async () => {
         const hasPermissions = await askForPermissions()
         if (!hasPermissions) {
@@ -81,14 +93,18 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
         const img = await ImagePicker.launchCameraAsync({
             qulity: 0.7,
             allowsEditing: true,
-            aspect: [16, 9]
+            aspect: [4, 3]
         })
         myId = String(Date.now())
-        if (img.uri) {setImage([{
-            id: myId,
-            image: img.uri}])}
+        if (img.uri) {
+            await compressedImage(img)
+            // setImage([{
+            // id: myId,
+            // image: img.uri}])
+        }
         
         setModalVisible(true)
+        
         console.log(img)
     }
     return (<Fragment>

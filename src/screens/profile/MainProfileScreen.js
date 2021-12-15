@@ -136,7 +136,7 @@ export const MainProfileScreen = ({navigation}) => {
             </TouchableOpacity>
             <TouchableOpacity onPress={() => {
                 // dispatch(clearObjectState())
-                navigation.navigate('ObjectsBuildings')
+                navigation.navigate('CorpusesBuilding')
                 }}>
             <View style={styles.actionMenu}>
                 <ObjectsIcon/>

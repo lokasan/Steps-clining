@@ -221,7 +221,7 @@ export const QRCode = ({goBack, navigation}) => {
         marginBottom: '20%',
         marginHorizontal: '10%'}} 
         title={''} 
-        onPress={() => setScanned(false)} >
+        onPress={() => {setScanned(false); console.log(posts)}} >
           <Text style={{height: 50, 
         borderColor: 'gray', 
         borderBottomWidth: 1,

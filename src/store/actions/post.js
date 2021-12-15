@@ -18,6 +18,12 @@ export const loadPost = building_id => {
         // })
     }
 }
+export const loadAllPostsFromServer = () => {
+    return async () => {
+        dispatch(showLoaderPost())
+        await UploadDataToServer.getAllPostsFromServer()
+    }
+}
 export const clearPost = () => async dispatch => {
     dispatch({ 
         type: CLEAR_POST

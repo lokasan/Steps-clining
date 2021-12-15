@@ -8,6 +8,7 @@ import {createStackNavigator} from 'react-navigation-stack'
 import { MainLayout } from '../MainLayout'
 import { MainProfileEdit } from '../screens/profile/MainProfileEdit'
 import { MainProfileScreen } from '../screens/profile/MainProfileScreen'
+import { CorpusesBuilding } from '../screens/profile/CorpusesBuilding'
 import { ObjectsBuilding } from '../screens/profile/ObjectsBuilding'
 import { AttributesList } from '../screens/profile/AttributesList'
 import { EmploeesList } from '../screens/profile/EmploeesList'
@@ -24,7 +25,9 @@ import { createMaterialBottomTabNavigator } from 'react-navigation-material-bott
 import {createDrawerNavigator} from 'react-navigation-drawer'
 import { CreateNewUser } from '../screens/profile/CreateNewUser'
 import { CreateNewObjects } from '../screens/profile/CreateNewObjects'
+// import { CorpusScreen } from '../screens/profile/CorpusScreen'
 import { ObjectScreen } from '../screens/profile/ObjectScreen'
+import { CorpusScreen } from '../screens/profile/CorpusScreen'
 import { CreateNewPost } from '../screens/profile/CreateNewPost'
 import { CreateNewComponent } from '../screens/profile/CreateNewAttribute'
 import { AttributeSingle } from '../screens/profile//AttributesSingle'
@@ -35,6 +38,7 @@ import { MainEmploeeListScreen } from '../screens/MainEmploeeListScreen'
 import { BypassScreen } from '../screens/BypassScreen'
 import { ComponentsRankScreen } from '../screens/ComponentsRankScreen'
 import { BasicStatEmploeeDetail } from '../screens/BasicStatEmploeeDetail'
+import { CreateNewCorpus } from '../screens/profile/CreateNewCorpus'
 const navigatorOptions = {
     defaultNavigationOptions: {
         headerStyle: {
@@ -69,6 +73,9 @@ const AnalyticsNavigator = createStackNavigator({
     Profile: {
         screen: MainProfileEdit
     },
+    CorpusesBuilding: {
+        screen: CorpusesBuilding
+    },
     ObjectsBuildings: {
         screen: ObjectsBuilding
     },
@@ -81,8 +88,14 @@ const AnalyticsNavigator = createStackNavigator({
     CreateUser: {
         screen: CreateNewUser
     },
+    CreateCorpus: {
+        screen: CreateNewCorpus
+    },
     CreateObjects: {
         screen: CreateNewObjects
+    },
+    CorpusInfo: {
+        screen: CorpusScreen
     },
     ObjectInfo: {
         screen: ObjectScreen
@@ -164,15 +177,15 @@ const MainNavigator = createDrawerNavigator({
             drawerIcon: info => <Ionicons name="ios-arrow-back" size={25} color={info.tintColor}/>
         }
     },
-    StatusObject: {
-        screen: ObjectNavigator,
-        navigationOptions: {
+    // StatusObject: {
+    //     screen: ObjectNavigator,
+    //     navigationOptions: {
             
-            drawerLabel: 'Состояние объекта',
+    //         drawerLabel: 'Состояние объекта',
             
-            drawerIcon: info => <Ionicons name="md-analytics" size={25} color={info.tintColor}/>,
-        }
-    },
+    //         drawerIcon: info => <Ionicons name="md-analytics" size={25} color={info.tintColor}/>,
+    //     }
+    // },
     About: {
        screen: AboutNavigator,
        navigationOptions: {

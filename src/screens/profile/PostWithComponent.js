@@ -131,12 +131,12 @@ PostWithComponent.navigationOptions = ({ navigation }) => {
     
     return {
         headerTitle: postName,
-        headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-        <Item 
-        title='AddNewUser'
-        iconName='ios-add-circle-outline'
-        onPress={() => navigation.navigate('CreateComponentRank', {postId, postName})}
-        />
-      </HeaderButtons>
+    //     headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+    //     <Item 
+    //     title='AddNewUser'
+    //     iconName='ios-add-circle-outline'
+    //     onPress={() => navigation.navigate('CreateComponentRank', {postId, postName})}
+    //     />
+    //   </HeaderButtons>
     }
 }

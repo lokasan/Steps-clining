@@ -11,7 +11,6 @@ export const PostDetail = ({period, monthRange, user, flagArrayUsersDetail, setF
     const existsComponents = useRef([])
     const dispatch = useDispatch()
     const DATA_USERS_DETAIL = useSelector(state => state.bypass.bypassUsersListDetail)
-    console.log(`PERIOD: ${period} \nMonthRange: ${monthRange}`)
     const CreateTextComponentWithRatingPostDetail = ({item}) => {
         const createdElements = []
         function getKeyByValue(object, value) {
@@ -20,7 +19,6 @@ export const PostDetail = ({period, monthRange, user, flagArrayUsersDetail, setF
         for (let cmp of existsComponents.current) {
             let keyByValue = getKeyByValue(item, cmp)
             if (keyByValue) {
-              // console.log(item.is_image)
               createdElements.push(
                 <Text style={styles.beastAndBad}>{item[keyByValue + '_rank']}
                 </Text>)
@@ -48,9 +46,8 @@ export const PostDetail = ({period, monthRange, user, flagArrayUsersDetail, setF
           }
   
           let createViewData = []
-  
+          let currentDate = ''
           if (item?.data?.length !== 0) {
-            // console.log(item.data, 'FINAL RES')
             const fullFillArray = []
             if (period === 'week' || period === 'month') {
               for (let i = period === 'week' ? 7 : period === 'month' ? 31 : 0; i >= 0; i--) {
@@ -65,16 +62,13 @@ export const PostDetail = ({period, monthRange, user, flagArrayUsersDetail, setF
               }
               
               item.data = getFilledArray(fullFillArray)
-              console.log(item.data, 'REKET')
             }
             if (monthRange === 'month_range') {
   
               for (let i = 31; i >= 0; i--) {
                 currentDate = new Date(new Date(...choseDateCurrentRef.current)
                               .setDate(new Date(...choseDateCurrentRef.current).getDate() - i))
-                              
-                console.log(currentDate)
-                console.log(choseDateCurrentRef)
+                            
                 fullFillArray.push({date: 
                   currentDate.getFullYear() + '-' + 
                   ((currentDate.getMonth() + 1) / 10 >= 1 ? 
@@ -169,12 +163,12 @@ export const PostDetail = ({period, monthRange, user, flagArrayUsersDetail, setF
           existsComponents.current = valueOfKeyComponent
           valueOfKeyComponent = []
         }
-        return {textComponent: createdComponent, existsComponents}
+        return createdComponent
       }
 
 
     const renderItem = ({item, index}) => {
-        let textComponent = createTextComponent(item).textComponent
+        let textComponent = createTextComponent(item)
 
         const weekMonthBeforeTemplate = (() => {
             return [

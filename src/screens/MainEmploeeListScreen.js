@@ -40,7 +40,8 @@ export const MainEmploeeListScreen = ( {navigation}) => {
       setDate(currentDate);
       let start_time = currentDate.getTime()
       // Alert.alert(String(currentDate.getTime()))
-      dispatch(getUsersBasicStat(Platform.OS === 'ios' ? start_time : start_time - (start_time) % (24 * 60 * 60 * 1000) - (3 * 60 * 60 * 1000)))
+      start_time = Platform.OS === 'ios' ? start_time : start_time - (start_time) % (24 * 60 * 60 * 1000) - (3 * 60 * 60 * 1000)
+      dispatch(getUsersBasicStat(start_time, start_time))
     };
   
     const showMode = (currentMode) => {
@@ -62,34 +63,38 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     console.log('buildings', buildings)
     useEffect(() => {
         registerForPushNotificationsAsync()
-        // for (el of buildings) {
-        //     dispatch(loadPost(el.id)) 
-        //   }
-        // for (el of components) {
-        //   dispatch(loadComponentRank(el.id))
-        // }
-        // for (el of posts) {
+        console.log("USEEFFECT BUILDINGS INFO", buildings)
+        for (el of buildings) {
+          
+            dispatch(loadPost(el.id)) 
+          }
+        for (el of components) {
+          dispatch(loadComponentRank(el.id))
+        }
+        for (el of posts) {
 
-        //   dispatch(loadPostWithComponent(el.id))
-        // }
+          dispatch(loadPostWithComponent(el.id))
+        }
     }, [])
-    useEffect(() => {
-      for (el of buildings) {
-        dispatch(loadPost(el.id)) 
-      }
-    }, [buildings])
+    // useEffect(() => {
+    //   console.log("USEEFFECT BUILDINGS INFO", buildings)
+    //   for (el of buildings) {
+        
+    //     dispatch(loadPost(el.id)) 
+    //   }
+    // }, [buildings])
   
-    useEffect(() => {
-      for (el of components) {
-        dispatch(loadComponentRank(el.id))
-      }
-    }, [components])
+    // useEffect(() => {
+    //   for (el of components) {
+    //     dispatch(loadComponentRank(el.id))
+    //   }
+    // }, [components])
   
-    useEffect(() => {
-      for (el of posts) {
-        dispatch(loadPostWithComponent(el.id))
-      }
-    }, [posts])
+    // useEffect(() => {
+    //   for (el of posts) {
+    //     dispatch(loadPostWithComponent(el.id))
+    //   }
+    // }, [posts])
     
     registerForPushNotificationsAsync = async () => {
         if (Constants.isDevice) {
@@ -143,16 +148,15 @@ export const MainEmploeeListScreen = ( {navigation}) => {
         }
     }
     useEffect(() => {
-        dispatch(getPostAll())
-        dispatch(getUsersBasicStat())
-        navigation.setParams({test: showDatepicker, access: true})
+      dispatch(getUsersServer())
+      dispatch(getPostAll())
+      dispatch(getUsersBasicStat())
+      navigation.setParams({test: showDatepicker, access: true})
         // dispatch(loadObject()),
         // dispatch(loadComponent())
         
-    }, [dispatch])
-    useEffect(() => {
-      dispatch(getUsersServer())
-  }, [dispatch])
+    }, [])
+  
   let serfIdUser = 0
   // const [serfIdUser, setSerfIdUser] = useState(0)
   let emplServer = useSelector(state => state.empDouble.empServer)

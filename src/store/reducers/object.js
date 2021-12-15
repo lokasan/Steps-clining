@@ -1,6 +1,7 @@
 import { ADD_OBJECT, CLEAR_OBJECTS_STATE, HIDE_LOADER, LOAD_OBJECT, REMOVE_OBJECT, SHOW_LOADER } from "../../components/types"
 const initialState = {
     objAll: [],
+    objectForCorpus: [],
     loading: false,
     error: null
 }
@@ -20,12 +21,16 @@ export const objectReducer = (state = initialState, action) => {
     console.log(action.type, 'OBJECTS');
     switch (action.type) {
         case LOAD_OBJECT: return {...state, objAll: action.payload, loading: false}
-        case REMOVE_OBJECT: return {...state, objAll: state.objAll.filter(e => e.id !== action.payload)
-
+        case REMOVE_OBJECT: return {
+            ...state, 
+            objAll: state.objAll.filter(e => e.id !== action.payload),
+            objectForCorpus: state.objectForCorpus.filter(e => e.id !== action.payload)
         }
+        case 'LOAD_OBJECT_FOR_CORPUS': return {...state, objectForCorpus: action.payload, loading: false}
         case ADD_OBJECT: return {
             ...state, 
-            objAll: [{...action.payload}, ...state.objAll]
+            objAll: [{...action.payload}, ...state.objAll],
+            objectForCorpus: [{...action.payload}, ...state.objectForCorpus]
         }
         case SHOW_LOADER: return {
             ...state,
@@ -37,7 +42,8 @@ export const objectReducer = (state = initialState, action) => {
         }
         case CLEAR_OBJECTS_STATE: return {
             ...state,
-            objAll: []
+            objAll: [],
+            objectForCorpus: []
         }
         default: return state
     }

@@ -38,7 +38,7 @@ export const Post = ({user_id, period, monthRange,
           existsComponents.current = valueOfKeyComponent
           valueOfKeyComponent = []
         }
-        return {textComponent: createdComponent, existsComponents}
+        return createdComponent
       }
     const CreateTextComponentWithRatingPost = ({item}) => {
         const createdElements = []
@@ -98,7 +98,7 @@ export const Post = ({user_id, period, monthRange,
         return createViewData
     }
     const ItemPost = ({item, index}) => {
-        let textComponent = createTextComponent(item).textComponent
+        let textComponent = createTextComponent(item)
 
         
         return (

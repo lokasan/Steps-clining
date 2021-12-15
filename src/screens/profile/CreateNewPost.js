@@ -9,14 +9,17 @@ import { addEmploee } from '../../store/actions/empDouble'
 import { addPost } from '../../store/actions/post'
 import { PhotoPicker } from '../../components/PhotoPicker'
 import { QRCodePicker } from '../../components/QRCodePicker'
+import findTrashSymbolsInfo from '../../utils/findTrashSymbolsInfo'
 
 export const CreateNewPost = ({navigation}) => {
     const dispatch = useDispatch()
     const building_id = navigation.getParam('objectId')
     const [name, setName] = useState('')
-    
+    const [borderBottomColor, setBorderBottomColor] = useState({
+      name    : false,
+    })
     const [description, setDescription] = useState('')
-    
+    const imgExtensionsRef = useRef()
     const imgRef = useRef()
     const qrRef = useRef()
     const qrcodePickHandler = uri => {
@@ -24,6 +27,7 @@ export const CreateNewPost = ({navigation}) => {
     }
     const photoPickHandler = uri => {
       imgRef.current = uri
+      imgExtensionsRef.current = '.' + uri.split('.')[uri.split('.').length - 1]
     }
     const createPostHandler = () => {
       const post = {
@@ -32,7 +36,8 @@ export const CreateNewPost = ({navigation}) => {
         description,
         img: imgRef.current,
         qrcode: String(Date.now()) + name,
-        qrcode_img: qrRef.current
+        qrcode_img: qrRef.current,
+        extensions: imgExtensionsRef.current
         
       }
       dispatch(addPost(post))
@@ -43,11 +48,22 @@ export const CreateNewPost = ({navigation}) => {
             <View>
         <Text style={styles.title}>Создание нового поста</Text>
         <AppCard>
+        <Text style={{color: 'red'}}>{findTrashSymbolsInfo(name).status !== 200 ?
+        `Некорректные символы: ${Array
+          .from(new Set(findTrashSymbolsInfo(name).error))
+          .join('')}` :
+        ''}</Text>
         <TextInput
         style={styles.textarea}
         placeholder='Название поста'
         value={name}
-        onChangeText={setName}/>
+        onChangeText={(text) => {
+          findTrashSymbolsInfo(text).status !== 200 ?
+          setBorderBottomColor({...borderBottomColor, name: false}) : 
+          setBorderBottomColor({...borderBottomColor, name: true})
+          setName(text)
+          
+        }}/>
         
         <TextInput
         style={styles.textarea}
@@ -60,7 +76,7 @@ export const CreateNewPost = ({navigation}) => {
      title='Создать пост' 
      onPress={createPostHandler} 
      color={HEADER_FOOTER.MAIN_COLOR}
-     disabled={!name || !description}/>
+     disabled={!name || !description || !borderBottomColor.name}/>
         <QRCodePicker value={name} onPick={qrcodePickHandler}/>
 
         

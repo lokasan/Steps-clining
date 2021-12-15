@@ -93,7 +93,7 @@ export const updateUser = (user) => async dispatch => {
     await DB.updateUserAuthorize(user.status === 0 ? 1 : 0, user.email)
     if (user.status) {
         await UploadDataToServer.userLogout(user)
-    } else {
+    } else if (~user.isAccess) {
         await UploadDataToServer.addActiveUser(user.id)
     }
     dispatch({

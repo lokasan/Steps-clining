@@ -21,9 +21,10 @@ import { hideLoaderComponentRank } from './store/actions/componentRank';
 import { msToTime } from './utils/msToTime'
 import { updateUser } from './store/actions/empDouble';
 import { hideLoaderBypassRank } from './store/actions/bypassRank';
+import { hideLoaderCorpus } from './store/actions/corpus';
 
 
-let ws            = new WebSocket('ws://192.168.1.2:8760');
+let ws            = new WebSocket('ws://192.168.1.11:8760');
     ws.binaryType = 'arraybuffer'
     ws.onmessage  = function(event) {
     socket_onmessage_callback(event.data)
@@ -132,12 +133,35 @@ async function socket_onmessage_callback(recv) {
             payload: data[MESSAGE]
         })
     }
+    else if (ACTION in data && data[ACTION] === 'GET_CORPUS_SYNCHRONIZE') {
+        await doCreateAndRemoveLocalStoreAndBase(data, DB.getCorpusById, DB.createCorpus, DB.removeCorpus)
+        dispatch(hideLoaderCorpus())
+        dispatch({
+            type: 'LOAD_CORPUS',
+            payload: await DB.getCorpuses()
+        })
+    }
+    else if (ACTION in data && data[ACTION] === 'GET_OBJECTS_SYNCHRONIZE_ID') {
+        await doCreateAndRemoveLocalStoreAndBase(data, DB.getObjectById, DB.createObject, DB.removeObject)
+        dispatch(hideLoaderBypass())
+        dispatch({
+            type   : 'LOAD_OBJECT_FOR_CORPUS',
+            payload: await DB.getObjectsByCorpusId(data['TARGET_ID'])
+        })
+    }
     else if (ACTION in data && data[ACTION] === GET_OBJECTS_SYNCHRONIZE) {
         await doCreateAndRemoveLocalStoreAndBase(data, DB.getObjectById, DB.createObject, DB.removeObject)
         dispatch(hideLoaderBypass())
         dispatch({
             type   : LOAD_OBJECT,
             payload: await DB.getObjects()
+        })
+    } else if (ACTION in data && data[ACTION] === 'GET_ALL_POSTS_FROM_SERVER') {
+        await doCreateAndRemoveLocalStoreAndBase(data, DB.getPostById, DB.createPost, DB.removePost)
+        dispatch(hideLoaderPost())
+        dispatch({
+            type   : GET_POSTS_ALL,
+            payload: await DB.getPostAll()
         })
     } else if (ACTION in data && data[ACTION] === GET_POSTS_SYNCHRONIZE) {
         await doCreateAndRemoveLocalStoreAndBase(data, DB.getPostById, DB.createPost, DB.removePost)
@@ -269,6 +293,11 @@ async function socket_onmessage_callback(recv) {
             type: GET_BYPASS_RANK_IMAGE_COUNT,
             payload: data['LENGTH']
         })
+    } else if (ACTION in data && data[ACTION] === 'GET_STATUS_COMPONENT_FOR_BUILDING') {
+        dispatch({
+            type: 'GET_STATUS_COMPONENT_FOR_BUILDING',
+            payload: data[MESSAGE]
+        })
     }
     // `data:image/jpeg;base64,${object.path}
     
@@ -278,7 +307,7 @@ export async function doCreateAndRemoveLocalStoreAndBase(data, get, create, remo
     if (data['CREATE_ELEMENTS'].length) {
         data['CREATE_ELEMENTS'].map((el, id) => el['path'] = data['CONTENT'][id])
         for (el of data['CREATE_ELEMENTS']) {
-           const filename = FileSystem.documentDirectory + el['image'].match(/\d+.jpeg/g)
+           const filename = FileSystem.documentDirectory + el['image'].match(/\d+.jpeg$|\d+.jpg$|\d+.gif$/g)
            await FileSystem.writeAsStringAsync(filename, el['path'], {
                encoding: FileSystem.EncodingType.Base64
            })
@@ -314,7 +343,7 @@ export async function doCreateAndRemoveLocalStoreAndBase(data, get, create, remo
         for (el of data['UPDATE_ELEMENTS']) {
             const obj = await get(el['id'])
             if (obj.length) {
-                const filename = FileSystem.documentDirectory + el['image'].match(/\d+.jpeg/g)
+                const filename = FileSystem.documentDirectory + el['image'].match(/\d+.jpeg$|\d+.jpg$|\d+.gif$/g)
                 await FileSystem.writeAsStringAsync(filename, el['path'], {encoding: FileSystem.EncodingType.Base64})
                 el.img = filename
                 await edit(el)
@@ -352,7 +381,8 @@ export class UploadDataToServer {
                     IMAGE      : payload.image,
                     PASSWD_HASH: payload.password,
                     START_SHIFT: payload.start_shift,
-                    PATH       : base64data
+                    PATH       : base64data,
+                    EXTENSIONS: payload.extensions
                     // NOTIFICATION_TOKEN: ''
     
                 }))
@@ -361,10 +391,33 @@ export class UploadDataToServer {
         // ws.send(blob, {'Content-Type': 'images/jpeg', 'headers': 'Robo'})
         
     }
+
+    static async addCorpus(path, payload) {
+        const blob = await this.getBlob(path)
+        let reader = new FileReader()
+        console.log('Hello, i am here in addCorpus now!')
+        reader.readAsDataURL(blob)
+        reader.onloadend = function () {
+            let base64data = reader.result
+            ws.send(JSON.stringify({
+                ACTION: 'ADD_CORPUS',
+                ID: payload.id,
+                NAME_FILE: String(Date.now()),
+                NAME: payload.name,
+                DESCRIPTION: payload.description,
+                ADDRESS: payload.address,
+                COORDS: payload.coords,
+                IMG: payload.img,
+                PATH: base64data,
+                EXTENSIONS: payload.extensions
+            }))
+        }
+    }
+
     static async addObject(path, payload) { 
         const blob   = await this.getBlob(path)
         let   reader = new FileReader()
-        const testOb = await DB.getObjects()
+        // const testOb = await DB.getObjects()
         reader.readAsDataURL(blob)
         reader.onloadend = function() {
             let base64data = reader.result
@@ -377,7 +430,8 @@ export class UploadDataToServer {
                     ADDRESS    : payload.address,
                     DESCRIPTION: payload.description,
                     IMG        : payload.img,
-                    PATH       : base64data
+                    PATH       : base64data,
+                    EXTENSIONS: payload.extensions
                 }))
         }
 
@@ -416,7 +470,8 @@ export class UploadDataToServer {
                     IMG        : payload.img,
                     QRCODE     : payload.qrcode,
                     QRCODE_IMG : payload.qrcode_img,
-                    PATH       : base64data
+                    PATH       : base64data,
+                    EXTENSIONS: payload.extensions
                 }))
         }
         
@@ -436,7 +491,8 @@ export class UploadDataToServer {
                     NAME       : payload.name,
                     DESCRIPTION: payload.description,
                     IMG        : payload.img,
-                    PATH       : base64data
+                    PATH       : base64data,
+                    EXTENSIONS: payload.extensions
                 }))
         }
         
@@ -461,7 +517,8 @@ export class UploadDataToServer {
                     RANK        : payload.rank,
                     IMAGE       : payload.img,
                     img         : payload.img,
-                    PATH        : base64data
+                    PATH        : base64data,
+                    EXTENSIONS: payload.extensions
                 }
             ))
         }
@@ -482,7 +539,8 @@ export class UploadDataToServer {
                         NAME             : payload.name,
                         IMAGE            : payload.img,
                         IMG              : payload.img,
-                        PATH             : base64data
+                        PATH             : base64data,
+                        EXTENSIONS: payload.extensions
                     }))
             }
         } else {
@@ -537,6 +595,12 @@ export class UploadDataToServer {
                 ACTION     : REMOVE_POST,
                 POST_ID    : id
             }))
+    }
+    static async removeCorpus(id) {
+        ws.send(JSON.stringify({
+            ACTION: 'REMOVE_CORPUS',
+            CORPUS_ID: id
+        }))
     }
     static async removeObject(id) {
         ws.send(JSON.stringify(
@@ -659,6 +723,20 @@ export class UploadDataToServer {
             }
         ))
     }
+
+    static async getCorpus() {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_CORPUS',
+            LOCAL_DATABASE: await DB.getCorpuses()
+        }))
+    }
+    static async getObjectById(corpus_id) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_OBJECT_BY_ID',
+            TARGET_ID: corpus_id,
+            LOCAL_DATABASE: await DB.getObjectById(corpus_id)
+        }))
+    }
     static async getObject() {
         // const response = await fetch('https://brigadir-cc6a6-default-rtdb.firebaseio.com/objects.json', {
         //     headers: {'Content-Type': 'application.json'}
@@ -679,6 +757,13 @@ export class UploadDataToServer {
         // console.log(object, 'finish');
         // console.log(data, 'mydata');
         
+    }
+    static async getAllPostsFromServer() {
+        ws.send(JSON.stringify(
+            {
+                ACTION: 'GET_ALL_POSTS_FROM_SERVER',
+                LOCAL_DATABASE: await DB.getPostAll()
+            }))
     }
     static async getPosts(building_id) {
         ws.send(JSON.stringify(
@@ -891,6 +976,15 @@ export class UploadDataToServer {
             END_TIME: end_time,
             LIMIT: 1,
             OFFSET: offset
+        }))
+    }
+    static async getComponentForBuilding(period, building_id, start_time=null, end_time=null) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_STATUS_COMPONENT_FOR_BUILDING',
+            PERIOD: period,
+            BUILDING_ID: building_id,
+            START_TIME: start_time,
+            END_TIME: end_time,
         }))
     }
 }

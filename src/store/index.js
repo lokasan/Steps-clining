@@ -3,6 +3,7 @@ import { empListReducer } from './reducers/emp'
 import thunk from 'redux-thunk'
 import { empDoubleReducer } from '../store/reducers/empDouble'
 import { objectReducer } from './reducers/object'
+import { corpusReducer } from './reducers/corpus'
 import { postReducer } from './reducers/post'
 import { componentReducer } from './reducers/component'
 import { componentRankReducer } from './reducers/componentRank'
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
     empList: empListReducer,
     empDouble: empDoubleReducer,
     object: objectReducer,
+    corpus: corpusReducer,
     post: postReducer,
     component: componentReducer,
     componentRank: componentRankReducer,

@@ -48,21 +48,24 @@ export const User = ({period, building_id, monthRange, showUserDetailInfoOrUnsho
                             </View>
                         </View>
                     </View>
-                    <View style = {{flexDirection: 'column', justifyContent: 'space-between', width: '45%'}}>
+                    <View style = {{flexDirection: 'column', justifyContent: 'space-between', width: '50%'}}>
                         <View 
                         style = {styles.sticker}>
                             <View style = {styles.toolkitPad}>
                                 <View style = {styles.alignElementsCenter}>
-                                    <Text style = {styles.textStyleInToolkit}>{item.avg_rank}</Text>
+                                    <Text style = {styles.textStyleInToolkit}>{item.avg_rank.toFixed(1)}</Text>
+                                </View>
+                                <View style = {styles.alignElementsCenter}>
+                                    <Text style = {styles.textStyleInToolkit}>{item.cycle}</Text>
+                                </View>
+                                <View style = {styles.alignElementsCenter}>
+                                    <Text style = {styles.textStyleInToolkit}>{msToTime(item.time_between_bypass)}</Text>
                                 </View>
                                 <View style = {styles.alignElementsCenter}>
                                     <Text style = {styles.textStyleInToolkit}>{item.count_bypass}</Text>
                                 </View>
                                 <View style = {styles.alignElementsCenter}>
                                     <Text style = {styles.textStyleInToolkit}>{msToTime(item.time_bypass)}</Text>
-                                </View>
-                                <View style = {styles.alignElementsCenter}>
-                                    <Text style = {styles.textStyleInToolkit}>-</Text>
                                 </View>
                                 <ArrowTrand item={item}/>
                             </View>

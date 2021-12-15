@@ -6,50 +6,55 @@ import { DATA } from '../../testData'
 import { Footer } from '../../components/ui/Footer'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import { HEADER_FOOTER } from '../../theme'
-import { removeObject, updateObject } from '../../store/actions/object'
+import { removeCopus } from '../../store/actions/corpus'
 import {AppHeaderIcon} from '../../components/AppHeaderIcon'
 import { loadPost } from '../../store/actions/post'
-import { PostCard } from '../../components/PostCard'
+import { ObjectCard } from '../../components/ObjectCard'
 import { ModalZoomable } from '../../components/ui/ModalZoomable'
+import * as SQLite from 'expo-sqlite'
+const db = SQLite.openDatabase('dbas.db')
 
-
-export const ObjectScreen = ({navigation}) => {
+export const CorpusScreen = ({navigation}) => {
+    
     const [zoomable, setZoomable] = useState(false)
     const dispatch = useDispatch()
-    const objectId = navigation.getParam('objectId')
-    const object = useSelector(state => state.object.objectForCorpus.find(e => e.id === objectId))
-    
+    const corpusId = navigation.getParam('corpusId')
+    const corpus = useSelector(state => state.corpus.corpusAll.find(e => e.id === corpusId))
+
+    const openObjectsHandler = object => {
+        navigation.navigate('ObjectInfo', {objectId: object.id, objectName: object.name})
+    }
     // useEffect(() => {
     //     dispatch(loadPost(objectId))
     // }, [])
-    const postAll = useSelector(state => state.post.postAll)
-    const loading = useSelector(state => state.post.loading)
-    const updatedUserPrivileg =  useCallback(() => {
-      dispatch(updateObject(object))
-    }, [dispatch, object])
-    if (!object) {
+    const loadObjectForCorpus = useSelector(state => state.object.objectForCorpus)
+    const loading = useSelector(state => state.object.loading)
+    // const updatedUserPrivileg =  useCallback(() => {
+    //   dispatch(updateObject(corpus))
+    // }, [dispatch, corpus])
+    console.log(loadObjectForCorpus, ' OBJECT FOR CORPUS')
+    if (!corpus) {
       return null
     }
-    
+
     return <Fragment><ScrollView style={{flex: 1, backgroundColor: '#000'}}>
         
         <View style={styles.container}>
     <View style={styles.userCard}>
     <View>
         <TouchableOpacity onPress={() => setZoomable(true)}>
-            <Image style={{height: 150, width: 150}} source={{uri: object.img}}/>
+            <Image style={{height: 150, width: 150}} source={{uri: corpus.img}}/>
         </TouchableOpacity>
     </View>
     <View style={styles.privateData}>
         <View style={styles.textStyle}>
-  <Text style={styles.textStyleLine}>{object.name}</Text>
+  <Text style={styles.textStyleLine}>{corpus.name}</Text>
         </View>
         <View style={styles.textStyle}>
-  <Text style={styles.textStyleLine}>{object.description}</Text>
+  <Text style={styles.textStyleLine}>{corpus.description}</Text>
         </View>
     
     </View>
-   
 </View>
         {loading ? 
         <SafeAreaView style={styles.center}>
@@ -57,9 +62,9 @@ export const ObjectScreen = ({navigation}) => {
             </SafeAreaView> :
             <FlatList 
             style={styles.menuCard}
-            data={postAll} 
-            keyExtractor={post => post.id.toString()} 
-            renderItem={({item}) => <PostCard post={item} navigation={navigation}
+            data={loadObjectForCorpus} 
+            keyExtractor={object => object.id.toString()} 
+            renderItem={({item}) => <ObjectCard object={item} onOpen={openObjectsHandler}
             horizontal={false}
             />}
                     />}
@@ -70,7 +75,7 @@ export const ObjectScreen = ({navigation}) => {
 
 {/* <Footer/> */}
 </ScrollView>
-<ModalZoomable zoomable={zoomable} setZoomable={setZoomable} pathImg={object.img}/>
+<ModalZoomable zoomable={zoomable} setZoomable={setZoomable} pathImg={corpus.img}/>
 </Fragment>
 }
 const styles = StyleSheet.create({
@@ -134,16 +139,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#1C1B1B'
     }, 
 })
-ObjectScreen.navigationOptions = ({ navigation }) => {
-    const name = navigation.getParam('objectName')
-    const objectId = navigation.getParam('objectId')
+CorpusScreen.navigationOptions = ({ navigation }) => {
+    const name = navigation.getParam('corpusName')
+    const corpusId = navigation.getParam('corpusId')
     return {
         headerTitle: name,
         headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
         <Item 
         title='AddNewUser'
         iconName='ios-add-circle-outline'
-        onPress={() => navigation.navigate('CreatePost', {objectId})}
+        onPress={() => navigation.navigate('CreateBuilding', {corpusId})}
         />
       </HeaderButtons>
     }

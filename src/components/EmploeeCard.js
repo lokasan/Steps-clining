@@ -13,6 +13,57 @@ export const EmploeeCard = ({emploee, onOpen, isOnline}) => {
   const TEXT_ACTION = 'Вы уверены, что хотите удалить пользователя'
   const [modalVisible, setModalVisible] = useState(false)
   
+  const countBypass = ((emploee.hasOwnProperty('count_bypass') ? emploee.count_bypass : 0) - 
+    (emploee.hasOwnProperty('prev_count_bypass') ? 
+    emploee.prev_count_bypass : 0)) >= 0 ? 
+    "+" + ((emploee.hasOwnProperty('count_bypass') ? 
+    emploee.count_bypass : 0) - 
+    (emploee.hasOwnProperty('prev_count_bypass') ? 
+    emploee.prev_count_bypass : 0)) :
+    ((emploee.hasOwnProperty('count_bypass') ? 
+    emploee.count_bypass : 0) - 
+    (emploee.hasOwnProperty('prev_count_bypass') ? 
+    emploee.prev_count_bypass : 0))
+
+  const colorForCountBypass = ((emploee.hasOwnProperty('count_bypass') ? 
+    emploee.count_bypass : 0) - 
+    (emploee.hasOwnProperty('prev_count_bypass') ? 
+    emploee.prev_count_bypass : 0)) >= 0 ? 
+    "green" : "red"
+
+  const avgRankOfEmploee = ((emploee.hasOwnProperty('avg_rank') ? emploee.avg_rank : 0) - 
+    (emploee.hasOwnProperty('prev_avg_rank') ? 
+    emploee.prev_avg_rank : 0)) >= 0 ? 
+    "+" + ((emploee.hasOwnProperty('avg_rank') ? 
+    emploee.avg_rank : 0) - 
+    (emploee.hasOwnProperty('prev_avg_rank') ? 
+    emploee.prev_avg_rank : 0)).toFixed(1) :
+    ((emploee.hasOwnProperty('avg_rank') ? 
+    emploee.avg_rank : 0) - 
+    (emploee.hasOwnProperty('prev_avg_rank') ? 
+    emploee.prev_avg_rank : 0)).toFixed(1)
+    const colorAvgRankOfEmploee = ((emploee.hasOwnProperty('avg_rank') ? emploee.avg_rank : 0) - 
+    (emploee.hasOwnProperty('prev_avg_rank') ? 
+    emploee.prev_avg_rank : 0)) >= 0 ? "green" : "red"
+
+  const countOfCycle = ((emploee.hasOwnProperty('count_cycle') ? emploee.count_cycle : 0) - 
+    (emploee.hasOwnProperty('prev_count_cycle') ? 
+    emploee.prev_count_cycle : 0)) >= 0 ? 
+    "+" + ((emploee.hasOwnProperty('count_cycle') ? 
+    emploee.count_cycle : 0) - 
+    (emploee.hasOwnProperty('prev_count_cycle') ? 
+    emploee.prev_count_cycle : 0)) :
+    ((emploee.hasOwnProperty('count_cycle') ? 
+    emploee.count_cycle : 0) - 
+    (emploee.hasOwnProperty('prev_count_cycle') ? 
+    emploee.prev_count_cycle : 0))
+
+  const colorCountOfCycle = ((emploee.hasOwnProperty('count_cycle') ? 
+    emploee.count_cycle : 0) - 
+    (emploee.hasOwnProperty('prev_count_cycle') ? 
+    emploee.prev_count_cycle : 0)) >= 0 ? 
+    "green" : "red"
+
   return <Fragment>
 
     <ModalForRemove 
@@ -23,7 +74,6 @@ export const EmploeeCard = ({emploee, onOpen, isOnline}) => {
       setModalVisible={setModalVisible} 
       myObject={emploee} 
       isOnline={isOnline}/>
-
     <View style={styles.item}>
 
         <View>
@@ -40,16 +90,8 @@ export const EmploeeCard = ({emploee, onOpen, isOnline}) => {
                 'red' : 'black', textAlign: 'center', paddingTop: 10}}>
                   {emploee.avg_rank ? emploee.avg_rank : 0}
               </Text>
-              <Text style={{color: emploee.avg_rank ? 
-                (emploee.avg_rank - emploee.prev_avg_rank < 0 ? 
-                'red' : 'green') : - emploee.prev_avg_rank < 0 ? 
-                'red' : 'green', textAlign: 'center', paddingTop: 10, paddingLeft: 2, fontSize: 10}}>
-                  {emploee.prev_avg_rank ? 
-                  (emploee.avg_rank ? 
-                  ((emploee.avg_rank - emploee.prev_avg_rank).toFixed(1) > 0 ? 
-                  "+" + (emploee.avg_rank - emploee.prev_avg_rank).toFixed(1) : 
-                  (emploee.avg_rank - emploee.prev_avg_rank).toFixed(1)) : 
-                  - emploee.prev_avg_rank): '+0'}</Text>
+              <Text style={{color: colorAvgRankOfEmploee, textAlign: 'center', paddingTop: 10, paddingLeft: 2, fontSize: 10}}>
+                  {avgRankOfEmploee}</Text>
               </View>
           </View>
 
@@ -57,16 +99,8 @@ export const EmploeeCard = ({emploee, onOpen, isOnline}) => {
             {Cycle('#000', 25, 24)}
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start'}}>
               <Text style={{textAlign: 'center', paddingTop: 10}}>{emploee.cycle ? emploee.cycle : 0}</Text>
-              <Text style={{color: emploee.cycle ? 
-                (emploee.cycle - emploee.prev_cycle < 0 ? 
-                'red' : 'green') : - emploee.prev_cycle < 0 ? 
-                'red' : 'green', textAlign: 'center', paddingTop: 10, paddingLeft: 2, fontSize: 10}}>
-                  {emploee.prev_cycle ? 
-                  (emploee.cycle ? 
-                  ((emploee.cycle - emploee.prev_cycle) > 0 ? 
-                  "+" + (emploee.cycle - emploee.prev_cycle) : 
-                  (emploee.cycle - emploee.prev_cycle)) : 
-                  - emploee.prev_cycle): '+0'}</Text>
+              <Text style={{color: colorCountOfCycle, textAlign: 'center', paddingTop: 10, paddingLeft: 2, fontSize: 10}}>
+                  {countOfCycle}</Text>
             </View>
           </View>
 
@@ -76,16 +110,8 @@ export const EmploeeCard = ({emploee, onOpen, isOnline}) => {
             </TouchableOpacity>
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start'}}>
               <Text style={{textAlign: 'center', paddingTop: 10}}>{emploee.count_bypass ? emploee.count_bypass : 0}</Text>
-              <Text style={{color: emploee.count_bypass ? 
-                (emploee.count_bypass - emploee.prev_count_bypass < 0 ? 
-                'red' : 'green') : - emploee.prev_count_bypass < 0 ? 
-                'red' : 'green', textAlign: 'center', paddingTop: 10, paddingLeft: 2, fontSize: 10}}>
-                  {emploee.prev_count_bypass ? 
-                  (emploee.count_bypass ? 
-                  ((emploee.count_bypass - emploee.prev_count_bypass) > 0 ? 
-                  "+" + (emploee.count_bypass - emploee.prev_count_bypass) : 
-                  (emploee.count_bypass - emploee.prev_count_bypass)) : 
-                  - emploee.prev_count_bypass): '+0'}
+              <Text style={{color: colorForCountBypass, textAlign: 'center', paddingTop: 10, paddingLeft: 2, fontSize: 10}}>
+                  {countBypass}
                 </Text>
             </View>
           </View>
@@ -101,7 +127,7 @@ export const EmploeeCard = ({emploee, onOpen, isOnline}) => {
           </View>
 
           <View style={{alignItems: 'center'}}>
-            {TimeBetweenBypass(25, 24)}
+            {TimeBetweenBypass('#000', 25, 24)}
             <Text style={{textAlign: 'center', paddingTop: 10}}>
               {emploee.time_between_bypass && +msToTime(emploee.time_between_bypass).slice(0, -6) < 10 ? 
               msToTime(emploee.time_between_bypass).slice(0, -3) :

@@ -15,6 +15,7 @@ const initialState = {
     bypassPostsList: [],
     usersWithTbr: [],
     userWithTbrDetail: [],
+    componentForBuilding: [],
     error: null
 }
 
@@ -141,6 +142,15 @@ export const bypassReducer = (state = initialState, action) => {
             ...state,
             usersWithTbr: [],
             loading: false
+        }
+        case 'GET_STATUS_COMPONENT_FOR_BUILDING': return {
+            ...state,
+            componentForBuilding: action.payload,
+            loading: false
+        }
+        case 'CLEAR_STATUS_COMPONENT_FOR_BUILDING': return {
+            ...state,
+            componentForBuilding: [],
         }
         case 'GET_STATUS_USER_WITH_TBR_DETAIL': return {
             ...state,

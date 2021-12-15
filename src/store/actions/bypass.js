@@ -187,3 +187,13 @@ export const getImageBypassUserOfPostCount = (period, component_id, post_id, ema
 export const getImageBypassUserOfPost = (period, component_id, post_id, email, offset, start_time=null, end_time=null) => async() => {
     await UploadDataToServer.getImageBypassUserOfPost(period, component_id, post_id, email, offset,start_time, end_time)
 }
+
+export const getComponentForBuilding = (period, building_id, start_time, end_time) => async() => {
+    await UploadDataToServer.getComponentForBuilding(period, building_id, start_time, end_time)
+}
+
+export const clearComponentForBuilding = () => async() => {
+    dispatch({
+        type: 'CLEAR_STATUS_COMPONENT_FOR_BUILDING'
+    })
+}

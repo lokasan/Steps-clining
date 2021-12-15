@@ -2,25 +2,25 @@ import React, { useEffect, useMemo, useCallback } from 'react'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import {View, Text, StyleSheet, FlatList, ActivityIndicator} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
-import { ObjectCard } from '../../components/ObjectCard'
+import { CorpusCard } from '../../components/CorpusCard'
 import {AppHeaderIcon} from '../../components/AppHeaderIcon'
-import { loadObject } from '../../store/actions/object'
+import { loadCorpus } from '../../store/actions/corpus'
 
-export const ObjectsBuilding = ({navigation}) => {
-    const openObjectsHandler = object => {
-        navigation.navigate('ObjectInfo', {objectId: object.id, objectName: object.name})
+export const CorpusesBuilding = ({navigation}) => {
+    const openCorpusHandler = corpus => {
+        navigation.navigate('CorpusInfo', {corpusId: corpus.id, corpusName: corpus.name})
     }
     // let result = getEmploeesList().then()
     // // получаю пустой промис исправить ошибку
     // console.log(result, 'раскрыл');
     const dispatch = useDispatch()
     useEffect(() => {
-        dispatch(loadObject())
+        dispatch(loadCorpus())
     }, [dispatch])
     
-    const buildings = useSelector(state => state.object.objAll)
-    const loading = useSelector(state => state.object.loading)
-    // console.log(objectsAll, 'Алл сотрудники');
+    const corpuses = useSelector(state => state.corpus.corpusAll)
+    const loading = useSelector(state => state.corpus.loading)
+    
     if (loading) {
         return <View style={styles.center}>
             <ActivityIndicator color="#0000ff"/>
@@ -31,9 +31,9 @@ export const ObjectsBuilding = ({navigation}) => {
     <View style={styles.container, styles.centers}>
     
         <FlatList style={styles.menuCard}
-        data={buildings} 
-        keyExtractor={object => object.id.toString()} 
-        renderItem={({item}) => <ObjectCard object={item} onOpen={openObjectsHandler}/>}
+        data={corpuses} 
+        keyExtractor={corpus => corpus.id.toString()} 
+        renderItem={({item}) => <CorpusCard corpus={item} onOpen={openCorpusHandler}/>}
                 />
     
     </View>
@@ -41,14 +41,14 @@ export const ObjectsBuilding = ({navigation}) => {
     </View>
 }
 
-ObjectsBuilding.navigationOptions = ({navigation}) => {
+CorpusesBuilding.navigationOptions = ({navigation}) => {
 return {
     headerTitle: 'Объекты',
     headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
     <Item 
     title='AddNewUser'
     iconName='ios-add-circle-outline'
-    onPress={() => navigation.navigate('CreateObjects')}
+    onPress={() => navigation.navigate('CreateCorpus')}
     />
   </HeaderButtons>
 }}

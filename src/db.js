@@ -3,7 +3,7 @@ import { DELETE_POST, CREATE_BUILDING_TABLE, CREATE_BYPASS_RANK_TABLE, CREATE_BY
     CREATE_COMPONENT_TABLE, CREATE_COMPONENT_WITH_POST_TABLE, CREATE_NEW_BUILDING, CREATE_NEW_COMPONENT, CREATE_NEW_USER, 
     CREATE_POST_TABLE, CREATE_STEP_TIME_TABLE, CREATE_USER_LOCAL_TABLE, DELETE_BUILDING, DELETE_COMPONENT, DELETE_USER, 
     CREATE_NEW_POST, CREATE_NEW_COMPONENT_RANK, DELETE_COMPONENT_RANK, UPDATE_COMPONENT_RANK, EDIT_COMPONENT_RANK, 
-    CREATE_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, GET_COMPONENT_TO_POST_LINKS, CREATE_PHOTO_RANK_GALLERY, CREATE_NEW_BYPASS, BYPASS_IS_CLEANER, UPDATE_BYPASS, FINISHED_BYPASS, DELETE_BYPASS, CREATE_NEW_BYPASS_RANK, UPDATE_BYPASS_RANK, CREATE_NEW_PHOTO_RANK_GALLERY, DELETE_PHOTO_RANK_GALLERY, LOAD_BYPASS, LOAD_FINISHED_COMPONENTS_FOR_BYPASS, LOAD_STARTED_BYPASS_RANK, EDIT_USER } from './txtRequests'
+    CREATE_COMPONENT_TO_POST_LINK, DELETE_COMPONENT_TO_POST_LINK, GET_COMPONENT_TO_POST_LINKS, CREATE_PHOTO_RANK_GALLERY, CREATE_NEW_BYPASS, BYPASS_IS_CLEANER, UPDATE_BYPASS, FINISHED_BYPASS, DELETE_BYPASS, CREATE_NEW_BYPASS_RANK, UPDATE_BYPASS_RANK, CREATE_NEW_PHOTO_RANK_GALLERY, DELETE_PHOTO_RANK_GALLERY, LOAD_BYPASS, LOAD_FINISHED_COMPONENTS_FOR_BYPASS, LOAD_STARTED_BYPASS_RANK, EDIT_USER, CREATE_CORPUS_TABLE, DELETE_CORPUS, CREATE_NEW_CORPUS } from './txtRequests'
 
 const db = SQLite.openDatabase('dbas.db')
 export class DB {
@@ -17,6 +17,7 @@ export class DB {
                 tx.executeSql(CREATE_USER_LOCAL_TABLE, [], resolve, (_, error) => reject(error))
                 tx.executeSql(CREATE_STEP_TIME_TABLE, [], resolve, (_, error) => reject(error))
                 tx.executeSql(CREATE_BYPASS_TABLE, [], resolve, (_, error) => reject(error))
+                tx.executeSql(CREATE_CORPUS_TABLE, [], resolve, (_, error) => reject(error))
                 tx.executeSql(CREATE_BUILDING_TABLE, [], resolve, (_, error) => reject(error))
                 tx.executeSql(CREATE_POST_TABLE, [], resolve, (_, error) => reject(error))
                 tx.executeSql(CREATE_COMPONENT_TABLE, [], resolve, (_, error) => reject(error))
@@ -129,6 +130,7 @@ export class DB {
     }
     static createObject({id, name, address, description, img}) {
         return new Promise((resolve, reject) => {
+            // console.log(`Object id: [${id}]\nCorpus_id: [${corpus_id}]\nAddress: [${address}]\nDescription: [${description}]\n img: [${img}]`)
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_BUILDING, 
@@ -139,6 +141,68 @@ export class DB {
             })
         })
     }
+    static createCorpus({id, name,  description, address, coords, img}) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    CREATE_NEW_CORPUS,
+                    [id ? id : Date.now(), name, description, address, coords, img],
+                    (_, result) => resolve(result.insertId),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static removeCorpus(id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(DELETE_CORPUS,
+                [id],
+                resolve,
+                (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static getCorpusById(id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    'SELECT * FROM corpus WHERE id = ?;',
+                    [id],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static getCorpuses() {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT * FROM corpus;",
+                    [],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+
+    static getObjectsByCorpusId(corpus_id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT * FROM building WHERE corpus_id = ?;",
+                    [corpus_id],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => {console.log(error); reject(error)}
+                )
+            })
+        })
+        
+    }
+
     static getObjects() {
         return new Promise((resolve, reject) => {
             db.transaction(tx => {

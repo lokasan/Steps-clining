@@ -9,22 +9,28 @@ import { addEmploee } from '../../store/actions/empDouble'
 import { addObject } from '../../store/actions/object'
 import { PhotoPicker } from '../../components/PhotoPicker'
 import { addComponent } from '../../store/actions/component'
+import findTrashSymbolsInfo from '../../utils/findTrashSymbolsInfo'
 
 export const CreateNewComponent = ({navigation}) => {
     const dispatch = useDispatch()
     
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
-    
+    const [borderBottomColor, setBorderBottomColor] = useState({
+      name    : false,
+    })
     const imgRef = useRef()
+    const imgExtensionsRef = useRef()
     const photoPickHandler = uri => {
-      imgRef.current = uri
+      imgRef.current = uri,
+      imgExtensionsRef.current = '.' + uri.split('.')[uri.split('.').length - 1]
     }
     const createComponentHandler = () => {
       const component = {
         name,
         description,
         img: imgRef.current,
+        extensions: imgExtensionsRef.current,
         
       }
       dispatch(addComponent(component))
@@ -35,11 +41,22 @@ export const CreateNewComponent = ({navigation}) => {
             <View>
         <Text style={styles.title}>Создание нового компонента</Text>
         <AppCard>
+        <Text style={{color: 'red'}}>{findTrashSymbolsInfo(name).status !== 200 ?
+        `Некорректные символы: ${Array
+          .from(new Set(findTrashSymbolsInfo(name).error))
+          .join('')}` :
+        ''}</Text>
         <TextInput
         style={styles.textarea}
         placeholder='Название компонента'
         value={name}
-        onChangeText={setName}/>
+        onChangeText={(text) => {
+          findTrashSymbolsInfo(text).status !== 200 ?
+          setBorderBottomColor({...borderBottomColor, name: false}) : 
+          setBorderBottomColor({...borderBottomColor, name: true})
+          setName(text)
+          
+        }}/>
         
         
         <TextInput
@@ -54,7 +71,7 @@ export const CreateNewComponent = ({navigation}) => {
      title='Создать компонент' 
      onPress={createComponentHandler} 
      color={HEADER_FOOTER.MAIN_COLOR}
-     disabled={!name || !description}/>
+     disabled={!name || !description || !borderBottomColor.name}/>
       </View>
       </TouchableWithoutFeedback>
     </ScrollView>

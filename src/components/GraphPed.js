@@ -10,6 +10,8 @@ import { EmploeeList } from '../screens/EmploeeList'
 import { signInWithGoogleAsync } from './GoogleAuth';
 import { Footer } from '../components/ui/Footer'
 import {AppHeaderIcon} from '../components/AppHeaderIcon'
+import { StatusObject } from '../screens/StatusObject';
+import {useSelector} from 'react-redux'
 // GoogleFit.checkIsAuthorized().then(() => {
 //   console.log(GoogleFit.isAuthorized, 'BOOOLEAN')
 // })
@@ -61,7 +63,7 @@ let sampleDataYear = [
 // // };
 
 
-export const GraphPed = ( {} ) => {
+export const GraphPed = ( {navigation} ) => {
   let dataForChart = [{ 'dataForChart': [], 
                         'statMem': 'day'}]
     const initialState = {
@@ -136,48 +138,39 @@ export const GraphPed = ( {} ) => {
                                     )
               })
     } 
+    const emploeeAll   = useSelector(state => state.empDouble.empAll)
+    let   tempPrivileg = false
+    let serfIdUser = 0
+    console.log(emploeeAll, 'Алл сотрудники');
+    for (let i of emploeeAll) {
+        if (i.status && i.privileg) {
+            tempPrivileg = true
+            
+        }
+        if (i.status) {
+          serfIdUser = i.id
+        }
+    }
       return (
-        <View style={{flex: 1}}>
-      <View style={styles.containerMain}>
-      <ScrollView style={{backgroundColor: 'black'}}>
-        <View>
-          
-            <RenderChart dataGraph={dataGraph} onSubmit={addDataGraph}/>
-          <View>
-            {/* {console.log(`GraphPed:====>>> , ${JSON.stringify(dataGraph)}`)} */}
-          </View>
-        {/* <reservChart/> */}
-        
-          
-          <View style={styles.container}>
-            <TouchableOpacity style={styles.buttonD} onPress={setDataToBase}><Text>Загрузить тестовые данные</Text></TouchableOpacity>
-            {/* <TouchableOpacity style={styles.buttonD} onPress={pragmaEdit}><Text>Год</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.buttonD} onPress={sendDataToFireBase}><Text>Загрузить в firebase</Text></TouchableOpacity> */}
-            {/* <TouchableOpacity style={styles.buttonD} onPress={() => signInWithGoogleAsync()}><Text>Google</Text></TouchableOpacity> */}
-            <TouchableOpacity style={styles.buttonD} ><Text>Открыть соединение</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.buttonD} onPress={() => ws.onclose()}><Text>Закрыть соединение</Text></TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
-      
-       
-      
-      </View>
-      {/* <Footer/> */}
-      
-      
-    </View>
-      )
+        tempPrivileg ? <StatusObject navigation={navigation}/> : <View></View>)
 }
 GraphPed.navigationOptions = ({navigation}) => ({
-  headerTitle: 'Шагомер',
-  headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+  headerTitle: 'Состояние объекта',
+  headerRight: () => <View style={{display: 'flex', flexDirection: 'row'}}><HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
     <Item 
     title='Private Account'
     iconName='ios-person'
     onPress={() => navigation.navigate('MainProfile')}
     />
-  </HeaderButtons>,
+  </HeaderButtons>
+  <HeaderButtons HeaderButtonComponent = {AppHeaderIcon}>
+      <Item
+      title='Filter Object'
+      iconName='ios-options'
+      onPress={() => navigation.getParam('openModalFilter')()}
+      />
+    </HeaderButtons>
+  </View>,
   headerLeft: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
   <Item 
   title='toogle'

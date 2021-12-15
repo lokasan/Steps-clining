@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
 import * as firebase from 'firebase'
 import ApiKeys from './ApiKeys'
-
+import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator'
 
 
 
@@ -22,6 +22,20 @@ async function askForPermissions () {
 
 export const PhotoPicker = ({onPick}) => {
     const [image, setImage] = useState(null)
+    const compressedImage = async (img) => {
+        const manipResult = await manipulateAsync(
+            img.uri,
+            [
+                {
+                    resize: {height: 1024, width: 1024}
+                }],
+            {compress: 0.37, format: SaveFormat.JPEG}
+        )
+        console.log(manipResult)
+        setImage(manipResult.uri)
+        onPick(manipResult.uri)
+    }
+    
     const addPhoto = async () => {
         const hasPermissions = await askForPermissions()
         if (!hasPermissions) {
@@ -29,13 +43,15 @@ export const PhotoPicker = ({onPick}) => {
         } 
         const img = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 0.3,
+            quality: 1,
             allowsEditing: true,
             aspect: [4, 3]
 
         })
-        setImage(img.uri)
-        onPick(img.uri)
+        console.log(img)
+        await compressedImage(img)
+        // setImage(img.uri)
+        // onPick(img.uri)
     }
     const takePhoto = async () => {
         const hasPermissions = await askForPermissions()
@@ -43,14 +59,15 @@ export const PhotoPicker = ({onPick}) => {
             return
         } 
         const img = await ImagePicker.launchCameraAsync({
-            quality: 0.3,
+            quality: 1,
             allowsEditing: true,
-            aspect: [16, 9]
+            aspect: [4, 3]
 
         })
         console.log(img)
-        setImage(img.uri)
-        onPick(img.uri)
+        await compressedImage(img)
+        // setImage(img.uri)
+        // onPick(img.uri)
         
         
     }

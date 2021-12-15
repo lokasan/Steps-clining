@@ -5,7 +5,8 @@ export const CREATE_USER_LOCAL_TABLE = "CREATE TABLE IF NOT EXISTS user_local (i
 export const CREATE_STEP_TIME_TABLE = "CREATE TABLE IF NOT EXISTS step_time (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, user_id INTEGER NOT NULL, \
     count_step INTEGER NOT NULL, date_time TEXT NOT NULL, current_time TEXT NOT NULL, FOREIGN KEY (user_id) REFERENCES user_local(id) ON DELETE CASCADE);"
 
-export const CREATE_BUILDING_TABLE = "CREATE TABLE IF NOT EXISTS building (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL UNIQUE, \
+export const CREATE_CORPUS_TABLE = "CREATE TABLE IF NOT EXISTS corpus (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL UNIQUE, description TEXT, address TEXT, coords TEXT, img TEXT NOT NULL);"
+export const CREATE_BUILDING_TABLE = "CREATE TABLE IF NOT EXISTS building (id INTEGER PRIMARY KEY NOT NULL, corpus_id INTEGER, name TEXT NOT NULL UNIQUE, \
     address TEXT NOT NULL, description TEXT NOT NULL, img TEXT NOT NULL);"
 
 export const CREATE_POST_TABLE = "CREATE TABLE IF NOT EXISTS post (id INTEGER PRIMARY KEY NOT NULL, building_id INTEGER NOT NULL, \
@@ -31,8 +32,10 @@ export const CREATE_BYPASS_RANK_TABLE = "CREATE TABLE IF NOT EXISTS bypass_rank 
 export const CREATE_PHOTO_RANK_GALLERY = "CREATE TABLE IF NOT EXISTS photo_rank_gallery (id INTEGER PRIMARY KEY NOT NULL, bypass_rank_id INTEGER NOT NULL, img TEXT NOT NULL, \
     FOREIGN KEY (bypass_rank_id) REFERENCES bypass_rank(id) ON DELETE CASCADE);"
 
+export const CREATE_NEW_CORPUS = "INSERT INTO corpus (id, name, description, address, coords, img) VALUES (?, ?, ?, ?, ?, ?);"
+export const DELETE_CORPUS = "DELETE FROM corpus WHERE id = ?;"
 export const CREATE_NEW_USER = "INSERT INTO user_local (id, surname, name, lastname, position, email, privileg, key_auth, status, img, create_user_date, start_shift) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
-export const DELETE_USER = "DELETE FROM user_local WHERE id = ?"
+export const DELETE_USER = "DELETE FROM user_local WHERE id = ?;"
 export const UPDATE_USER = ""
 export const CREATE_NEW_BUILDING = "INSERT INTO building (id, name, address, description, img) VALUES (?, ?, ?, ?, ?);"
 export const DELETE_BUILDING = "DELETE FROM building WHERE id = ?"

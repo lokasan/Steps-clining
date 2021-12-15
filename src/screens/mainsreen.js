@@ -1,6 +1,6 @@
 import React, {useContext, useCallback, useEffect} from 'react';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
-import {StyleSheet, View, FlatList, Image, ScrollView, Text, Alert, ActivityIndicator} from 'react-native'
+import {StyleSheet, View, FlatList, Image, ScrollView, Text, Alert, ActivityIndicator, TouchableOpacity} from 'react-native'
 import {Authorization} from '../components/Authorization'
 import {Svg} from 'react-native-svg'
 import {Todo} from '../components/Todo'
@@ -15,7 +15,7 @@ import {AppHeaderIcon} from '../components/AppHeaderIcon'
 import { loadObject } from '../store/actions/object';
 import { loadComponent } from '../store/actions/component';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadPost } from '../store/actions/post';
+import { loadAllPostsFromServer, loadPost } from '../store/actions/post';
 import { loadComponentRank } from '../store/actions/componentRank';
 import { loadPostWithComponent } from '../store/actions/postWithComponent';
 import { UploadDataToServer } from '../uploadDataToServer';
@@ -60,37 +60,56 @@ export const MainScreen = ({navigation}) => {
     loadGetDB()
     dispatch(loadObject())
     dispatch(loadComponent())
-
+    
+    // dispatch(loadAllPostsFromServer()) 
     
   }, [])
+  // useEffect(() => {
+  //   dispatch(loadObject())
+  // }, [])
 
-  useEffect(() => {
-    for (el of buildings) {
-      dispatch(loadPost(el.id)) 
-    }
-  }, [buildings])
+  // useEffect(() => {
+  //   console.log('USEFFECT BUILDINGS!!', JSON.stringify(buildings))
+  //   for (el of buildings) {
+  //     dispatch(loadPost(el.id)) 
+  //   }
+  // }, [buildings])
 
-  useEffect(() => {
-    for (el of components) {
-      dispatch(loadComponentRank(el.id))
-    }
-  }, [components])
+  // useEffect(() => {
+  //   console.log('USEFFECT COMPONENTS!!', JSON.stringify(components))
+  //   for (el of components) {
+  //     dispatch(loadComponentRank(el.id))
+  //   }
+  // }, [components])
 
-  useEffect(() => {
-    for (el of posts) {
-      dispatch(loadPostWithComponent(el.id))
-    }
-  }, [posts])
+  // useEffect(() => {
+  //   console.log('USEFFECT POSTS!!', JSON.stringify(posts))
+  //   for (el of posts) {
+  //     dispatch(loadPostWithComponent(el.id))
+  //   }
+  // }, [buildings])
+  const getPADATA = () => {
+    return new Promise(res => {
+      db.transaction(tx => {
+        tx.executeSql('pragma table_info(corpus);', [], (_, {rows}) => {
+          console.log(JSON.stringify(rows), ' POSTS IN LOCAL DATABASE')
+          console.log(posts?.length, ' COUNT POSTS IN STATE')
+          res()
+        })
+      })
+    })
+  }
   async function getAsyncData() {
     await buildQ()
     if (myKey.isStatus) {
       await UploadDataToServer.addActiveUser(myKey.id)
-      await UploadDataToServer.getActiveUsers()
+      
       navigation.navigate('App')
       
   
       
     }
+    await UploadDataToServer.getActiveUsers()
   }
     return (
       <View style={{flex: 1}}>
@@ -105,6 +124,7 @@ export const MainScreen = ({navigation}) => {
       </View>
       </View>
       {/* <Footer/> */}
+      <TouchableOpacity onPress={getPADATA}><Text>Загрузить из бд</Text></TouchableOpacity>
     </View>
       
       
