@@ -67,6 +67,9 @@ const FooterNavigator = createStackNavigator({
 
 const AnalyticsNavigator = createStackNavigator({
     Analytics: GraphPed,
+    CorpusDetailAnalytics: {
+        screen: StatusObject
+    },
     MainProfile: {
         screen: MainProfileScreen,  
     },

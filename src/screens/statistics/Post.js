@@ -1,9 +1,9 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {View, Text, FlatList, ScrollView, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import { clearBypassUsersDetail, getImageBypassUserOfPost, getImageBypassUserOfPostCount, loadBypassUsersDetail } from '../../store/actions/bypass';
 import { showLoaderBypassRank } from '../../store/actions/bypassRank';
-import {msToTime} from '../../utils/msToTime';
+import {msToTime, timeToFormat, countFormat} from '../../utils/msToTime';
 import { PostDetail } from './PostDetail';
 export const Post = ({user_id, period, monthRange, 
     showUserDetailInfoOrUnshow, flagArrayUsersDetail, setFlagArrayUsersDetail, setMonthRange, 
@@ -11,6 +11,7 @@ export const Post = ({user_id, period, monthRange,
     bypassKeyByValueRef, bypassPhotoPostIdRef, bypassPhotoEmailRef, DATA_IMAGE_BYPASS_RANK}) => {
     const existsComponents = useRef([])
     const DATA_USER_WITH_TBR_DETAIL = useSelector(state => state.bypass.userWithTbrDetail)
+    const DATA_USERS_TBR_CORPUS_DETAIL = useSelector(state => state.bypass.userWithTbrCorpusDetail)
     const [openedPostInOpenedUserOfBuilding, setOpenedPostInOpenedUserOfBuilding] = useState([])
     const POSTS_LIST = useSelector(state => state.post.postAll)
     const DATA_USER_DETAIL = useSelector(state => state.bypass.bypassUsersList)
@@ -22,7 +23,7 @@ export const Post = ({user_id, period, monthRange,
         const uniqueComponent = {}
         let valueOfKeyComponent = []
         if (item?.data?.length !== 0) {
-        item.data.map(el => {
+        item.map(el => {
             Object.keys(el).map(key => {
                 if (!isNaN(Number(key))) {
                     if (!uniqueComponent.hasOwnProperty(key)) {
@@ -69,41 +70,60 @@ export const Post = ({user_id, period, monthRange,
         return createdElements
     }
     const CreateViewDataComponentPost = ({item, index}) => {
-        const createViewData = []
-        if (item?.data?.length !== 0) {
-            item.data.forEach((el, idx) => {
-                createViewData.push(<View>
-                    <TouchableOpacity onPress = {() => showUserDetailInfoOrUnshow(idx, item)}>
-                    <Image 
-                    style={{
-                      width: 20, 
-                      height: 20, 
-                      marginLeft: 22, 
-                      marginTop: 11, 
-                      borderRadius: 50}} source={{uri: POSTS_LIST.map(els => {
-                      if (els.id === item?.data[idx]?.post_id) {
-                        return els.img
-                      }
-                      }).join('')}}/>
-                    </TouchableOpacity>
-                    <Text style={styles.beastAndBad}>{item.data[idx].avg_rank_post}</Text>
-                    <Text style={styles.beastAndBad}>{item.data[idx].count_bypass}</Text>
-                    <Text style={styles.beastAndBad}>{msToTime(item.data[idx].time_bypasses)}</Text>
-                    <Text style={styles.beastAndBad}>{msToTime(item.data[idx].avg_bp_by_bp)}</Text>
-                    <Text style={styles.beastAndBad}>{item.data[idx].cleaner}</Text>
-                    <CreateTextComponentWithRatingPost item={item?.data[idx]} />
-                    </View>)
-            })
+        console.log(index, 'index in createViewDataComponentPost')
+        const data = {data: DATA_USER_WITH_TBR_DETAIL.length
+            ? DATA_USER_WITH_TBR_DETAIL.filter(el => el.user_id === user_id) 
+            : DATA_USERS_TBR_CORPUS_DETAIL.filter(el => el.user_id === user_id)} 
+        return <View>
+            <TouchableOpacity onPress = {() => showUserDetailInfoOrUnshow(index, data)}>
+            <Image 
+            style={{
+            width: 20, 
+            height: 20, 
+            marginLeft: 22, 
+            marginTop: 11, 
+            borderRadius: 50}} source={{uri: POSTS_LIST.map(els => {
+            if (els.id === item?.post_id) {
+                return els.img
+            }
+            }).join('')}}/>
+            </TouchableOpacity>
+            <Text style={styles.beastAndBad}>{item.avg_rank_post}</Text>
+            <Text style={styles.beastAndBad}>{countFormat(item.count_bypass)}</Text>
+            <Text style={styles.beastAndBad}>{timeToFormat(msToTime(item.time_bypasses))}</Text>
+            <Text style={styles.beastAndBad}>{timeToFormat(msToTime(item.avg_bp_by_bp))}</Text>
+            <Text style={styles.beastAndBad}>{item.cleaner}</Text>
+            <CreateTextComponentWithRatingPost item={item} />
+        </View>
+           
         }
-        return createViewData
+    
+    const MainWindowWithRanking = () => {
+        return (<FlatList
+            data={DATA_USER_WITH_TBR_DETAIL.length
+                ? DATA_USER_WITH_TBR_DETAIL.filter(el => el.user_id === user_id) 
+                : DATA_USERS_TBR_CORPUS_DETAIL.filter(el => el.user_id === user_id)}
+            keyExtractor={useCallback(item => item.post_id.toString())}
+            
+            renderItem={CreateViewDataComponentPost}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            
+            
+            style={{display: 'flex', flexDirection: 'row', width: '65%'}}
+            
+            />)
     }
-    const ItemPost = ({item, index}) => {
+    const ItemPost = () => {
+        const item = DATA_USER_WITH_TBR_DETAIL.length
+        ? DATA_USER_WITH_TBR_DETAIL.filter(el => el.user_id === user_id) 
+        : DATA_USERS_TBR_CORPUS_DETAIL.filter(el => el.user_id === user_id)
         let textComponent = createTextComponent(item)
 
         
-        return (
-            <View style={flagArrayUsersDetail.length && flagArrayUsersDetail.map(el => item.data
-                .map(elD => el.email === elD.email && el.post === elD.post_name))
+        return (<>
+            <View style={flagArrayUsersDetail.length && flagArrayUsersDetail.map(el => item
+            .map(elD => el.email === elD.email && el.post === elD.post_name))
               .map(res => res.indexOf(true) !== -1? true : false)
               .indexOf(true) !== -1 && period !== 'today' ? {display: 'none'} : {...styles.itemUD}}>
                 {/* {textCmpt(item.data)} */}
@@ -123,47 +143,40 @@ export const Post = ({user_id, period, monthRange,
                                 <Text style={styles.beastAndBad}>Уборщик</Text>
                                 {textComponent}
                             </View>
-                            <ScrollView 
-                                vertical={false}
-                                horizontal
-                                showsHorizontalScrollIndicator={false}
-                                style={{display: 'flex', flexDirection: 'row', width: '65%'}}>
-                                <CreateViewDataComponentPost item={item}/>
-                                </ScrollView>
+                            {MainWindowWithRanking()}
                         </View>
                     </View>
                 </View>
             </View>
-        )
-    }
-    const renderItem = ({item, index}) => {
-        return <>
-                <ItemPost item={item} index={index} />
-               {flagArrayUsersDetail.map(el => item.data
+            {flagArrayUsersDetail.map(el => item
                     .map(elD => el.email === elD.email && el.post === elD.post_name))
                     .map(res => res.indexOf(true) !== -1 ? true : false)
                     .indexOf(true) !== -1 && period !== 'today' ? 
                     <PostDetail 
-                    period={period} 
-                    monthRange={monthRange} 
-                    user={item.data} 
-                    setFlagArrayUsersDetail={setFlagArrayUsersDetail}
-                    flagArrayUsersDetail={flagArrayUsersDetail}
-                    setMonthRange={setMonthRange}
-                    setModalVisibleDay={setModalVisibleDay}
-                    choseDateCurrentRef={choseDateCurrentRef}
-                    /> : null}
+                        period={period} 
+                        monthRange={monthRange} 
+                        user={item} 
+                        setFlagArrayUsersDetail={setFlagArrayUsersDetail}
+                        flagArrayUsersDetail={flagArrayUsersDetail}
+                        setMonthRange={setMonthRange}
+                        setModalVisibleDay={setModalVisibleDay}
+                        choseDateCurrentRef={choseDateCurrentRef}
+                        />
+                     : null}
+            </>
+        )
+    }
+    const renderItem = () => {
+        return <>
+                {ItemPost()}
                </>
     }
     console.log(DATA_USER_WITH_TBR_DETAIL, 'DATA_USER_WITH_TBR_DETAIL')
     return (
         <>
-        <FlatList
-        data={[{id: String(Date.now()), data: DATA_USER_WITH_TBR_DETAIL.filter(el => el.user_id === user_id)}]}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}>
-
-        </FlatList>
+        <ScrollView>
+         {ItemPost()}   
+        </ScrollView>
         </>
     )
 }

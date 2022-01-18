@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, ScrollView, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import { ArrowTrand } from '../../components/toolkitComponents/ArrowTrand';
-import { msToTime } from '../../utils/msToTime';
+import { msToTime, timeToFormat, countFormat } from '../../utils/msToTime';
 
 export const Attribute = ({  }) => {
     const DATA_COMPONENT = useSelector(state => state.bypass.componentForBuilding)
@@ -30,10 +30,10 @@ export const Attribute = ({  }) => {
                                     <Text style = {styles.textStyleInToolkit}>{item.avg_rank_component.toFixed(1)}</Text>
                                 </View>
                                 <View style = {styles.alignElementsCenter}>
-                                    <Text style = {styles.textStyleInToolkit}>{item.count_bypass}</Text>
+                                    <Text style = {styles.textStyleInToolkit}>{countFormat(item.count_bypass)}</Text>
                                 </View>
                                 <View style = {styles.alignElementsCenter}>
-                                    <Text style = {styles.textStyleInToolkit}>{msToTime(item.time_bypasses_component)}</Text>
+                                    <Text style = {styles.textStyleInToolkit}>{timeToFormat(msToTime(item.time_bypasses_component))}</Text>
                                 </View>
                                 <View style = {styles.alignElementsCenter}>
                                     <Text style = {styles.textStyleInToolkit}>-</Text>

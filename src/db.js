@@ -128,15 +128,15 @@ export class DB {
             })
         })
     }
-    static createObject({id, name, address, description, img}) {
+    static createObject({id, corpus_id, name, address, description, img}) {
         return new Promise((resolve, reject) => {
             // console.log(`Object id: [${id}]\nCorpus_id: [${corpus_id}]\nAddress: [${address}]\nDescription: [${description}]\n img: [${img}]`)
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_BUILDING, 
-                    [id ? id : Date.now(), name, address, description, img],
+                    [id ? id : Date.now(), corpus_id, name, address, description, img],
                     (_, result) => resolve(result.insertId),
-                    (_, error) => reject(error)
+                    (_, error) => {console.log(error); reject(error)}
                 )
             })
         })
@@ -270,6 +270,18 @@ export class DB {
                 tx.executeSql(
                     "SELECT building_id, id, name, description, img, qrcode, qrcode_img FROM post WHERE building_id = ?;",
                     [building_id],
+                    (_, result) => resolve(result.rows._array),
+                    (_, error) => reject(error)
+                )
+            })
+        })
+    }
+    static getPostsForCorpus(corpus_id) {
+        return new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                tx.executeSql(
+                    "SELECT building_id, post.id, post.name, post.description, post.img, post.qrcode, post.qrcode_img FROM post left join building on building.id = post.building_id WHERE corpus_id = ?;",
+                    [corpus_id],
                     (_, result) => resolve(result.rows._array),
                     (_, error) => reject(error)
                 )

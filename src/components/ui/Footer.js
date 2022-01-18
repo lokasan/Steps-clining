@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Image, TouchableOpacity} from 'react-native'
-import { Background } from 'victory-native'
+// import { Background } from 'victory-native'
 import { HEADER_FOOTER } from '../../theme'
 import { Platform } from 'react-native'
 

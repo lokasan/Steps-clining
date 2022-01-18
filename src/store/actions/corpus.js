@@ -8,6 +8,10 @@ export const loadCorpus = () => async dispatch => {
     await UploadDataToServer.getCorpus()
 }
 
+export const loadCorpusBypassBase = (period, start_time=null, end_time=null) => async dispatch => {
+    await UploadDataToServer.getBypassCorpusBase(period, start_time, end_time)
+}
+
 export const removeCorpus = id => async dispatch => {
     await UploadDataToServer.removeCorpus(id)
     await DB.removeCorpus(id)
@@ -39,7 +43,7 @@ export const addCorpus = corpus => async dispatch => {
     })
 }
 
-export const updateCorpus = corpus => async dispath => {
+export const updateCorpus = corpus => async dispatch => {
     await DB.updateCorpus(corpus)
     dispatch({
         type: 'UPDATE_CORPUS',

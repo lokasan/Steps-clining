@@ -24,6 +24,12 @@ export const loadAllPostsFromServer = () => {
         await UploadDataToServer.getAllPostsFromServer()
     }
 }
+
+export const loadPostForCorpus = corpus_id => async () => {
+    dispatch(showLoaderPost())
+    await UploadDataToServer.getPostsForCorpus(corpus_id)
+}
+
 export const clearPost = () => async dispatch => {
     dispatch({ 
         type: CLEAR_POST

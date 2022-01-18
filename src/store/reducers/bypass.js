@@ -15,7 +15,12 @@ const initialState = {
     bypassPostsList: [],
     usersWithTbr: [],
     userWithTbrDetail: [],
+    userWithTbrCorpus: [],
+    userWithTbrCorpusDetail: [],
     componentForBuilding: [],
+    listUsersInBuilding: [],
+    listUsersInBuildingDetail: [],
+    listUsersInCorpusDetail: [],
     error: null
 }
 
@@ -73,6 +78,10 @@ export const bypassReducer = (state = initialState, action) => {
         case CLEAR_BYPASS_STATUS_USERS_DETAIL_FOR_DAY: return {
             ...state,
             bypassUSersListDetailForDay: []
+        }
+        case "CLEAR_BYPASS_STATUS_OBJECT": return {
+            ...state,
+            bypassGetter: []
         }
         case CLEAR_BYPASS_POSTS: return {
             ...state,
@@ -157,6 +166,25 @@ export const bypassReducer = (state = initialState, action) => {
             userWithTbrDetail: [...state.userWithTbrDetail, ...action.payload],
             loading: false
         }
+        case 'GET_STATUS_USER_WITH_TBR_CORPUS': return {
+            ...state,
+            userWithTbrCorpus: action.payload, 
+            loading: false
+        }
+        case 'CLEAR_STATUS_USER_WITH_TBR_CORPUS': return {
+            ...state,
+            userWithTbrCorpus: [],
+            loading: false
+        }
+        case 'GET_STATUS_USER_WITH_TBR_CORPUS_DETAIL': return {
+            ...state,
+            userWithTbrCorpusDetail: [...state.userWithTbrCorpusDetail, ...action.payload],
+            loading: false
+        }
+        case 'CLEAR_STATUS_USER_WITH_TBR_CORPUS_DETAIL': return {
+            ...state,
+            userWithTbrCorpusDetail: [...action.payload.data.filter(el => !(el.user_id === action.payload.user_id))]
+        }
         case 'CLEAR_STATUS_USER_WITH_TBR_DETAIL': return {
             ...state,
             userWithTbrDetail: [...action.payload.data.filter(el => !(el.building_id === action.payload.building_id))],
@@ -170,6 +198,34 @@ export const bypassReducer = (state = initialState, action) => {
         case 'CLEAR_STATIC_WITH_TBR_DETAIL_ALL': return {
             ...state,
             userWithTbrDetail: []
+        }
+        case 'CLEAR_STATIC_WITH_TBR_CORPUS_DETAIL_ALL': return {
+            ...state,
+            userWithTbrCorpusDetail: []
+        }
+        case 'GET_CYCLES_LIST_FOR_BUILDING': return {
+            ...state,
+            listUsersInBuilding: [...state.listUsersInBuilding, ...action.payload]
+        }
+        case 'GET_CYCLES_LIST_FOR_BUILDING_DETAIL': return {
+            ...state,
+            listUsersInBuildingDetail: [...state.listUsersInBuildingDetail, ...action.payload]
+        }
+        case 'CLEAR_CYCLES_LIST_FOR_BUILDING_DETAIL': return {
+            ...state,
+            listUsersInBuildingDetail: [...action.payload.data.filter(el => el.user_id !== action.payload.user_id)]
+        }
+        case 'GET_CYCLES_LIST_FOR_CORPUS_DETAIL': return {
+            ...state,
+            listUsersInCorpusDetail: [...state.listUsersInCorpusDetail, ...action.payload]
+        }
+        case 'CLEAR_CYCLES_LIST_FOR_CORPUS_DETAIL': return {
+            ...state,
+            listUsersInCorpusDetail: [...action.payload.data.filter(el => el.user_id !== action.payload.user_id)]
+        }
+        case 'CLEAR_CYCLES_LIST_FOR_BUILDING_DETAIL_ALL': return {
+            ...state,
+            listUsersInBuildingDetail: []
         }
         default: return state
     }

@@ -2,22 +2,11 @@ import React, {useContext, useCallback, useEffect} from 'react';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import {StyleSheet, View, FlatList, Image, ScrollView, Text, Alert, ActivityIndicator, TouchableOpacity} from 'react-native'
 import {Authorization} from '../components/Authorization'
-import {Svg} from 'react-native-svg'
-import {Todo} from '../components/Todo'
-import {GraphPed} from '../components/GraphPed'
 import * as SQLite from 'expo-sqlite'
-// import PureChart from 'react-native-pure-chart'
-import {VictoryChart, VictoryGroup, VictoryBar, VictoryZoomContainer, VictoryScatter} from 'victory-native'
-import { EmploeeContext } from '../context/emploee/authorizationContext';
-import { ScreenContext } from '../context/screen/screenContext';
-import { Footer } from '../components/ui/Footer'
 import {AppHeaderIcon} from '../components/AppHeaderIcon'
 import { loadObject } from '../store/actions/object';
 import { loadComponent } from '../store/actions/component';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadAllPostsFromServer, loadPost } from '../store/actions/post';
-import { loadComponentRank } from '../store/actions/componentRank';
-import { loadPostWithComponent } from '../store/actions/postWithComponent';
 import { UploadDataToServer } from '../uploadDataToServer';
 import { getUsersServer } from '../store/actions/empDouble';
 

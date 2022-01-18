@@ -71,6 +71,11 @@ export const hideLoaderBypass = () => async dispatch => {
     })
 }
 
+export const loadBypassBuildingForCorpus = (period, corpus_id, start_time=null, end_time=null) => async() => {
+    dispatch(showLoaderBypass())
+    await UploadDataToServer.getBypassBuildingCorpus(period, corpus_id, start_time, end_time)
+}
+
 export const loadBypassGetter = period => async () => {
     dispatch(showLoaderBypass())
     await UploadDataToServer.getBypassGetter(period)
@@ -90,6 +95,13 @@ export const loadBypassUsers = (period, post_name) => async () => {
     dispatch(showLoaderBypassIcon())
     await UploadDataToServer.getBypassUsers(period, post_name)
 }
+
+export const clearBypassBuildingForCorpus = () => async () => {
+    dispatch({
+        type: 'CLEAR_BYPASS_STATUS_OBJECT'
+    })
+}
+ 
 export const clearBypassUsers = (data, post_name) => async () => {
     dispatch({
         type: CLEAR_BYPASS_USERS,
@@ -163,11 +175,34 @@ export const getListUsersStaticWithTbrDetail = (period, building_id, user_id, st
     dispatch(showLoaderBypassIcon())
     await UploadDataToServer.getStatusUsersWithTbrDetail(period, building_id, user_id, start_time, end_time)
 }
+export const getListUsersStaticWithTbrCorpus = (period, corpus_id, start_time=null, end_time=null) => async () => {
+    dispatch(showLoaderBypassIcon())
+    await UploadDataToServer.getStatusUsersWithTbrCorpus(period, corpus_id, start_time, end_time)
+}
+export const getListUsersStaticWithTbrCorpusDetail = (period, corpus_id, user_id, start_time=null, end_time=null) => async () => {
+    dispatch(showLoaderBypassIcon())
+    await UploadDataToServer.getStatusUsersWithTbrCorpusDetail(period, corpus_id, user_id, start_time, end_time)
+}
+
+export const clearListUsersStaticWithTbrCorpus = () => async () => {
+    dispatch({
+        type: 'CLEAR_STATUS_USER_WITH_TBR_CORPUS'
+    })
+}
+
+export const clearListUsersStaticWithTbrCorpusDetail = (data, user_id) => async () => {
+    dispatch({
+        type: 'CLEAR_STATUS_USER_WITH_TBR_CORPUS_DETAIL',
+        payload: {data, user_id}
+    })
+}
+
 export const clearListUsersStaticTbr = () => async() => {
     dispatch({
         type: 'CLEAR_STATUS_USER_WITH_TBR'
     })
 }
+
 export const clearListUsersStaticWithTbrDetail = (data, user_id) => async() => {
     dispatch({
         type: 'CLEAR_STATIC_WITH_TBR_DETAIL',
@@ -181,9 +216,16 @@ export const clearListUsersStaticWithTbrDetailAll = () => async() => {
     })
 }
 
+export const clearListUsersStaticWithTbrCorpusDetailAll = () => async() => {
+    dispatch({
+        type: 'CLEAR_STATIC_WITH_TBR_CORPUS_DETAIL_ALL'
+    })
+}
+
 export const getImageBypassUserOfPostCount = (period, component_id, post_id, email, start_time=null, end_time=null) => async() => {
     await UploadDataToServer.getImageBypassUserOfPostCount(period, component_id, post_id, email, start_time, end_time)
 }
+
 export const getImageBypassUserOfPost = (period, component_id, post_id, email, offset, start_time=null, end_time=null) => async() => {
     await UploadDataToServer.getImageBypassUserOfPost(period, component_id, post_id, email, offset,start_time, end_time)
 }
@@ -197,3 +239,40 @@ export const clearComponentForBuilding = () => async() => {
         type: 'CLEAR_STATUS_COMPONENT_FOR_BUILDING'
     })
 }
+
+export const getCyclesListForUserInBuilding = (user_id, building_id) => async () => {
+    await UploadDataToServer.getCyclesListForUserInBuilding(user_id, building_id)
+}
+
+export const clearCyclesListForUserInBuilding = (user_id) => async() => {
+    console.log('Hello world')
+}
+
+export const getCyclesListForUserInBuildingDetail = (offset, user_id, building_id, period=null, start_time=null, end_time=null) => async() => {
+    await UploadDataToServer.getCyclesListForUserInBuildingDetail(offset, user_id, building_id, period, start_time, end_time)
+}
+
+export const clearCyclesListForUserInBuildingDetail = (data, user_id) => async() => {
+    dispatch({
+        type: 'CLEAR_CYCLES_LIST_FOR_BUILDING_DETAIL',
+        payload: {data, user_id}
+    })
+}
+export const getCyclesListForUserInCorpusDetail = (offset, user_id, corpus_id, period=null, start_time=null, end_time=null) => async() => {
+    await UploadDataToServer.getCyclesListForUserInCorpusDetail(offset, user_id, corpus_id, period, start_time, end_time)
+}
+export const clearCyclesListForUserInCorpusDetail = (data, user_id) => async() => {
+    dispatch({
+        type: 'CLEAR_CYCLES_LIST_FOR_CORPUS_DETAIL',
+        payload: {data, user_id}
+    })
+}
+export const clearCyclesListForUserInBuildingDetailAll = () => async () => {
+    dispatch({
+        type: 'CLEAR_CYCLES_LIST_FOR_BUILDING_DETAIL_ALL'
+    })
+}
+export const getBypassListOfPostInCycle = (cycle_id, user_id) => async() => {
+    await UploadDataToServer.getBypassListOfPostInCycle(cycle_id, user_id)
+}
+

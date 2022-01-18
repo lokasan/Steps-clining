@@ -1,8 +1,8 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {View, Text, FlatList, TouchableOpacity, StyleSheet, Image, ScrollView} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import { clearBypassUsersDetail, loadBypassUsersDetail } from '../../store/actions/bypass';
-import {msToTime} from '../../utils/msToTime';
+import {msToTime, timeToFormat, countFormat} from '../../utils/msToTime';
 
 
 export const PostDetail = ({period, monthRange, user, flagArrayUsersDetail, setFlagArrayUsersDetail, 
@@ -11,7 +11,13 @@ export const PostDetail = ({period, monthRange, user, flagArrayUsersDetail, setF
     const existsComponents = useRef([])
     const dispatch = useDispatch()
     const DATA_USERS_DETAIL = useSelector(state => state.bypass.bypassUsersListDetail)
-    const CreateTextComponentWithRatingPostDetail = ({item}) => {
+    const getArrayComparePostDetailCallback = useCallback(getArrayComparePostDetail)
+    const comparePostDetail = getArrayComparePostDetailCallback(useSelector(state => state.bypass.bypassUsersListDetail)
+      .filter(el => user
+        .filter(elD => el.email === elD.email && el.post_name === elD.post_name).length ? true : false))
+    
+    
+    const CreateTextComponentWithRatingPostDetail = useCallback(({item}) => {
         const createdElements = []
         function getKeyByValue(object, value) {
             return Object.keys(object).find(key => object[key] === value);
@@ -27,127 +33,126 @@ export const PostDetail = ({period, monthRange, user, flagArrayUsersDetail, setF
             }
           }  
         return createdElements
-    }
+    })
     
-    const CreateViewDataComponentPostDetail = ({item}) => {
-        
-        function getFilledArray (arr) {
+    /* Function for compare  array date for bypass */
+    function getArrayComparePostDetail (item) {
+      function getFilledArray (arr) {
 
-            for (let i = 0; i < arr.length; i++) {
-              for (let j = 0; j < item.data.length; j++) {
-  
-                  if (arr[i].date === item.data[j].date) {
-                    arr[i] = item.data[j]
-                      break
-                  }
+        for (let i = 0; i < arr.length; i++) {
+          for (let j = 0; j < item?.length; j++) {
+
+              if (arr[i].date === item[j]?.date) {
+                arr[i] = item[j]
+                  break
               }
-            }
-            return JSON.parse(JSON.stringify(arr))
           }
-  
-          let createViewData = []
-          let currentDate = ''
-          if (item?.data?.length !== 0) {
-            const fullFillArray = []
-            if (period === 'week' || period === 'month') {
-              for (let i = period === 'week' ? 7 : period === 'month' ? 31 : 0; i >= 0; i--) {
-                currentDate = new Date(new Date().setDate(new Date().getDate() - i))
-                fullFillArray.push({date: 
-                  currentDate.getFullYear() + '-' + 
-                  ((currentDate.getMonth() + 1) / 10 >= 1 ? 
-                  (currentDate.getMonth() + 1) : 
-                  '0' + (currentDate.getMonth() + 1)) + '-' +
-                  (currentDate.getDate() / 10 >= 1 ? currentDate.getDate()  : '0' + currentDate.getDate() )
-                })
-              }
-              
-              item.data = getFilledArray(fullFillArray)
-            }
-            if (monthRange === 'month_range') {
-  
-              for (let i = 31; i >= 0; i--) {
-                currentDate = new Date(new Date(...choseDateCurrentRef.current)
-                              .setDate(new Date(...choseDateCurrentRef.current).getDate() - i))
-                            
-                fullFillArray.push({date: 
-                  currentDate.getFullYear() + '-' + 
-                  ((currentDate.getMonth() + 1) / 10 >= 1 ? 
-                  (currentDate.getMonth() + 1) : 
-                  '0' + (currentDate.getMonth() + 1)) + '-' +
-                  (currentDate.getDate() / 10 >= 1 ? currentDate.getDate()  : '0' + currentDate.getDate() )
-                })
-              }
-              
-              item.data = getFilledArray(fullFillArray)
-            }
-            if (period === 'year' && monthRange === 'year') {
-              for (let i = 12; i >= 0; i--) {
-                currentDate = new Date(new Date().setMonth(new Date().getMonth() - i))
-                
-                fullFillArray.push({date: String(currentDate.getFullYear()).slice(2) + '-' 
-                + ((currentDate.getMonth() + 1) / 10 >= 1 ? 
-                (currentDate.getMonth() + 1) : 
-                '0' + (currentDate.getMonth() + 1))})
-              }
-              
-              item.data = getFilledArray(fullFillArray)
-            }
-            console.log(item.data, 'REKET')
-            for (let el in item.data) {
-              
-                let [year, month, day] = item.data[el].date.split('-')
-  
-                createViewData.push(<View>
-                  <TouchableOpacity 
-                    disabled={!item.data[el].email ? true : false}
-                    onPress={() => {
-                      if (period === 'year' && monthRange === 'year') {
-                        choseDateCurrentRef.current = [year.length === 2 ? 20 + year : year, +month]
-                        console.log(choseDateCurrentRef.current, 'SET CHOSE DATE CURRENT')
-                        setMonthRange('month_range')
-                        dispatch(loadBypassUsersDetail(
-                          'month_range', item.data[el].email, item.data[el].post_name, 
-                        new Date(year.length === 2 ? 20 + year : year, +month - 1).getTime()))
-                      } else {
-                        dispatch(loadBypassUsersDetail(period === 'year' && monthRange === 'year' ? 'month' : 'day', item.data[el].email, item.data[el].post_name, 
-                        new Date(year.length === 2 ? 20 + year : year, +month - 1, day ? +day : 1).getTime()))
-                      }
-                      
-                      if (period !== 'year' || monthRange === 'month_range') {
-                        // if (monthRange === 'month_range') {
-  
-                        // }
-                        setModalVisibleDay(true)
-                      }
-                      
-                    }}
-                  >
-                    <Text 
-                      style={styles.beastAndBad}>
-                        {item.data[el].date.split('-').reverse().join('.').slice(0, 5)}
-                    </Text>
-                  </TouchableOpacity>
-                  <Text style={styles.beastAndBad}>{item.data[el].temperature}</Text>
-                  <Text style={styles.beastAndBad}>{item.data[el].avg_rank}</Text>
-                  <Text style={styles.beastAndBad}>{item.data[el].count_bypass}</Text>
-                  <Text style={styles.beastAndBad}>{msToTime(item.data[el].time_bypass)}</Text>
-                  <Text style={styles.beastAndBad}>{msToTime(item.data[el].time_bbb)}</Text>
-                  <Text style={styles.beastAndBad}>{item.data[el].cleaner}</Text>
-                  <CreateTextComponentWithRatingPostDetail item={item?.data[el]}/>
-                </View>)
-              
-              
-            }
+        }
+        return JSON.parse(JSON.stringify(arr))
+      }
+      
+      let currentDate = ''
+      if (item?.length !== 0) {
+        const fullFillArray = []
+        if (period === 'week' || period === 'month') {
+          for (let i = period === 'week' ? 7 : period === 'month' ? 31 : 0; i >= 0; i--) {
+            currentDate = new Date(new Date().setDate(new Date().getDate() - i))
+            fullFillArray.push({date: 
+              currentDate.getFullYear() + '-' + 
+              ((currentDate.getMonth() + 1) / 10 >= 1 ? 
+              (currentDate.getMonth() + 1) : 
+              '0' + (currentDate.getMonth() + 1)) + '-' +
+              (currentDate.getDate() / 10 >= 1 ? currentDate.getDate()  : '0' + currentDate.getDate() )
+            })
           }
-          return createViewData
+          
+          item = getFilledArray(fullFillArray)
+        }
+        if (monthRange === 'month_range') {
+
+          for (let i = 31; i >= 0; i--) {
+            currentDate = new Date(new Date(...choseDateCurrentRef.current)
+                          .setDate(new Date(...choseDateCurrentRef.current).getDate() - i))
+                        
+            fullFillArray.push({date: 
+              currentDate.getFullYear() + '-' + 
+              ((currentDate.getMonth() + 1) / 10 >= 1 ? 
+              (currentDate.getMonth() + 1) : 
+              '0' + (currentDate.getMonth() + 1)) + '-' +
+              (currentDate.getDate() / 10 >= 1 ? currentDate.getDate()  : '0' + currentDate.getDate() )
+            })
+          }
+          
+          item = getFilledArray(fullFillArray)
+        }
+        if (period === 'year' && monthRange === 'year') {
+          for (let i = 12; i >= 0; i--) {
+            currentDate = new Date(new Date().setMonth(new Date().getMonth() - i))
+            
+            fullFillArray.push({date: String(currentDate.getFullYear()).slice(2) + '-' 
+            + ((currentDate.getMonth() + 1) / 10 >= 1 ? 
+            (currentDate.getMonth() + 1) : 
+            '0' + (currentDate.getMonth() + 1))})
+          }
+          
+          item = getFilledArray(fullFillArray)
+        }
+        return item
+      }
     }
+    const DisplayDateForPeriod = React.memo(({item}) => {
+      let [year, month, day] = item?.date.split('-')
+      return (
+        [<TouchableOpacity 
+          disabled={!item?.email ? true : false}
+          onPress={() => {
+            if (period === 'year' && monthRange === 'year') {
+              choseDateCurrentRef.current = [year.length === 2 ? 20 + year : year, +month]
+              console.log(choseDateCurrentRef.current, 'SET CHOSE DATE CURRENT')
+              setMonthRange('month_range')
+              dispatch(loadBypassUsersDetail(
+                'month_range', item?.email, item?.post_name, 
+              new Date(year.length === 2 ? 20 + year : year, +month - 1).getTime()))
+            } else {
+              dispatch(loadBypassUsersDetail(period === 'year' && monthRange === 'year' ? 'month' : 'day', item?.email, item?.post_name, 
+              new Date(year.length === 2 ? 20 + year : year, +month - 1, day ? +day : 1).getTime()))
+            }
+            
+            if (period !== 'year' || monthRange === 'month_range') {
+              // if (monthRange === 'month_range') {
 
-    const createTextComponent = (item, index) => {
+              // }
+              setModalVisibleDay(true)
+            }
+            
+          }}
+        >
+          <Text 
+            style={styles.beastAndBad}>
+              {item?.date.split('-').reverse().join('.').slice(0, 5)}
+          </Text>
+        </TouchableOpacity>]
+      )
+    })
+    const CreateViewDataComponentPostDetail = useCallback(({item}) => {
+      return (<View>
+        <DisplayDateForPeriod item={item}/>
+        <Text style={styles.beastAndBad}>{item?.temperature}</Text>
+        <Text style={styles.beastAndBad}>{item?.avg_rank}</Text>
+        <Text style={styles.beastAndBad}>{countFormat(item?.count_bypass)}</Text>
+        <Text style={styles.beastAndBad}>{timeToFormat(msToTime(item?.time_bypass))}</Text>
+        <Text style={styles.beastAndBad}>{timeToFormat(msToTime(item?.time_bbb))}</Text>
+        <Text style={styles.beastAndBad}>{item?.cleaner}</Text>
+        <CreateTextComponentWithRatingPostDetail item={item}/>
+      </View>)
+    })
+
+    const createTextComponent = useCallback((item, index) => {
         let createdComponent = []
         const uniqueComponent = {}
         let valueOfKeyComponent = []
-        if (item?.data?.length !== 0) {
-        item.data.map(el => {
+        if (item.length !== 0) {
+        item.map(el => {
             Object.keys(el).map(key => {
                 if (!isNaN(Number(key))) {
                     if (!uniqueComponent.hasOwnProperty(key)) {
@@ -164,11 +169,24 @@ export const PostDetail = ({period, monthRange, user, flagArrayUsersDetail, setF
           valueOfKeyComponent = []
         }
         return createdComponent
+      })
+
+      const MainWindowWithRanking = () => {
+        return (<FlatList
+            data={comparePostDetail}
+            keyExtractor={useCallback(item => item?.date?.toString())}
+            renderItem={CreateViewDataComponentPostDetail}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={{display: 'flex', flexDirection: 'row', width: '68%'}}
+            />)
       }
 
-
-    const renderItem = ({item, index}) => {
-        let textComponent = createTextComponent(item)
+    const renderItem = () => {
+        const dataPostDetail = DATA_USERS_DETAIL
+        .filter(el => user
+            .filter(elD => el.email === elD.email && el.post_name === elD.post_name).length ? true : false)
+        let textComponent = createTextComponent(dataPostDetail)
 
         const weekMonthBeforeTemplate = (() => {
             return [
@@ -191,17 +209,17 @@ export const PostDetail = ({period, monthRange, user, flagArrayUsersDetail, setF
                                 <TouchableOpacity
                                     onPress={() => {
                                         if (monthRange === 'month_range') {
-                                            dispatch(loadBypassUsersDetail('year', item?.data[0]?.email, item?.data[0]?.post_name))
+                                            dispatch(loadBypassUsersDetail('year', dataPostDetail[0]?.email, dataPostDetail[0].post_name))
                                             setMonthRange('year')
                                         } else {
                                             setFlagArrayUsersDetail(flagArrayUsersDetail
-                                                .filter(el => !(el.email == item?.data[0]?.email &&
-                                                    el.post === item?.data[0].post_name)))
+                                                .filter(el => !(el.email == dataPostDetail[0]?.email &&
+                                                    el.post === dataPostDetail[0]?.post_name)))
                                         }
-                                        dispatch(clearBypassUsersDetail(DATA_USERS_DETAIL, item?.data[0]?.email, item?.data[0]?.post_name))
+                                        dispatch(clearBypassUsersDetail(DATA_USERS_DETAIL, dataPostDetail[0]?.email, dataPostDetail[0]?.post_name))
                                     }}>
                                     <Text style={styles.headTitle}>{period !== 'today' ? 
-                                    item?.data[0]?.post_name : item?.data[0].title}
+                                    dataPostDetail[0]?.post_name : dataPostDetail[0]?.title}
                                     </Text>
                                 </TouchableOpacity>
                             </View>
@@ -211,17 +229,9 @@ export const PostDetail = ({period, monthRange, user, flagArrayUsersDetail, setF
                                 {weekMonthBeforeTemplate}
                                 {textComponent}
                             </View>
-                            <ScrollView
-                                vertical={false}
-                                horizontal={true}
-                                showsHorizontalScrollIndicator={false}
-                                style={{display: 'flex', flexDirection: 'row', width: '68%'}}>
-                                <CreateViewDataComponentPostDetail item={JSON.parse(JSON.stringify(item))}/>
-                            </ScrollView>
-                            <Image
-                                style={{...styles.beastAndBad, heigth: 32, width: 20}}
-                                source={item.data?.length !== 0 ? 
-                                    {uri: `http://openweathermap.org/img/wn/${item.data[0].icon}@2x.png`} : null}/>
+                            {MainWindowWithRanking()}
+                            
+                            
                         </View>
                     </View>
                     <View 
@@ -233,15 +243,11 @@ export const PostDetail = ({period, monthRange, user, flagArrayUsersDetail, setF
     }
 
     return (
-        <FlatList
-        data={[{id: String(Date.now()), 
-            data: DATA_USERS_DETAIL
-            .filter(el => user
-                .filter(elD => el.email === elD.email && el.post_name === elD.post_name).length ? true : false)}]}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}>
-
-        </FlatList>
+      <ScrollView>
+        {renderItem()}
+        
+      </ScrollView>
+        
     )
     
 }

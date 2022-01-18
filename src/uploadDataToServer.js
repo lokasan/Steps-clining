@@ -18,7 +18,7 @@ import { hideLoaderBypass, hideLoaderBypassIcon } from './store/actions/bypass';
 import { hideLoaderComponent } from './store/actions/component';
 import { hideLoaderPost } from './store/actions/post';
 import { hideLoaderComponentRank } from './store/actions/componentRank';
-import { msToTime } from './utils/msToTime'
+import { msToTime, timeToFormat } from './utils/msToTime'
 import { updateUser } from './store/actions/empDouble';
 import { hideLoaderBypassRank } from './store/actions/bypassRank';
 import { hideLoaderCorpus } from './store/actions/corpus';
@@ -90,7 +90,7 @@ async function socket_onmessage_callback(recv) {
         })
 
     } else if (ACTION in data && data[ACTION] === GET_BYPASS_STATUS_OBJECT) {
-        data[MESSAGE].map((el) => el['countTime'] = msToTime(el['countTime']))
+        data[MESSAGE].map((el) => el['countTime'] = timeToFormat(msToTime(el['countTime'])))
         
         dispatch(hideLoaderBypass())
         dispatch({
@@ -105,28 +105,28 @@ async function socket_onmessage_callback(recv) {
         })
     }
     else if (ACTION in data && data[ACTION] === GET_BYPASS_STATUS_POSTS) {
-        data[MESSAGE].map((el) => el['countTime'] = msToTime(el['countTime']))
+        data[MESSAGE].map((el) => el['countTime'] = timeToFormat(msToTime(el['countTime'])))
         dispatch(hideLoaderBypass())
         dispatch({
             type: LOAD_BYPASS_STATUS_POSTS,
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === GET_BYPASS_STATUS_USERS) {
-        data[MESSAGE].map((el) => el['countTime'] = msToTime(el['countTime']))
+        data[MESSAGE].map((el) => el['countTime'] = timeToFormat(msToTime(el['countTime'])))
         dispatch(hideLoaderBypassIcon())
         dispatch({
             type: LOAD_BYPASS_STATUS_USERS,
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === GET_BYPASS_STATUS_USERS_DETAIL) {
-        data[MESSAGE].map((el) => el['countTime'] = msToTime(el['end_time'] - el['start_time']))
+        data[MESSAGE].map((el) => el['countTime'] = timeToFormat(msToTime(el['end_time'] - el['start_time'])))
         dispatch(hideLoaderBypassIcon())
         dispatch({
             type: LOAD_BYPASS_STATUS_USERS_DETAIL,
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === 'GET_BYPASS_STATUS_USERS_DETAIL_FOR_DAY') {
-        data[MESSAGE].map((el) => el['countTime'] = msToTime(el['end_time'] - el['start_time']))
+        data[MESSAGE].map((el) => el['countTime'] = timeToFormat(msToTime(el['end_time'] - el['start_time'])))
         dispatch(hideLoaderBypassIcon())
         dispatch({
             type: 'LOAD_BYPASS_STATUS_USERS_DETAIL_FOR_DAY',
@@ -170,7 +170,15 @@ async function socket_onmessage_callback(recv) {
             type   : LOAD_POST,
             payload: await DB.getPosts(data['TARGET_ID'])  /* target id for elements with included  */
         })
-    } else if (ACTION in data && data[ACTION] === GET_COMPONENTS_SYNCHRONIZE) {
+    } else if (ACTION in data && data[ACTION] === 'GET_POSTS_FOR_CORPUS_SYNCHRONIZE') {
+        await doCreateAndRemoveLocalStoreAndBase(data, DB.getPostById, DB.createPost, DB.removePost)
+        dispatch(hideLoaderPost())
+        dispatch({
+            type   : LOAD_POST,
+            payload: await DB.getPostsForCorpus(data['TARGET_ID'])  /* target id for elements with included  */
+        })
+    }
+        else if (ACTION in data && data[ACTION] === GET_COMPONENTS_SYNCHRONIZE) {
         await doCreateAndRemoveLocalStoreAndBase(data, DB.getCompoentById, DB.createComponent, DB.removeComponent)
         dispatch(hideLoaderComponent())
         dispatch({
@@ -288,6 +296,16 @@ async function socket_onmessage_callback(recv) {
             type: 'GET_STATUS_USER_WITH_TBR_DETAIL',
             payload: data[MESSAGE]
         })
+    } else if (ACTION in data && data[ACTION] === 'GET_STATUS_USER_WITH_TBR_CORPUS') {
+        dispatch({
+            type: 'GET_STATUS_USER_WITH_TBR_CORPUS',
+            payload: data[MESSAGE]
+        })
+    } else if (ACTION in data && data[ACTION] === 'GET_STATUS_USER_WITH_TBR_CORPUS_DETAIL') {
+        dispatch({
+            type: 'GET_STATUS_USER_WITH_TBR_CORPUS_DETAIL',
+            payload: data[MESSAGE]
+        })
     } else if (ACTION in data && data[ACTION] === 'GET_IMAGE_BYPASS_USER_OF_POST_COUNT') {
         dispatch({
             type: GET_BYPASS_RANK_IMAGE_COUNT,
@@ -296,6 +314,31 @@ async function socket_onmessage_callback(recv) {
     } else if (ACTION in data && data[ACTION] === 'GET_STATUS_COMPONENT_FOR_BUILDING') {
         dispatch({
             type: 'GET_STATUS_COMPONENT_FOR_BUILDING',
+            payload: data[MESSAGE]
+        })
+    } else if (ACTION in data && data[ACTION] === 'GET_BYPASS_CORPUS_BASE') {
+        dispatch({
+            type: 'LOAD_CORPUS_ANALYTICS_BASE',
+            payload: data[MESSAGE]
+        })
+    } else if (ACTION in data && data[ACTION] === 'GET_CYCLES_LIST_FOR_BUILDING') {
+        dispatch({
+            type: 'GET_CYCLES_LIST_FOR_BUILDING',
+            payload: data[MESSAGE]
+        })
+    } else if (ACTION in data && data[ACTION] === 'GET_CYCLES_LIST_FOR_BUILDING_DETAIL') {
+        dispatch({
+            type: 'GET_CYCLES_LIST_FOR_BUILDING_DETAIL',
+            payload: data[MESSAGE]
+        })
+    } else if (ACTION in data && data[ACTION] === 'GET_BYPASS_LIST_OF_POST_IN_CYCLE') {
+        dispatch({
+            type: 'GET_BYPASS_LIST_OF_POST_IN_CYCLE',
+            payload: data[MESSAGE]
+        })
+    } else if(ACTION in data && data[ACTION] === 'GET_CYCLES_LIST_FOR_CORPUS_DETAIL') {
+        dispatch({
+            type: 'GET_CYCLES_LIST_FOR_CORPUS_DETAIL',
             payload: data[MESSAGE]
         })
     }
@@ -425,6 +468,7 @@ export class UploadDataToServer {
                 {
                     ACTION     : ADD_OBJECT,
                     ID         : payload.id,
+                    CORPUS_ID: payload.corpus_id,
                     NAME_FILE  : String(Date.now()),
                     NAME       : payload.name,
                     ADDRESS    : payload.address,
@@ -773,6 +817,13 @@ export class UploadDataToServer {
                 LOCAL_DATABASE: await DB.getPosts(building_id)
             }))
     }
+    static async getPostsForCorpus(corpus_id) {
+        ws.send(JSON.stringify({
+            ACTION: "GET_POSTS_FOR_CORPUS",
+            MESSAGE: corpus_id,
+            LOCAL_DATABASE: await DB.getPostsForCorpus(corpus_id)
+        }))
+    }
     static async getComponents() {
         ws.send(JSON.stringify(
             {
@@ -807,6 +858,14 @@ export class UploadDataToServer {
                 ACTION : GET_COMPONENT_TO_POST_LINK,
                 MESSAGE: postId
             }))
+    }
+    static async getBypassCorpusBase(period, start_time=null, end_time=null) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_BYPASS_CORPUS_BASE',
+            PERIOD: period,
+            START_TIME: start_time,
+            END_TIME: end_time
+        }))
     }
     static async getBypassGetter(period) {
         ws.send(JSON.stringify(
@@ -954,6 +1013,25 @@ export class UploadDataToServer {
             PERIOD: period
         }))
     }
+    static async getStatusUsersWithTbrCorpus(period=null, corpus_id, start_time=null, end_time=null) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_STATUS_USER_WITH_TBR_CORPUS',
+            START_TIME: start_time,
+            END_TIME: end_time,
+            CORPUS_ID: corpus_id,
+            PERIOD: period
+        }))
+    }
+    static async getStatusUsersWithTbrCorpusDetail(period=null, corpus_id=null, user_id=null, start_time=null, end_time=null) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_STATUS_USER_WITH_TBR_CORPUS_DETAIL',
+            START_TIME: start_time,
+            END_TIME: end_time,
+            CORPUS_ID: corpus_id,
+            USER_ID: user_id,
+            PERIOD: period
+        }))
+    }
     static async getImageBypassUserOfPostCount(period, component_id, post_id, email, start_time=null, end_time=null) {
         ws.send(JSON.stringify({
             ACTION: 'GET_IMAGE_BYPASS_USER_OF_POST_COUNT',
@@ -985,6 +1063,55 @@ export class UploadDataToServer {
             BUILDING_ID: building_id,
             START_TIME: start_time,
             END_TIME: end_time,
+        }))
+    }
+    static async getBypassBuildingCorpus(period, corpus_id, start_time, end_time) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_BYPASS_BUILDING_FOR_CORPUS',
+            PERIOD: period,
+            TARGET_ID: corpus_id,
+            START_TIME: start_time,
+            END_TIME: end_time
+        }))
+    }
+    static async getCyclesListForUserInBuilding(user_id, building_id) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_CYCLES_LIST_FOR_BUILDING',
+            USER_ID: user_id,
+            BUILDING_ID: building_id,
+            START_TIME: 1640984400000,
+            END_TIME: 1640984400000 + 86400000
+        }))
+    }
+    static async getCyclesListForUserInBuildingDetail(offset, user_id, building_id, period, start_time, end_time) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_CYCLES_LIST_FOR_BUILDING_DETAIL',
+            USER_ID: user_id,
+            BUILDING_ID: building_id,
+            PERIOD: period,
+            START_TIME: start_time,
+            END_TIME: end_time,
+            LIMIT: 5,
+            OFFSET: offset
+        }))
+    }
+    static async getBypassListOfPostInCycle(cycle_id, post_id) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_BYPASS_LIST_OF_POST_IN_CYCLE',
+            CYCLE_ID: cycle_id,
+            POST_ID: post_id
+        }))
+    }
+    static async getCyclesListForUserInCorpusDetail(offset, user_id, corpus_id, period, start_time, end_time) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_CYCLES_LIST_FOR_CORPUS_DETAIL',
+            USER_ID: user_id,
+            CORPUS_ID: corpus_id,
+            PERIOD: period,
+            START_TIME: start_time,
+            END_TIME: end_time,
+            LIMIT: 5,
+            OFFSET: offset
         }))
     }
 }

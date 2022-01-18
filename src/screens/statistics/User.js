@@ -1,20 +1,33 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {View, TouchableOpacity, Text, FlatList, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, Text, FlatList, StyleSheet, Alert} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import { ArrowTrand } from '../../components/toolkitComponents/ArrowTrand';
-import { clearListUsersStaticWithTbrDetail, getListUsersStaticWithTbrDetail } from '../../store/actions/bypass';
-import { msToTime } from '../../utils/msToTime';
+import { clearListUsersStaticWithTbrCorpusDetail, clearListUsersStaticWithTbrDetail, getListUsersStaticWithTbrCorpusDetail, getListUsersStaticWithTbrDetail, getCyclesListForUserInBuildingDetail, clearCyclesListForUserInBuildingDetail, clearCyclesListForUserInCorpusDetail, getCyclesListForUserInCorpusDetail } from '../../store/actions/bypass';
+import { loadPostForCorpus } from '../../store/actions/post';
+
+import { msToTime, timeToFormat, countFormat } from '../../utils/msToTime';
+import { Cycles } from './Cycles';
 import { Post } from './Post';
 
-export const User = ({period, building_id, monthRange, showUserDetailInfoOrUnshow, 
+export const User = ({period, corpus_id, building_id, monthRange, showUserDetailInfoOrUnshow, 
     setModalVisibleDay, flagArrayUsersDetail, setFlagArrayUsersDetail, 
     setMonthRange, choseDateCurrentRef, setModalVisibleRank, 
     bypassKeyByValueRef, bypassPhotoPostIdRef, bypassPhotoEmailRef, DATA_IMAGE_BYPASS_RANK}) => {
     const dispatch = useDispatch()
     const DATA_USERS_TBR = useSelector(state => state.bypass.usersWithTbr)
     const DATA_USERS_TBR_DETAIL = useSelector(state => state.bypass.userWithTbrDetail)
+    
+    const DATA_USERS_TBR_CORPUS = useSelector(state => state.bypass.userWithTbrCorpus)
+    const DATA_USERS_TBR_CORPUS_DETAIL = useSelector(state => state.bypass.userWithTbrCorpusDetail)
+    const DATA_CYCLES_LIST_FOR_USER_IN_BUILDING = useSelector(state => state.bypass.listUsersInBuildingDetail)
+    const DATA_CYCLES_LIST_FOR_USER_IN_CORPUS = useSelector(state => state.bypass.listUsersInCorpusDetail)
+    console.log(DATA_CYCLES_LIST_FOR_USER_IN_BUILDING, 'cycles list for user in building')
     const [openedUsersInBuildingArray, setOpenedUsersInBuildingArray] = useState([])
+    const [openedCyclesInUsers, setOpenedCyclesInUsers] = useState([])
     const choiseUser = useRef('')
+    const choiseUserCycle = useRef('')
+    const DATA_CYCLES_LIST = useRef()
+    const itemIdRef = useRef()
     useEffect(() => {
         console.log(DATA_USERS_TBR_DETAIL, 'USER COMPONENT STAT DETAIL USE')
       }, [DATA_USERS_TBR_DETAIL])
@@ -22,14 +35,51 @@ export const User = ({period, building_id, monthRange, showUserDetailInfoOrUnsho
     const ItemUser = ({item, index}) => {
 
         const updateOpenedUsersInBuilding = () => {
-            if (openedUsersInBuildingArray.indexOf(item.id) !== -1) {
+            if (~openedUsersInBuildingArray.indexOf(item.id) && !corpus_id) {
                 dispatch(clearListUsersStaticWithTbrDetail(DATA_USERS_TBR_DETAIL, item.id))
                 setOpenedUsersInBuildingArray(openedUsersInBuildingArray.filter(e => e !== item.id))
                 choiseUser.current = null
-            } else {
+            } else if (!~openedUsersInBuildingArray.indexOf(item.id) && !corpus_id) {
                 dispatch(getListUsersStaticWithTbrDetail(period, building_id, item.id))
                 setOpenedUsersInBuildingArray([...openedUsersInBuildingArray, item.id])
                 choiseUser.current = item.id
+            } else if (~openedUsersInBuildingArray.indexOf(item.id) && corpus_id) {
+                dispatch(clearListUsersStaticWithTbrCorpusDetail(DATA_USERS_TBR_CORPUS_DETAIL, item.id))
+                setOpenedUsersInBuildingArray(openedUsersInBuildingArray.filter(e => e !== item.id))
+                choiseUser.current = null
+            } else if (!~openedUsersInBuildingArray.indexOf(item.id) && corpus_id) {
+                dispatch(getListUsersStaticWithTbrCorpusDetail(period, corpus_id, item.id))
+                
+                setOpenedUsersInBuildingArray([...openedUsersInBuildingArray, item.id])
+                choiseUser.current = item.id
+            }
+        }
+        
+        const updateOpenedCyclesInUser = () => {
+            if (~openedCyclesInUsers.indexOf(item.id) && !corpus_id) {
+                
+                dispatch(clearCyclesListForUserInBuildingDetail(DATA_CYCLES_LIST_FOR_USER_IN_BUILDING, item.id))
+                setOpenedCyclesInUsers(openedCyclesInUsers.filter(e => e !== item.id))
+                choiseUserCycle.current = null
+            } else if (!~openedCyclesInUsers.indexOf(item.id) && !corpus_id) {
+                DATA_CYCLES_LIST.current = DATA_CYCLES_LIST_FOR_USER_IN_BUILDING
+                itemIdRef.current = building_id
+                dispatch(getCyclesListForUserInBuildingDetail(offset=0, item?.id, building_id, period))
+                
+                setOpenedCyclesInUsers([...openedCyclesInUsers, item.id])
+                choiseUserCycle.current = item.id
+            } else if (~openedCyclesInUsers.indexOf(item.id) && corpus_id) {
+                
+                dispatch(clearCyclesListForUserInCorpusDetail(DATA_CYCLES_LIST_FOR_USER_IN_CORPUS, item?.id))
+                setOpenedCyclesInUsers(openedCyclesInUsers.filter(e => e !== item.id))
+                choiseUserCycle.current = null
+            } else if (!~openedCyclesInUsers.indexOf(item.id) && corpus_id) {
+                
+                dispatch(getCyclesListForUserInCorpusDetail(offset=0, item?.id, corpus_id, period))
+                setOpenedCyclesInUsers([...openedCyclesInUsers, item.id])
+                DATA_CYCLES_LIST.current = DATA_CYCLES_LIST_FOR_USER_IN_CORPUS
+                itemIdRef.current = corpus_id
+                choiseUserCycle.current = item.id
             }
         }
 
@@ -48,7 +98,9 @@ export const User = ({period, building_id, monthRange, showUserDetailInfoOrUnsho
                             </View>
                         </View>
                     </View>
+                    
                     <View style = {{flexDirection: 'column', justifyContent: 'space-between', width: '50%'}}>
+                    <TouchableOpacity onPress={updateOpenedCyclesInUser}>
                         <View 
                         style = {styles.sticker}>
                             <View style = {styles.toolkitPad}>
@@ -56,21 +108,23 @@ export const User = ({period, building_id, monthRange, showUserDetailInfoOrUnsho
                                     <Text style = {styles.textStyleInToolkit}>{item.avg_rank.toFixed(1)}</Text>
                                 </View>
                                 <View style = {styles.alignElementsCenter}>
-                                    <Text style = {styles.textStyleInToolkit}>{item.cycle}</Text>
+                                    <Text style = {styles.textStyleInToolkit}>{countFormat(item.cycle)}</Text>
                                 </View>
                                 <View style = {styles.alignElementsCenter}>
-                                    <Text style = {styles.textStyleInToolkit}>{msToTime(item.time_between_bypass)}</Text>
+                                    <Text style = {styles.textStyleInToolkit}>{timeToFormat(msToTime(item.time_between_bypass))}</Text>
                                 </View>
                                 <View style = {styles.alignElementsCenter}>
-                                    <Text style = {styles.textStyleInToolkit}>{item.count_bypass}</Text>
+                                    <Text style = {styles.textStyleInToolkit}>{countFormat(item.count_bypass)}</Text>
                                 </View>
                                 <View style = {styles.alignElementsCenter}>
-                                    <Text style = {styles.textStyleInToolkit}>{msToTime(item.time_bypass)}</Text>
+                                    <Text style = {styles.textStyleInToolkit}>{timeToFormat(msToTime(item.time_bypass))}</Text>
                                 </View>
                                 <ArrowTrand item={item}/>
                             </View>
                         </View>
+                        </TouchableOpacity>
                     </View>
+                    
                 </View>
             </View>
         </TouchableOpacity>
@@ -80,7 +134,7 @@ export const User = ({period, building_id, monthRange, showUserDetailInfoOrUnsho
     const renderItem = ({item, index}) => {
         return <>
                     <ItemUser item={item} index={index}/>
-                    {openedUsersInBuildingArray.indexOf(item.id) !== -1 ? 
+                    {~openedUsersInBuildingArray.indexOf(item.id) ? 
                     <Post 
                     user_id={item.id}
                     period={period}
@@ -96,14 +150,20 @@ export const User = ({period, building_id, monthRange, showUserDetailInfoOrUnsho
                     bypassPhotoPostIdRef={bypassPhotoPostIdRef}
                     bypassPhotoEmailRef={bypassPhotoEmailRef}
                     DATA_IMAGE_BYPASS_RANK={DATA_IMAGE_BYPASS_RANK}
-                    /> : null}
+                    /> : ~openedCyclesInUsers.indexOf(item.id) ? 
+                    <Cycles 
+                    period={period} 
+                    user_id={item.id} 
+                    item_id={itemIdRef.current} 
+                    getCyclesList={corpus_id ? getCyclesListForUserInCorpusDetail : getCyclesListForUserInBuildingDetail}
+                    DATA_CYCLES_LIST={corpus_id ? DATA_CYCLES_LIST_FOR_USER_IN_CORPUS : DATA_CYCLES_LIST_FOR_USER_IN_BUILDING} setModalVisibleDay={setModalVisibleDay}/> : null}
                 </>
     }
 
     return (
         <FlatList
             showsVerticalScrollIndicator = {false}
-            data = {DATA_USERS_TBR}
+            data = {DATA_USERS_TBR.length ? DATA_USERS_TBR : DATA_USERS_TBR_CORPUS}
             renderItem={renderItem}
             keyExtractor={item => item.id}
             listKey={String(Date.now())}  

@@ -12,6 +12,7 @@ import { Footer } from '../components/ui/Footer'
 import {AppHeaderIcon} from '../components/AppHeaderIcon'
 import { StatusObject } from '../screens/StatusObject';
 import {useSelector} from 'react-redux'
+import { AnalyticsCorpus } from './AnalyticsCorpus';
 // GoogleFit.checkIsAuthorized().then(() => {
 //   console.log(GoogleFit.isAuthorized, 'BOOOLEAN')
 // })
@@ -152,7 +153,7 @@ export const GraphPed = ( {navigation} ) => {
         }
     }
       return (
-        tempPrivileg ? <StatusObject navigation={navigation}/> : <View></View>)
+        tempPrivileg ? <AnalyticsCorpus navigation={navigation}/> : <View></View>)
 }
 GraphPed.navigationOptions = ({navigation}) => ({
   headerTitle: 'Состояние объекта',

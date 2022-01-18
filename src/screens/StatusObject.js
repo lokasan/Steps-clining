@@ -6,12 +6,12 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import {useDispatch, useSelector} from 'react-redux'
-import { getPostAll, loadPost } from '../store/actions/post';
+import { getPostAll, loadPost, loadPostForCorpus } from '../store/actions/post';
 import QRCode from 'react-native-qrcode-generator'
 import {Cycle, Clock, Rank, QRIcon, StepsIcon, PeopleIcon, ArrowRight, TimeBetweenBypass} from '../components/ui/imageSVG/circle'
 import { useState, useRef } from 'react';
-import { clearBypassObjectDetail, clearBypassObjectDetailAll, clearBypassPosts, clearBypassUsers, clearBypassUsersAverage, clearBypassUsersAverageAll, clearBypassUsersDetail, clearBypassUsersDetailAll, clearBypassUsersDetailForDay, clearListUsersStaticTbr, clearListUsersStaticWithTbrDetailAll, getImageBypassUserOfPost, getImageBypassUserOfPostCount, getListUsersAverageForPost, getListUsersStaticTbr, getListUsersStaticWithTbrDetail, loadBypassGetter, loadBypassObjectDetail, loadBypassPosts, loadBypassUsers, loadBypassUsersDetail, getComponentForBuilding, clearComponentForBuilding } from '../store/actions/bypass';
-import { msToTime } from '../utils/msToTime';
+import { clearBypassObjectDetail, clearBypassObjectDetailAll, clearBypassPosts, clearBypassUsers, clearBypassUsersAverage, clearBypassUsersAverageAll, clearBypassUsersDetail, clearBypassUsersDetailAll, clearBypassUsersDetailForDay, clearListUsersStaticTbr, clearListUsersStaticWithTbrDetailAll, getImageBypassUserOfPost, getImageBypassUserOfPostCount, getListUsersAverageForPost, getListUsersStaticTbr, getListUsersStaticWithTbrDetail, loadBypassGetter, loadBypassObjectDetail, loadBypassPosts, loadBypassUsers, loadBypassUsersDetail, getComponentForBuilding, clearComponentForBuilding, loadBypassBuildingForCorpus, clearBypassBuildingForCorpus, getListUsersStaticWithTbrCorpus, clearListUsersStaticWithTbrCorpus, clearListUsersStaticWithTbrCorpusDetail, clearListUsersStaticWithTbrCorpusDetailAll, clearCyclesListForUserInBuildingDetailAll } from '../store/actions/bypass';
+import { msToTime, timeToFormat, countFormat } from '../utils/msToTime';
 import { UploadDataToServer } from '../uploadDataToServer';
 import { clearBypassRankImage, clearBypassRankImageCount, showLoaderBypassRank } from '../store/actions/bypassRank';
 import CarouselItem from '../components/ui/CarouselItem'
@@ -22,17 +22,23 @@ import * as Localization from 'expo-localization';
 import i18n from 'i18n-js';
 import { User } from './statistics/User';
 import { Attribute } from './statistics/Attribute';
+import { BarChart } from '../components/BarChart';
+import { DateChanger } from '../components/Analytics/DateChanger';
+
 // import { Circle } from 'react-native-svg';
 // import Shares from 'react-native-share'
 const NORMAL_RANK = 3
 const {width, height} = Dimensions.get("window")
 export const StatusObject = ({navigation}) => {
+  const corpusId = navigation.getParam('corpusId')
+  
+  console.log()
   const [modalVisibleFilter, setModalVisibleFilter] = useState(false)
   const openFilter = () => setModalVisibleFilter(!modalVisibleFilter)
   const dispatch = useDispatch()
   const existsComponents = useRef([])
   useEffect(() => {
-    dispatch(loadBypassGetter('today'))
+    dispatch(loadBypassBuildingForCorpus('today', corpusId))
     navigation.setParams({openModalFilter: openFilter})
   }, [])
   const bypassKeyByValueRef = useRef(null)
@@ -56,6 +62,7 @@ export const StatusObject = ({navigation}) => {
   const DATA_IMAGE_BYPASS_RANK = useSelector(state => state.bypassRank.bypassRankImage)
   const COUNT_IMAGE_TO_BYPASS_RANK = useSelector(state => state.bypassRank.bypassRankImageCount)
   const DATA_USERS_TBR = useSelector(state => state.bypass.usersWithTbr)
+  const DATA_USERS_TBR_CORPUS = useSelector(state => state.bypass.userWithTbrCorpus)
   const DATA_COMPONENT = useSelector(state => state.bypass.componentForBuilding)
   // const DATA_USERS_TBR_DETAIL = useSelector(state => state.bypass.userWithTbrDetail)
   const emploeeAll   = useSelector(state => state.empDouble.empAll)
@@ -63,6 +70,7 @@ export const StatusObject = ({navigation}) => {
   console.log(DATA_USERS_TBR, 'DATA_USER_TBR')
   console.log(emploeeAll, 'EMP_ALL DATA')
   console.log(emploeeAll.map(emp => console.log()))
+  console.log('I have corpus with tbr detail', DATA_USERS_TBR_CORPUS)
   let imageToBypassRankArray = []
   
   useEffect(()=> {
@@ -229,15 +237,15 @@ export const StatusObject = ({navigation}) => {
                   </View>
                   <View style = { stateChartInnerRef.employee ? styles.alignElementsCenter : {display: 'none'}}>
                   {Cycle()}
-                  <Text style = {styles.textStyleInToolkit}>{item.cycle}</Text>
+                  <Text style = {styles.textStyleInToolkit}>{countFormat(item.cycle)}</Text>
                   </View>
                   <View style = {stateChartInnerRef.employee ? styles.alignElementsCenter : {display: 'none'}}>
                   {TimeBetweenBypass('#fff', 17, 16)}
-                  <Text style = {styles.textStyleInToolkit}>{msToTime(item.time_between_bypass)}</Text>
+                  <Text style = {styles.textStyleInToolkit}>{timeToFormat(msToTime(item.time_between_bypass))}</Text>
                   </View>
                   <View style = {styles.alignElementsCenter}>
                   {QRIcon()}
-                  <Text style = {styles.textStyleInToolkit}>{item.countBypass}</Text>
+                  <Text style = {styles.textStyleInToolkit}>{countFormat(item.countBypass)}</Text>
                   </View>
                   <View style = {styles.alignElementsCenter}>
                   {Clock()}
@@ -306,7 +314,7 @@ export const StatusObject = ({navigation}) => {
               </Text>
               <Text style={styles.beastAndBad}>{dateBypassEnd.getHours() / 10 >= 1? dateBypassEnd.getHours() : '0' + dateBypassEnd.getHours()}:{dateBypassEnd.getMinutes() / 10 >= 1 ? dateBypassEnd.getMinutes() : '0' + dateBypassEnd.getMinutes()}
               </Text>
-              <Text style={styles.beastAndBad}>{msToTime(dateBypassEnd - dateBypassStart).slice(0, 5)}</Text>
+              <Text style={styles.beastAndBad}>{timeToFormat(msToTime(dateBypassEnd - dateBypassStart))}</Text>
               </View>)
           }
         }
@@ -561,9 +569,9 @@ export const StatusObject = ({navigation}) => {
                 }).join('')}}/>
               </TouchableOpacity>
               <Text style={styles.beastAndBad}>{item.data[el].avg_rank}</Text>
-              <Text style={styles.beastAndBad}>{item.data[el].count_bypass}</Text>
-              <Text style={styles.beastAndBad}>{msToTime(item.data[el].time_bypass)}</Text>
-              <Text style={styles.beastAndBad}>{msToTime(item.data[el].time_bbb)}</Text>
+              <Text style={styles.beastAndBad}>{countFormat(item.data[el].count_bypass)}</Text>
+              <Text style={styles.beastAndBad}>{timeToFormat(msToTime(item.data[el].time_bypass))}</Text>
+              <Text style={styles.beastAndBad}>{timeToFormat(msToTime(item.data[el].time_bbb))}</Text>
               <Text style={styles.beastAndBad}>{item.data[el].cleaner}</Text>
               <CreateTextComponentWithRatingUsers item={item?.data[el]} />
               </View>)
@@ -731,7 +739,7 @@ export const StatusObject = ({navigation}) => {
               }
               
               </Text>
-              <Text style={styles.beastAndBad}>{msToTime(dateBypassEnd - dateBypassStart).slice(0, 5)}</Text>
+              <Text style={styles.beastAndBad}>{timeToFormat(msToTime(dateBypassEnd - dateBypassStart))}</Text>
               <Text style={styles.beastAndBad}>{item.data[el].cleaner == 1 ? '+' : '-'}</Text>
               {createTextComponentWithRating(item?.data[el])}
               </View>)
@@ -847,9 +855,9 @@ export const StatusObject = ({navigation}) => {
                 </TouchableOpacity>
                 <Text style={styles.beastAndBad}>{item.data[el].temperature}</Text>
                 <Text style={styles.beastAndBad}>{item.data[el].avg_rank}</Text>
-                <Text style={styles.beastAndBad}>{item.data[el].count_bypass}</Text>
-                <Text style={styles.beastAndBad}>{msToTime(item.data[el].time_bypass)}</Text>
-                <Text style={styles.beastAndBad}>{msToTime(item.data[el].time_bbb)}</Text>
+                <Text style={styles.beastAndBad}>{countFormat(item.data[el].count_bypass)}</Text>
+                <Text style={styles.beastAndBad}>{timeToFormat(msToTime(item.data[el].time_bypass))}</Text>
+                <Text style={styles.beastAndBad}>{timeToFormat(msToTime(item.data[el].time_bbb))}</Text>
                 <Text style={styles.beastAndBad}>{item.data[el].cleaner}</Text>
                 {createTextComponentWithRating(item?.data[el])}
               </View>)
@@ -991,7 +999,7 @@ export const StatusObject = ({navigation}) => {
       const keyExtractors = useCallback(item => item.id)
       function onRefresh() {
         setIsRefreshing(true)
-        dispatch(loadBypassGetter(period))
+        dispatch(loadBypassBuildingForCorpus(period, corpusId))
         setIsRefreshing(false)
       }
       const renderItem = useCallback(({ item, index }) => {
@@ -1075,12 +1083,14 @@ export const StatusObject = ({navigation}) => {
         dispatch(clearBypassUsersAverageAll())
         dispatch(clearComponentForBuilding())
         dispatch(clearListUsersStaticWithTbrDetailAll())
+        dispatch(clearListUsersStaticWithTbrCorpusDetailAll())
         setFlagArrayPosts([])
         dispatch(clearBypassObjectDetailAll())
         setFlagArrayObjectDetail([])
         dispatch(clearBypassUsersDetailAll())
         setFlagArrayUsersDetail([])
         dispatch(clearBypassPosts())
+        dispatch(clearCyclesListForUserInBuildingDetailAll())
         setFlagArrayObjects([])
         setMonthRange('year')
       }
@@ -1102,7 +1112,8 @@ export const StatusObject = ({navigation}) => {
             onPress={() => {
               clearAnalyticScreen()
               setPeriod('today')
-              dispatch(loadBypassGetter('today'))
+              dispatch(loadBypassBuildingForCorpus('today', corpusId))
+              dispatch(getListUsersStaticWithTbrCorpus('today', corpusId))
               }}>
           <View>
               
@@ -1116,7 +1127,8 @@ export const StatusObject = ({navigation}) => {
         onPress={() => {
           clearAnalyticScreen()
           setPeriod('week')
-          dispatch(loadBypassGetter('week'))
+          dispatch(loadBypassBuildingForCorpus('week', corpusId))
+          dispatch(getListUsersStaticWithTbrCorpus('week', corpusId))
           }}>
           <View>
         
@@ -1131,7 +1143,8 @@ export const StatusObject = ({navigation}) => {
         onPress={() => {
           clearAnalyticScreen()
           setPeriod('month')
-          dispatch(loadBypassGetter('month'))
+          dispatch(loadBypassBuildingForCorpus('month', corpusId))
+          dispatch(getListUsersStaticWithTbrCorpus('month', corpusId))
           }}>
           <View >
           
@@ -1147,7 +1160,8 @@ export const StatusObject = ({navigation}) => {
         onPress={() => {
           clearAnalyticScreen()
           setPeriod('year')
-          dispatch(loadBypassGetter('year'))
+          dispatch(loadBypassBuildingForCorpus('year', corpusId))
+          dispatch(getListUsersStaticWithTbrCorpus('year', corpusId))
           }}>
           <View >
           
@@ -1230,6 +1244,10 @@ export const StatusObject = ({navigation}) => {
                 //   dispatch(getListUsersStaticTbr(period, activeBuildingRef.current.building_id))
 
                 // }
+                dispatch(clearBypassBuildingForCorpus())
+                dispatch(getListUsersStaticWithTbrCorpus(period, corpusId))
+                dispatch(loadPostForCorpus(corpusId))
+                console.log('period:' , period)
                 setModalVisibleFilter(!modalVisibleFilter)
               }}
               style={{borderRadius: 20, padding: 10, elevation: 2}, stateChart.employee ? {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: "black"} : {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: '#2196F3'}}
@@ -1248,6 +1266,8 @@ export const StatusObject = ({navigation}) => {
             <Pressable
               onPress={() => {
                 stateChart.buildings = true
+                dispatch(clearListUsersStaticWithTbrCorpus())
+                dispatch(loadBypassBuildingForCorpus(period, corpusId))
                 setModalVisibleFilter(!modalVisibleFilter)
               }}
               style={{borderRadius: 20, padding: 10, elevation: 2}, stateChart.buildings ? {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: "black"} : {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: '#2196F3'}}
@@ -1435,14 +1455,37 @@ export const StatusObject = ({navigation}) => {
       </Modal>
         {/* <Image source = {{uri: 'https://www.alllessons.ru/wp-content/uploads/files/hello_html_m25c160ca.jpg'}} style = {StyleSheet.absoluteFillObject} blurRadius = {50}/> */}
         {listMenu()}
-        
-        {loading ? loader : <><Animated.FlatList showsVerticalScrollIndicator={false}
+        {/* <View 
+          style={styles.layerRank}
+          onMoveShouldSetResponderCapture={(event) => {
+            
+            return true
+          }} 
+          onResponderMove={(event) => console.log(event.currentTarget._children[0]._children[0]._children[0].viewConfig.validAttributes.borderColor.process('red'))}>
+          <DateChanger period={period} height={styles.layerRank.height}/>
+        </View> */}
+        {loading ? loader : stateChart.buildings ? <><Animated.FlatList showsVerticalScrollIndicator={false}
           style={{marginTop: 15}} data={DATA_OBJECTS_LIST} onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {y: scrollY}}}],
           { useNativeDriver: true}
           )} renderItem={renderItem} keyExtractor={item => item.id}/>
-          </>}
-          {DATA_OBJECTS_LIST.length ?  
+          </> : <User 
+                  period={period}
+                  corpus_id={corpusId}
+                  monthRange={monthRange}
+                  showUserDetailInfoOrUnshow={showUserDetailInfoOrUnshow}
+                  setModalVisibleDay={setModalVisibleDay}
+                  flagArrayUsersDetail={flagArrayUsersDetail}
+                  setFlagArrayUsersDetail={setFlagArrayUsersDetail}
+                  setMonthRange={setMonthRange}
+                  choseDateCurrentRef={choseDateCurrentRef}
+                  setModalVisibleRank={setModalVisibleRank}
+                  bypassKeyByValueRef={bypassKeyByValueRef}
+                  bypassPhotoPostIdRef={bypassPhotoPostIdRef}
+                  bypassPhotoEmailRef={bypassPhotoEmailRef}
+                  DATA_IMAGE_BYPASS_RANK={DATA_IMAGE_BYPASS_RANK} />
+          }
+          {DATA_OBJECTS_LIST.length || DATA_USERS_TBR_CORPUS.length ?  
           null : 
           <View 
           style={{
@@ -1456,7 +1499,7 @@ export const StatusObject = ({navigation}) => {
         </SafeAreaView>
 }
 StatusObject.navigationOptions = ({navigation}) => ({
-    headerTitle: 'Состояние объекта',
+    headerTitle: navigation.getParam('corpusName'),
     headerRight: () => <HeaderButtons HeaderButtonComponent = {AppHeaderIcon}>
       <Item
       title='Filter Object'
@@ -1464,13 +1507,13 @@ StatusObject.navigationOptions = ({navigation}) => ({
       onPress={() => navigation.getParam('openModalFilter')()}
       />
     </HeaderButtons>,
-    headerLeft: () => <HeaderButtons HeaderButtonComponent = {AppHeaderIcon}>
-    <Item
-    title    = 'toogle'
-    iconName = 'ios-menu'
-    onPress  = {() => navigation.toggleDrawer()}
-    />
-  </HeaderButtons>
+  //   headerLeft: () => <HeaderButtons HeaderButtonComponent = {AppHeaderIcon}>
+  //   <Item
+  //   title    = 'toogle'
+  //   iconName = 'ios-menu'
+  //   onPress  = {() => navigation.toggleDrawer()}
+  //   />
+  // </HeaderButtons>
     
     
   })
@@ -1499,6 +1542,25 @@ StatusObject.navigationOptions = ({navigation}) => ({
         justifyContent: 'center',
         alignItems    : 'center',
     },
+      layerRank: {
+        backgroundColor : 'rgba(220, 220, 220, .2)',
+        // flexGrow: 0,
+        marginHorizontal: '5%',
+        marginVertical  : 5,
+        height          : 40,
+        borderRadius    : 15,
+        shadowColor     : "#000000",
+        shadowOffset    : {
+          width : 0,
+          height: 6,
+        },
+         shadowOpacity: 0.30,
+         shadowRadius : 4.65,
+
+        //  elevation: 1,
+        
+        
+      },
       item: {
           backgroundColor : 'rgba(220, 220, 220, .2)',
           // flexGrow: 0,

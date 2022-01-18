@@ -148,7 +148,7 @@ CorpusScreen.navigationOptions = ({ navigation }) => {
         <Item 
         title='AddNewUser'
         iconName='ios-add-circle-outline'
-        onPress={() => navigation.navigate('CreateBuilding', {corpusId})}
+        onPress={() => navigation.navigate('CreateObjects', {corpusId})}
         />
       </HeaderButtons>
     }

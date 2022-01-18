@@ -4,7 +4,7 @@ import {ArrowRight, Clock, Cycle, QRIcon, Rank, TimeBetweenBypass} from '../comp
 import {useDispatch} from 'react-redux'
 import { removeEmploee, updateUserPrivileg } from '../store/actions/empDouble'
 import { ModalForRemove } from './ui/ModalForRemove'
-import { msToTime } from '../utils/msToTime'
+import { msToTime, timeToFormat, countFormat } from '../utils/msToTime'
 import { OPTIMAL_RANK } from './types'
 
 
@@ -98,7 +98,7 @@ export const EmploeeCard = ({emploee, onOpen, isOnline}) => {
           <View style={{alignItems: 'center'}}>
             {Cycle('#000', 25, 24)}
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start'}}>
-              <Text style={{textAlign: 'center', paddingTop: 10}}>{emploee.cycle ? emploee.cycle : 0}</Text>
+              <Text style={{textAlign: 'center', paddingTop: 10}}>{emploee.cycle ? countFormat(emploee.cycle) : 0}</Text>
               <Text style={{color: colorCountOfCycle, textAlign: 'center', paddingTop: 10, paddingLeft: 2, fontSize: 10}}>
                   {countOfCycle}</Text>
             </View>
@@ -109,7 +109,7 @@ export const EmploeeCard = ({emploee, onOpen, isOnline}) => {
               {QRIcon('#000', 25, 24)}
             </TouchableOpacity>
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start'}}>
-              <Text style={{textAlign: 'center', paddingTop: 10}}>{emploee.count_bypass ? emploee.count_bypass : 0}</Text>
+              <Text style={{textAlign: 'center', paddingTop: 10}}>{emploee.count_bypass ? countFormat(emploee.count_bypass) : 0}</Text>
               <Text style={{color: colorForCountBypass, textAlign: 'center', paddingTop: 10, paddingLeft: 2, fontSize: 10}}>
                   {countBypass}
                 </Text>

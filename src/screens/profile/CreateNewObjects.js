@@ -12,7 +12,7 @@ import findTrashSymbolsInfo from '../../utils/findTrashSymbolsInfo'
 
 export const CreateNewObjects = ({navigation}) => {
     const dispatch = useDispatch()
-    
+    const corpus_id = navigation.getParam('corpusId')
     const [name, setName]               = useState('')
     const [address, setAddress]         = useState('')
     const [description, setDescription] = useState('')
@@ -28,6 +28,7 @@ export const CreateNewObjects = ({navigation}) => {
     }
     const createObjectHandler = () => {
       const object = {
+        corpus_id,
         name,
         address,
         description,
@@ -36,7 +37,7 @@ export const CreateNewObjects = ({navigation}) => {
         
       }
       dispatch(addObject(object))
-      navigation.navigate('ObjectsBuildings')
+      navigation.navigate('CorpusInfo')
     }
     return                    <ScrollView style = {styles.wrapper}>
     <TouchableWithoutFeedback onPress           = {() => Keyboard.dismiss()}>
