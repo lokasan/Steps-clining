@@ -16,14 +16,14 @@ export const ComponentCardToPost = ({post, component, postWithComponentAll}) => 
     const dispatch = useDispatch()
     
     let flag = false
-    console.log(postWithComponentAll)
+    // console.log(postWithComponentAll)
    
     for (let item of postWithComponentAll) {
         if (item.id === component.id) {
            flag = true
         }
     }
-    console.log(flag);
+    // console.log(flag);
     
     return <TouchableOpacity style={{borderBottomWidth: 0.3, borderColor: '#fff'}} activeOpacity={0.7}  onPress={() => createDeleteHandler(dispatch, post.id, component, flag)}>
     <View style={flag ? styles.actionMenuActive : styles.actionMenu}>

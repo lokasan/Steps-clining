@@ -10,9 +10,9 @@ export async function bootstrap() {
             'adantino': require('../src/assets/fonts/Adantino.ttf')
         })
         await DB.init()
-        console.log('DATABASE CREATED')
+        // console.log('DATABASE CREATED')
         
-        console.log('USERS LOADED')
+        // console.log('USERS LOADED')
         
         if (!firebase.apps.length) {
             firebase.initializeApp(ApiKeys.FirebaseConfig)

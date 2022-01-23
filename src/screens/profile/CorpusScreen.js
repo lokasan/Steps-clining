@@ -32,7 +32,7 @@ export const CorpusScreen = ({navigation}) => {
     // const updatedUserPrivileg =  useCallback(() => {
     //   dispatch(updateObject(corpus))
     // }, [dispatch, corpus])
-    console.log(loadObjectForCorpus, ' OBJECT FOR CORPUS')
+    // console.log(loadObjectForCorpus, ' OBJECT FOR CORPUS')
     if (!corpus) {
       return null
     }

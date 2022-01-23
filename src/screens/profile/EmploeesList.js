@@ -25,7 +25,7 @@ export const EmploeesList = ( {navigation}) => {
     const emplServer = useSelector(state => state.empDouble.empServer)
     const emploeeAll = useSelector(state => state.empDouble.empAll)
     const isOnline = useSelector(state => state.empDouble.isOnlineEmp)
-    console.log('MYOF', isOnline)
+    // console.log('MYOF', isOnline)
     // console.log(state, 'statw past is online')
     // console.log(emploeeAll, "ЗЕМЛНЯН")
     // console.log(emploeeAll, 'Алл сотрудники');

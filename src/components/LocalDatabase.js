@@ -39,9 +39,9 @@ const db = SQLite.openDatabase('db.db')
       dataForChartDouble = []
       let countYear = await getMinAndCountYear
       
-      console.log(`min year: ${countYear}`)
+      // console.log(`min year: ${countYear}`)
       for (let i = countYear[0]; i <= countYear[countYear.length - 1]; i++) {
-        console.log(`Проход по году ${i}`)
+        // console.log(`Проход по году ${i}`)
         for (let key of lastDayForMonth.monthList) {
           if (Object.keys(key)[0] === '02') {
             // console.log(`${lastDayForMonth.monthList[1][Object.keys(key)[0]](i)} ${Object.keys(key)[0]} ${i}`)
@@ -72,15 +72,15 @@ const db = SQLite.openDatabase('db.db')
         tempP = new Date(2020, 7, 1, 0, count+=10)
         tempP = tempP.getFullYear() + '-' + (tempP.getMonth() + 1) + '-' +tempP.getDate() + ' ' + tempP.getHours() + ':' + tempP.getMinutes()
         tmp = tempP.split(/\-|\ |\:/)
-        console.log('tmp_first_cycle: ', tmp)
+        // console.log('tmp_first_cycle: ', tmp)
         for (let j = 1; j < tmp.length; j++) {
           if (tmp[j].length == 1) {
             tmp[j] = '0' + tmp[j]
             tempP = tmp[0] + '-' + tmp[1] + '-' + tmp[2] + ' ' + tmp[3] + ':' + tmp[4]
-            console.log('tempP second Cycle: ', tempP)
+            // console.log('tempP second Cycle: ', tempP)
           }
         }
-        console.log('Out Cycle: ', tempP)
+        // console.log('Out Cycle: ', tempP)
         saveDataReq.push(tempP)
         db.transaction(tx => {
         tx.executeSql("insert into step_time (user_id, count_step, date_time, current_time) values (?, ?, ?, ?);", [1, Math.floor(Math.random() * 10000), saveDataReq[i], Date.now()])

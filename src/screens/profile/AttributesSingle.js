@@ -48,7 +48,7 @@ export const AttributeSingle = ({navigation}) => {
     const componentId = navigation.getParam('componentId')
     const component = useSelector(state => state.component.componentAll.find(e => e.id === componentId))
    
-    console.log(component);
+    // console.log(component);
     useEffect(() => {
         dispatch(loadComponentRank(componentId))
     }, [dispatch])

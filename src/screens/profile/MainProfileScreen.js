@@ -34,7 +34,7 @@ export const MainProfileScreen = ({navigation}) => {
     const allPostResult = useSelector(state => state.post.postAlls)
     const emploeeAll   = useSelector(state => state.empDouble.empAll)
     let   tempPrivileg = false
-    console.log(emploeeAll, 'Алл сотрудники');
+    // console.log(emploeeAll, 'Алл сотрудники');
     
         if (result.status && result.privileg && result.privileg > 1) {
             tempPrivileg = true
@@ -47,7 +47,7 @@ export const MainProfileScreen = ({navigation}) => {
       <body>
         <div style="display: flex; flex-direction: row; justify-content: space-around; flex-wrap: wrap;">`
         for (let el of allPostResult) {
-            console.log(el);
+            // console.log(el);
             // const data = await FileSystem.readAsStringAsync(el.img, {
             //     encoding: FileSystem.EncodingType.Base64,
             // });

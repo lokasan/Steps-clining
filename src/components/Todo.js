@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, View, StyleSheet, TouchableOpacity} from 'react-native'
 export const Todo = ({ todo, onRemove }) => {
-    console.log(todo)
+    // console.log(todo)
     return (
         <TouchableOpacity onPress={() => console.log('Pressed', todo.id)}
         >

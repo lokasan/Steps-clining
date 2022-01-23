@@ -86,14 +86,7 @@ export const CreateNewComponentRank = ({navigation}) => {
     </ScrollView>
 }
 CreateNewComponentRank.navigationOptions = ({navigation}) => ({
-    headerTitle: 'Новый критерий оценки', 
-    headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-    <Item 
-    title='AddNewUser'
-    iconName='ios-arrow-dropdown'
-    onPress={() => navigation.navigate('CreatePost')}
-    />
-  </HeaderButtons>
+    headerTitle: 'Новый критерий оценки'
 })
 
 const styles = StyleSheet.create({

@@ -18,7 +18,7 @@ const initialState = {
 // }
 
 export const objectReducer = (state = initialState, action) => {
-    console.log(action.type, 'OBJECTS');
+    // console.log(action.type, 'OBJECTS');
     switch (action.type) {
         case LOAD_OBJECT: return {...state, objAll: action.payload, loading: false}
         case REMOVE_OBJECT: return {

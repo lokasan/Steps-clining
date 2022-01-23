@@ -4,7 +4,7 @@ import { UploadDataToServer } from '../../uploadDataToServer'
 
 export const createBypass = (id, userId, postId, weather, temperature, icon) => async dispatch => {
     
-    console.log(id, 'BYPASS_ID_CREATE')
+    // console.log(id, 'BYPASS_ID_CREATE')
     await DB.createBypass(id, userId, postId, weather, temperature, icon)
     await UploadDataToServer.addBypass(id, userId, postId, weather, temperature, icon)
     dispatch({
@@ -15,7 +15,7 @@ export const createBypass = (id, userId, postId, weather, temperature, icon) => 
 
 export const loadBypass = (userId, postId) => async dispatch => {
     const bypassId = await DB.loadBypass(userId, postId)
-    console.log(bypassId, 'Массив объектов');
+    // console.log(bypassId, 'Массив объектов');
     dispatch({
         type: LOAD_BYPASS,
         payload: bypassId.length ? 
@@ -272,7 +272,14 @@ export const clearCyclesListForUserInBuildingDetailAll = () => async () => {
         type: 'CLEAR_CYCLES_LIST_FOR_BUILDING_DETAIL_ALL'
     })
 }
+export const clearCyclesListForUserInCorpusDetailAll = () => async () => {
+    dispatch({
+        type: 'CLEAR_CYCLES_LIST_FOR_CORPUS_DETAIL_ALL'
+    })
+}
 export const getBypassListOfPostInCycle = (cycle_id, user_id) => async() => {
     await UploadDataToServer.getBypassListOfPostInCycle(cycle_id, user_id)
 }
-
+export const getBypassMapCompleteCycle = (user_id, building_id) => async() => {
+    await UploadDataToServer.getBypassMapCompleteCycle(user_id, building_id)
+} 

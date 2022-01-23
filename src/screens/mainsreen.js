@@ -29,10 +29,10 @@ export const MainScreen = ({navigation}) => {
      return new Promise(resolve => {
        db.transaction((tx) => { 
         tx.executeSql('select * from user_local where status=1', [], (_, { rows }) => {
-          console.log(JSON.stringify(rows),'напечатал из бд');
+          // console.log(JSON.stringify(rows),'напечатал из бд');
           myKey.isStatus = rows.length !== 0 ? JSON.stringify(rows._array[0]['status']) : 0
           myKey.id = rows.length !== 0 ? JSON.stringify(rows._array[0]['id']) : 0
-          console.log(rows['_array'])
+          // console.log(rows['_array'])
          resolve()                
        }                                
         )                               
@@ -81,8 +81,8 @@ export const MainScreen = ({navigation}) => {
     return new Promise(res => {
       db.transaction(tx => {
         tx.executeSql('pragma table_info(corpus);', [], (_, {rows}) => {
-          console.log(JSON.stringify(rows), ' POSTS IN LOCAL DATABASE')
-          console.log(posts?.length, ' COUNT POSTS IN STATE')
+          // console.log(JSON.stringify(rows), ' POSTS IN LOCAL DATABASE')
+          // console.log(posts?.length, ' COUNT POSTS IN STATE')
           res()
         })
       })

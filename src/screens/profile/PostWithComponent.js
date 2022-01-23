@@ -23,7 +23,7 @@ export const PostWithComponent = ({navigation}) => {
     const postWithComponent = useSelector(state => state.post.postAll.find(e => e.id === post.id))
     const componentAll = useSelector(state => state.component.componentAll)
     const postWithComponentAll = useSelector(state => state.postWithComponent.postWithComponentAll)
-    console.log(postWithComponentAll, 'GRANDER');
+    // console.log(postWithComponentAll, 'GRANDER');
     useEffect(() => {
         dispatch(loadComponent())
         dispatch(loadPostWithComponent(postWithComponent.id))

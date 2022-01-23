@@ -68,9 +68,9 @@ export const updateComponentRank = (componentRank, componentLength, count) => as
 export const editComponentRank = (componentRank) => async dispatch => {
     const idAndFileName = Date.now()
     const fileImage = idAndFileName + '.' + componentRank.img.split('/').pop().split('.').pop()
-    console.log(fileImage);
+    // console.log(fileImage);
     const newPath = FileSystem.documentDirectory + fileImage
-    console.log(newPath);
+    // console.log(newPath);
     let flag = 0
     try {
         if (newPath !== componentRank.img)

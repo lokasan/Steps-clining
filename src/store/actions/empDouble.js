@@ -55,7 +55,7 @@ export const addEmploee = emploee => async dispatch => {
     await DB.createUser(payload)
 
     await UploadDataToServer.addUser(newPath, payload)
-    console.log(payload, ' test payload')
+    // console.log(payload, ' test payload')
     
 
     dispatch({

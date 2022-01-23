@@ -29,7 +29,7 @@ export const Authorization = ({navigation}) => {
         dispatch(loadObject())
     }, [])
     useEffect(() => {
-        console.log('USEFFECT BUILDINGS!!', JSON.stringify(buildings))
+        // console.log('USEFFECT BUILDINGS!!', JSON.stringify(buildings))
         for (el of buildings) {
           dispatch(loadPost(el.id)) 
         }
@@ -50,7 +50,7 @@ export const Authorization = ({navigation}) => {
     //   }, [buildings])
     users = useSelector(state => state.empDouble.empAll)
     isAccess = useSelector(state => state.empDouble.isAccess)
-    console.log('MY UPLOAD USER', users)
+    // console.log('MY UPLOAD USER', users)
     const empServer = useSelector(state => state.empDouble.empServer)
     isAccessMemo = useMemo(() => {
         return isAccess

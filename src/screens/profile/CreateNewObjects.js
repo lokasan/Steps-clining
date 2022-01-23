@@ -84,14 +84,7 @@ export const CreateNewObjects = ({navigation}) => {
     </ScrollView>
 }
 CreateNewObjects.navigationOptions = ({navigation}) => ({
-    headerTitle: 'Новый участок',
-    headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-    <Item 
-    title    = 'AddNewUser'
-    iconName = 'ios-arrow-dropdown'
-    onPress  = {() => navigation.navigate('CreateObjects')}
-    />
-  </HeaderButtons>
+    headerTitle: 'Новый участок'
 })
 
 const styles = StyleSheet.create({

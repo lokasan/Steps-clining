@@ -19,7 +19,7 @@ const initialState = {
 // }
 
 export const postReducer = (state = initialState, action) => {
-    console.log(action.type, 'POST');
+    // console.log(action.type, 'POST');
     switch (action.type) {
         case LOAD_POST: return {...state, postAll: action.payload, loading: false}
         case GET_POSTS_ALL: return {...state, postAlls: action.payload}

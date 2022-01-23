@@ -5,7 +5,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import {msToTime, timeToFormat, countFormat} from '../../utils/msToTime';
 import {getBypassListOfPostInCycle, getCyclesListForUserInBuildingDetail, getCyclesListForUserInCorpusDetail} from '../../store/actions/bypass'
 import { CyclesComponent } from './CyclesComponent';
-export const Cycles = ({getCyclesList, period, user_id, item_id, DATA_CYCLES_LIST, setModalVisibleDay}) => {
+export const Cycles = ({flagArrayUsersDetail, getCyclesList, period, user_id, item_id, DATA_CYCLES_LIST, setModalVisibleDay}) => {
     const DATA_CYCLES_LIST_FOR_USER_IN_BUILDING = useSelector(state => state.bypass.listUsersInBuildingDetail)
     const DATA_CYCLES_LIST_FOR_USER_IN_CORPUS = useSelector(state => state.bypass.listUsersInCorpusDetail)
     const existsComponents = useRef([])
@@ -43,7 +43,7 @@ export const Cycles = ({getCyclesList, period, user_id, item_id, DATA_CYCLES_LIS
         for (let cmp of existsComponents.current) {
             let keyByValue = getKeyByValue(item, cmp)
             if (keyByValue) {
-                console.log(keyByValue, 'Value rank')
+                // console.log(keyByValue, 'Value rank')
                 createdElements.push(<TouchableOpacity onPress={() => {setModalVisibleDay(true); dispatch(getBypassListOfPostInCycle(item.cycle_id, keyByValue))}}>
                 <Text style={{...styles.beastAndBad, color: "black"}}>{`${item[keyByValue + '_rank']}`}
                 </Text></TouchableOpacity>)
@@ -78,12 +78,13 @@ export const Cycles = ({getCyclesList, period, user_id, item_id, DATA_CYCLES_LIS
         
     })
     const onReached = useCallback(() => {
-        dispatch(getCyclesList(DATA_CYCLES_LIST.length, user_id, item_id, period))
+        dispatch(getCyclesList(DATA_CYCLES_LIST.filter(el => el.user_id == user_id).length, user_id, item_id, period))
     })
 
     const MainWindowWithRanking = () => {
+        const data = DATA_CYCLES_LIST.filter(el => el.user_id == user_id)
         return (<FlatList
-            data={DATA_CYCLES_LIST}
+            data={data}
             keyExtractor={useCallback(item => item.cycle_id.toString())}
             
             renderItem={CreateViewDataComponentPost}
@@ -102,7 +103,10 @@ export const Cycles = ({getCyclesList, period, user_id, item_id, DATA_CYCLES_LIS
 
         
         return (
-            <View style={styles.itemUD}>
+            <View style={flagArrayUsersDetail.length && flagArrayUsersDetail.map(el => item
+                .map(elD => el.email === elD.email && el.post === elD.post_name))
+                  .map(res => res.indexOf(true) !== -1? true : false)
+                  .indexOf(true) !== -1 && period !== 'today' ? {display: 'none'} : {...styles.itemUD}}>
                 {/* {textCmpt(item.data)} */}
                 <View style={styles.wrapperFirstLine}>
                     <View>

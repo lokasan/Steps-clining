@@ -8,7 +8,7 @@ export const QRCodePicker = ({value, onPick}) => {
             size={100}
             fgcolor='white'
             getImageOnLoad={(e) =>{
-                console.log(e) 
+                // console.log(e) 
                 onPick(e)}} 
         />
         </View>

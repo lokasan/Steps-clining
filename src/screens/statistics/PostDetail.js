@@ -108,7 +108,7 @@ export const PostDetail = ({period, monthRange, user, flagArrayUsersDetail, setF
           onPress={() => {
             if (period === 'year' && monthRange === 'year') {
               choseDateCurrentRef.current = [year.length === 2 ? 20 + year : year, +month]
-              console.log(choseDateCurrentRef.current, 'SET CHOSE DATE CURRENT')
+              // console.log(choseDateCurrentRef.current, 'SET CHOSE DATE CURRENT')
               setMonthRange('month_range')
               dispatch(loadBypassUsersDetail(
                 'month_range', item?.email, item?.post_name, 

@@ -76,7 +76,7 @@ export const MyPedometer = () => {
   };
   
 
-  console.log(currentStepCount)
+  // console.log(currentStepCount)
     return (
       <View style={styles.container}>
         <Text style={{color: 'white'}}>Pedometer.isAvailableAsync(): {isPedometerAvailable}</Text>

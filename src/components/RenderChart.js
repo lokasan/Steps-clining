@@ -24,13 +24,13 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
     const db = SQLite.openDatabase('dbas.db')
     const origami = useSelector((state) => {console.log(state, 'statelog');
       return state.empList.emploee})
-    console.log(origami, 'я здесь');
+    // console.log(origami, 'я здесь');
     const choiseScreen = useSelector(state => state.empDouble.empAll)
-    console.log(choiseScreen);
+    // console.log(choiseScreen);
     for (let el of choiseScreen) {
-      console.log(el);
+      // console.log(el);
       if (el.privileg === 0 && el.status === 1) {
-        console.log('лох');
+        // console.log('лох');
         easyUser = true
         storeChoise.current = el.key_auth
       } 
@@ -59,7 +59,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
         // баги - нажать на год без выбора пользователя, нажать на месяц без выбора пользователя, выбрать пользователя
         // Нужно сделать - добавить  
       }
-      console.log(`Я твое значение`, tempSlice);
+      // console.log(`Я твое значение`, tempSlice);
       printData(status, tempSlice, my_key)
     }
   // if (chartChoose) {
@@ -67,7 +67,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
   // }
     
     const getChartYear = (userStatus, key_auth, countUser, key_my) => {
-      console.log(userStatus, key_auth, countUser, 'user status key_auth countUser')
+      // console.log(userStatus, key_auth, countUser, 'user status key_auth countUser')
       return new Promise(resolve => {
         // fetchEmploees()
         
@@ -127,19 +127,19 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
   })
   // Разобраться в функции дня!!!
     const getChartDay = (monthChoose, userStatus, key_auth, userCount) => {
-      console.log('getChartDay():', storeChoise.current)
+      // console.log('getChartDay():', storeChoise.current)
       return new Promise(resolve => {
         {/* Вынести в отдельный промис */}
-        console.log(monthChoose, "LUNA");
+        // console.log(monthChoose, "LUNA");
         db.transaction(tx => {
           let RDB = `select sum(count_step) as steps, strftime('%H', date_time) as hour, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id and hour<='23' and day=? and month=? and year=? group by year, month, day, hour order by year desc, month desc, day desc, hour desc limit 24;`
           if (storeChoise.current) {
-            console.log(storeChoise.current, 'MyStore');
+            // console.log(storeChoise.current, 'MyStore');
             
             RDB =  `select sum(count_step) as steps, strftime('%H', date_time) as hour, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id and hour<='23' and day=? and month=? and year=? and key_auth='${storeChoise.current}' group by year, month, day, hour order by year desc, month desc, day desc, hour desc limit 24;`
           }
           if (monthChoose.length === 2) {
-            console.log(monthChoose, 'PRIVET');
+            // console.log(monthChoose, 'PRIVET');
             if (storeChoise.current) {
               RDB = `select sum(count_step) as steps, strftime('%H', date_time) as hour, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id and day IN (select max(strftime('%d', date_time)) as day from step_time where strftime('%m', date_time) is '${monthChoose[0]}') and month=? and year=? and key_auth='${storeChoise.current}' group by year, month, day, hour order by year desc, month desc, day desc, hour desc limit 24;`
             }
@@ -203,7 +203,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
           }
           }
           else if (!(month && year) && storeChoise.current) {
-            console.log("Success");
+            // console.log("Success");
             reqDB = `select sum(count_step) steps, strftime('%d', date_time) as day, strftime('%m', date_time) as month, strftime('%Y', date_time) as year, count(DISTINCT user_local.id) as users_count from step_time left join user_local where user_local.id = user_id and user_local.key_auth='${storeChoise.current}' group by year, month, day order by year desc, month desc, day desc limit 31;`
           }
           else {
@@ -243,7 +243,7 @@ export const RenderChart = ({ dataGraph, onSubmit}) => {
       
       // double refresh
       if (statMem === 'month') {
-        console.log('hiii');
+        // console.log('hiii');
         if (chartChoose) {
           let monthChoose = chartChoose.x
             .replace(/"/)

@@ -118,7 +118,7 @@ export const PhotoPickerBypass = ({userId, target, componentsFinished, component
     const renderItem = ({ item }) => (
         <Item item = {item}/>
     )
-    console.log(image, 'Image photo picker')
+    // console.log(image, 'Image photo picker')
     return <Fragment>
         <Modal
               animationType = "fade"

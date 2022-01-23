@@ -17,7 +17,7 @@ const initialState = {
 // }
 
 export const postWithComponentReducer = (state = initialState, action) => {
-    console.log(action.type, 'POST');
+    // console.log(action.type, 'POST');
     switch (action.type) {
         case LOAD_COMPONENT_TO_POST_LINK: return {
             ...state, 

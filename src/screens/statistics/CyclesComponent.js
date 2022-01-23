@@ -19,7 +19,7 @@ export const CyclesComponent = ({setModalVisibleDay, existsComponents, item_id, 
         for (let cmp of existsComponents.current) {
             let keyByValue = getKeyByValue(item, cmp)
             if (keyByValue) {
-                console.log(keyByValue, 'Value rank')
+                // console.log(keyByValue, 'Value rank')
                 createdElements.push(<TouchableOpacity onPress={() => {setModalVisibleDay(true); dispatch(getBypassListOfPostInCycle(item.cycle_id, keyByValue))}}>
                 <Text style={{...styles.beastAndBad, color: "black"}}>{`${item[keyByValue + '_rank']}`}
                 </Text></TouchableOpacity>)

@@ -14,7 +14,7 @@ export const AnalyticsCorpus = ({navigation}) => {
     }, [])
     const corpusData = useSelector(state => state.corpus.corpusAll)
     const corpusAnalyticsBase = useSelector(state => state.corpus.corpusAnalyticsBase)
-    console.log(corpusAnalyticsBase)
+    // console.log(corpusAnalyticsBase)
 
     return <ScrollView style={{marginLeft: 20, alignSelf: 'center'}}>
         <FlatList

@@ -54,7 +54,7 @@ export const EmploeeScreen = ({navigation}) => {
       dispatch(getUserShift(emploeeId))
     }, [])
 
-    console.log(emploee);
+    // console.log(emploee);
 
     const onChange = (event, selectedDate) => {
       const currentDate = selectedDate || date;

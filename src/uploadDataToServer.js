@@ -164,6 +164,18 @@ async function socket_onmessage_callback(recv) {
             payload: await DB.getPostAll()
         })
     } else if (ACTION in data && data[ACTION] === GET_POSTS_SYNCHRONIZE) {
+        console.log('NEW ELEMENTS OF POSTS')
+        try {
+            data['CREATE_ELEMENTS'].forEach((el) => {
+                console.log('POST NAME OF OUTTER QUERY TO DATABASE: ', el.name)
+            })
+        } catch(err) {
+            console.log(err)
+
+        } finally {
+            console.log('END ELEMENTS OF POSTS PARTITION')
+        }
+        // data['CREATE_ELEMENTS'].forEach((el) => console.log('POST NAME IS: ', el.name))
         await doCreateAndRemoveLocalStoreAndBase(data, DB.getPostById, DB.createPost, DB.removePost)
         dispatch(hideLoaderPost())
         dispatch({
@@ -229,6 +241,7 @@ async function socket_onmessage_callback(recv) {
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === 'CHECK_AUTHENTICATION') {
+        console.log('CHECK_AUTHETICATION ', data['MESSAGE']['email'], data['MESSAGE']['id'])
         dispatch(updateUser({status: 0, email: data[MESSAGE]['email'], id: data[MESSAGE]['id'], isAccess: data[MESSAGE]['email'] ? 1 : -1}))
     } else if (ACTION in data && data[ACTION] === 'UPDATE_EMPLOEE_PRIVILEG') {
         await DB.updateUserPrivileg(data[MESSAGE])
@@ -341,6 +354,11 @@ async function socket_onmessage_callback(recv) {
             type: 'GET_CYCLES_LIST_FOR_CORPUS_DETAIL',
             payload: data[MESSAGE]
         })
+    } else if (ACTION in data && data[ACTION] === 'GET_BYPASS_MAP_COMPLETE_CYCLE') {
+        dispatch({
+            type: 'GET_BYPASS_MAP_COMPLETE_CYCLE',
+            payload: data[MESSAGE]
+        })
     }
     // `data:image/jpeg;base64,${object.path}
     
@@ -348,8 +366,27 @@ async function socket_onmessage_callback(recv) {
 //  разобраться с багом отображения на андройде
 export async function doCreateAndRemoveLocalStoreAndBase(data, get, create, remove, edit, update) {
     if (data['CREATE_ELEMENTS'].length) {
-        data['CREATE_ELEMENTS'].map((el, id) => el['path'] = data['CONTENT'][id])
-        for (el of data['CREATE_ELEMENTS']) {
+        // if (ACTION in data && data['ACTION'] === 'GET_USERS') {
+        //     console.log(data['CONTENT'])
+        // }
+
+        await data['CREATE_ELEMENTS'].map((el, id) => el['path'] = data['CONTENT'][id])
+        // data['CREATE_ELEMENTS'].forEach(async (el, id) => {
+        //     const filename = FileSystem.documentDirectory + el['image'].match(/\d+.jpeg$|\d+.jpg$|\d+.gif$/g)
+        //     await FileSystem.writeAsStringAsync(filename, el['path'], {
+        //        encoding: FileSystem.EncodingType.Base64
+        //     })
+        //     const obj = await get(el['id'])
+        //     if (!obj.length) {
+        //         await create({...el, img: filename})
+                
+        //     }
+        // })
+
+
+
+        // 
+        for (let el of data['CREATE_ELEMENTS']) {
            const filename = FileSystem.documentDirectory + el['image'].match(/\d+.jpeg$|\d+.jpg$|\d+.gif$/g)
            await FileSystem.writeAsStringAsync(filename, el['path'], {
                encoding: FileSystem.EncodingType.Base64
@@ -438,7 +475,7 @@ export class UploadDataToServer {
     static async addCorpus(path, payload) {
         const blob = await this.getBlob(path)
         let reader = new FileReader()
-        console.log('Hello, i am here in addCorpus now!')
+        // console.log('Hello, i am here in addCorpus now!')
         reader.readAsDataURL(blob)
         reader.onloadend = function () {
             let base64data = reader.result
@@ -1112,6 +1149,13 @@ export class UploadDataToServer {
             END_TIME: end_time,
             LIMIT: 5,
             OFFSET: offset
+        }))
+    }
+    static async getBypassMapCompleteCycle(user_id, building_id) {
+        ws.send(JSON.stringify({
+            ACTION: 'GET_BYPASS_MAP_COMPLETE_CYCLE',
+            USER_ID: user_id,
+            BUILDING_ID: building_id
         }))
     }
 }

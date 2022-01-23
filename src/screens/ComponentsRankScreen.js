@@ -30,19 +30,20 @@ export const ComponentsRankScreen = ({ navigation }) => {
     // const bypassRankId = navigation.getParam('startedBypassRank')
     const componentSingle    = navigation.getParam('item')
     const componentsValid    = navigation.getParam('componentsValid')
+    const setModalVisibleCompleteCycle = navigation.getParam('setModalVisibleCompleteCycle')
     const startedBypassRanks = useSelector(state => state.bypassRank.bypassRankIsStarted)
     const loading            = useSelector(state => state.bypassRank.loading)
-    console.log(loading, 'загрузка')
+    // console.log(loading, 'загрузка')
     if (loading) {
         return <AppLoader/>
     }
-    console.log(startedBypassRanks, 'STATE RANK2')
+    // console.log(startedBypassRanks, 'STATE RANK2')
     const bypassRank       = startedBypassRanks.filter(e => e.component_id === componentSingle.id)
     const bypassRankId     = bypassRank.length ? bypassRank[0].id : null
     const componentId      = component.id
     const componentRankAll = useSelector(state => state.componentRank.componentRankAll)
     const loader = useSelector(state => state.componentRank.loading)
-    console.log(componentRankAll, 'Component Rank all my is component')
+    // console.log(componentRankAll, 'Component Rank all my is component')
     const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
     const y                = new Animated.Value(0)
     const onScroll         = Animated.event([{ nativeEvent: { contentOffset: { y } }}], { useNativeDriver: true })
@@ -65,7 +66,7 @@ export const ComponentsRankScreen = ({ navigation }) => {
                     componentsValid = {componentsValid}
                     target          = {target}
                     componentRankAll = {componentRankAll}
-                
+                    setModalVisibleCompleteCycle = {setModalVisibleCompleteCycle}
                     />
                     )}  
                     keyExtractor = {(item) => String(item.id)}

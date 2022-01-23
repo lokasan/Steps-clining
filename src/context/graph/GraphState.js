@@ -38,7 +38,7 @@ export const GraphState = ({ children }) => {
 
     const fetchEmploees = async (period = null, person = null) => {
        const emploee = await dataEmp(period, person)
-       console.log(emploee, 'MY');
+    //    console.log(emploee, 'MY');
        dispatch({type: FETCH_USERS, emploee})
        // разобраться как передавать
     

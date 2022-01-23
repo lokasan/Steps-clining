@@ -21,16 +21,16 @@ export const User = ({period, corpus_id, building_id, monthRange, showUserDetail
     const DATA_USERS_TBR_CORPUS_DETAIL = useSelector(state => state.bypass.userWithTbrCorpusDetail)
     const DATA_CYCLES_LIST_FOR_USER_IN_BUILDING = useSelector(state => state.bypass.listUsersInBuildingDetail)
     const DATA_CYCLES_LIST_FOR_USER_IN_CORPUS = useSelector(state => state.bypass.listUsersInCorpusDetail)
-    console.log(DATA_CYCLES_LIST_FOR_USER_IN_BUILDING, 'cycles list for user in building')
+    // console.log(DATA_CYCLES_LIST_FOR_USER_IN_BUILDING, 'cycles list for user in building')
     const [openedUsersInBuildingArray, setOpenedUsersInBuildingArray] = useState([])
     const [openedCyclesInUsers, setOpenedCyclesInUsers] = useState([])
     const choiseUser = useRef('')
     const choiseUserCycle = useRef('')
     const DATA_CYCLES_LIST = useRef()
     const itemIdRef = useRef()
-    useEffect(() => {
-        console.log(DATA_USERS_TBR_DETAIL, 'USER COMPONENT STAT DETAIL USE')
-      }, [DATA_USERS_TBR_DETAIL])
+    // useEffect(() => {
+    //     console.log(DATA_USERS_TBR_DETAIL, 'USER COMPONENT STAT DETAIL USE')
+    //   }, [DATA_USERS_TBR_DETAIL])
     
     const ItemUser = ({item, index}) => {
 
@@ -155,6 +155,7 @@ export const User = ({period, corpus_id, building_id, monthRange, showUserDetail
                     period={period} 
                     user_id={item.id} 
                     item_id={itemIdRef.current} 
+                    flagArrayUsersDetail={flagArrayUsersDetail}
                     getCyclesList={corpus_id ? getCyclesListForUserInCorpusDetail : getCyclesListForUserInBuildingDetail}
                     DATA_CYCLES_LIST={corpus_id ? DATA_CYCLES_LIST_FOR_USER_IN_CORPUS : DATA_CYCLES_LIST_FOR_USER_IN_BUILDING} setModalVisibleDay={setModalVisibleDay}/> : null}
                 </>

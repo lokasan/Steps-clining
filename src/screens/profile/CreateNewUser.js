@@ -105,7 +105,7 @@ export const CreateNewUser = ( {navigation} ) => {
       Sharing.shareAsync(uri);
     }
     const validateEmail = (text) => {
-      console.log(text);
+      // console.log(text);
       let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
       if (reg.test(text) === false) {
         console.log("Email is Not Correct");
@@ -117,8 +117,8 @@ export const CreateNewUser = ( {navigation} ) => {
         setEmail(text)
         setBorderBottomColor({...borderBottomColor, email: true})
         UploadDataToServer.checkUserEmail(text)
-        console.log("Email is Correct");
-        console.log(existsEmail)
+        // console.log("Email is Correct");
+        // console.log(existsEmail)
       }
     }
     const navigationReturn = () => {

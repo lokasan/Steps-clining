@@ -17,7 +17,7 @@ export const QRCode = ({goBack, navigation}) => {
   const posts = useSelector(state => state.post.postAlls)
   const postsWithComponent = useSelector(state => state.postWithComponent.postWithComponentAll)
   const {bypassId, cleanerStatus} = useSelector(state => state.bypass.bypassNumber)
-  console.log(bypassId, cleanerStatus, 'bypass and cleaner  status')
+  // console.log(bypassId, cleanerStatus, 'bypass and cleaner  status')
   // console.log('Hello', bypassId)
   const userId = useSelector(state => state.empDouble.empAll.filter(e => e.status === 1))
   // console.log(userId[0].id, 'HELLO USER NAMERS');
@@ -41,7 +41,7 @@ export const QRCode = ({goBack, navigation}) => {
     }
   );
  
-  console.log(didBlurSubscription);
+  // console.log(didBlurSubscription);
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [dataScan, setDataScan] = useState(null);
@@ -94,7 +94,7 @@ export const QRCode = ({goBack, navigation}) => {
   for (const element of posts){
     // console.log(element);
     if (dataScan === element.name) {
-      console.log(postsWithComponent, ' MY Data test');
+      // console.log(postsWithComponent, ' MY Data test');
       
       const x = new Animated.Value(0) 
       const onScroll = Animated.event([{ nativeEvent: { contentOffset: { x } }}], { useNativeDriver: true })
@@ -109,7 +109,7 @@ export const QRCode = ({goBack, navigation}) => {
               fetch('http://api.openweathermap.org/data/2.5/weather?q=Moscow&appid=1127426f6c715f020198315e1b366cba&lang=ru')
               .then((res) => res.json())
               .then(data => {
-                console.log(Math.round(data.main.temp - 272.1), data.weather[0].description)
+                // console.log(Math.round(data.main.temp - 272.1), data.weather[0].description)
                 dispatch(createBypass(id, userId[0].id, element.id, data.weather[0].description, parseInt(Math.round(data.main.temp - 272.1)), data.weather[0].icon))
                 
                 navigation.navigate('BypassScreen', {postsWithComponent, element, goBackQRScreen})

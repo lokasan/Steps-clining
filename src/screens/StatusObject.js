@@ -10,7 +10,7 @@ import { getPostAll, loadPost, loadPostForCorpus } from '../store/actions/post';
 import QRCode from 'react-native-qrcode-generator'
 import {Cycle, Clock, Rank, QRIcon, StepsIcon, PeopleIcon, ArrowRight, TimeBetweenBypass} from '../components/ui/imageSVG/circle'
 import { useState, useRef } from 'react';
-import { clearBypassObjectDetail, clearBypassObjectDetailAll, clearBypassPosts, clearBypassUsers, clearBypassUsersAverage, clearBypassUsersAverageAll, clearBypassUsersDetail, clearBypassUsersDetailAll, clearBypassUsersDetailForDay, clearListUsersStaticTbr, clearListUsersStaticWithTbrDetailAll, getImageBypassUserOfPost, getImageBypassUserOfPostCount, getListUsersAverageForPost, getListUsersStaticTbr, getListUsersStaticWithTbrDetail, loadBypassGetter, loadBypassObjectDetail, loadBypassPosts, loadBypassUsers, loadBypassUsersDetail, getComponentForBuilding, clearComponentForBuilding, loadBypassBuildingForCorpus, clearBypassBuildingForCorpus, getListUsersStaticWithTbrCorpus, clearListUsersStaticWithTbrCorpus, clearListUsersStaticWithTbrCorpusDetail, clearListUsersStaticWithTbrCorpusDetailAll, clearCyclesListForUserInBuildingDetailAll } from '../store/actions/bypass';
+import { clearBypassObjectDetail, clearBypassObjectDetailAll, clearBypassPosts, clearBypassUsers, clearBypassUsersAverage, clearBypassUsersAverageAll, clearBypassUsersDetail, clearBypassUsersDetailAll, clearBypassUsersDetailForDay, clearListUsersStaticTbr, clearListUsersStaticWithTbrDetailAll, getImageBypassUserOfPost, getImageBypassUserOfPostCount, getListUsersAverageForPost, getListUsersStaticTbr, getListUsersStaticWithTbrDetail, loadBypassGetter, loadBypassObjectDetail, loadBypassPosts, loadBypassUsers, loadBypassUsersDetail, getComponentForBuilding, clearComponentForBuilding, loadBypassBuildingForCorpus, clearBypassBuildingForCorpus, getListUsersStaticWithTbrCorpus, clearListUsersStaticWithTbrCorpus, clearListUsersStaticWithTbrCorpusDetail, clearListUsersStaticWithTbrCorpusDetailAll, clearCyclesListForUserInBuildingDetailAll, clearCyclesListForUserInCorpusDetailAll } from '../store/actions/bypass';
 import { msToTime, timeToFormat, countFormat } from '../utils/msToTime';
 import { UploadDataToServer } from '../uploadDataToServer';
 import { clearBypassRankImage, clearBypassRankImageCount, showLoaderBypassRank } from '../store/actions/bypassRank';
@@ -32,7 +32,7 @@ const {width, height} = Dimensions.get("window")
 export const StatusObject = ({navigation}) => {
   const corpusId = navigation.getParam('corpusId')
   
-  console.log()
+  // console.log()
   const [modalVisibleFilter, setModalVisibleFilter] = useState(false)
   const openFilter = () => setModalVisibleFilter(!modalVisibleFilter)
   const dispatch = useDispatch()
@@ -67,10 +67,10 @@ export const StatusObject = ({navigation}) => {
   // const DATA_USERS_TBR_DETAIL = useSelector(state => state.bypass.userWithTbrDetail)
   const emploeeAll   = useSelector(state => state.empDouble.empAll)
   // console.log('Count of photos: ', COUNT_IMAGE_TO_BYPASS_RANK)
-  console.log(DATA_USERS_TBR, 'DATA_USER_TBR')
-  console.log(emploeeAll, 'EMP_ALL DATA')
-  console.log(emploeeAll.map(emp => console.log()))
-  console.log('I have corpus with tbr detail', DATA_USERS_TBR_CORPUS)
+  // console.log(DATA_USERS_TBR, 'DATA_USER_TBR')
+  // console.log(emploeeAll, 'EMP_ALL DATA')
+  // console.log(emploeeAll.map(emp => console.log()))
+  // console.log('I have corpus with tbr detail', DATA_USERS_TBR_CORPUS)
   let imageToBypassRankArray = []
   
   useEffect(()=> {
@@ -80,9 +80,9 @@ export const StatusObject = ({navigation}) => {
       // console.log('test ', i)
     }
   }, [COUNT_IMAGE_TO_BYPASS_RANK])
-  useEffect(() => {
-    console.log(DATA_COMPONENT, 'DATA_COMPONENT')
-  }, [DATA_COMPONENT])
+  // useEffect(() => {
+  //   console.log(DATA_COMPONENT, 'DATA_COMPONENT')
+  // }, [DATA_COMPONENT])
   const USERS_LIST = useSelector(state => state.empDouble.empServer)
   // console.log(DATA_POSTS)
   // console.log(DATA_USERS, 'data userss');
@@ -144,7 +144,7 @@ export const StatusObject = ({navigation}) => {
               
             }
             else {
-              console.log(item, 'item test id')
+              // console.log(item, 'item test id')
               
               // dispatch(getListUsersStaticTbr(period, item.building_id))
               // dispatch(getListUsersStaticWithTbrDetail(period, item.building_id, '1628444545542'))
@@ -581,8 +581,8 @@ export const StatusObject = ({navigation}) => {
       })
       const ItemUsers = React.memo(({item, index}) => {
         
-        console.log('RENDER ITEMUSERS')
-        console.log('RENDER', item?.data[0]?.email)
+        // console.log('RENDER ITEMUSERS')
+        // console.log('RENDER', item?.data[0]?.email)
         let textComponent = createTextComponent(item).textComponent
         const comparePosts = choisePostS?.email === item?.data[0]?.email && 
         choisePostS?.post === item?.data[0]?.post_name
@@ -623,7 +623,7 @@ export const StatusObject = ({navigation}) => {
            </View>
        </Animated.View>)
       }, (prevProps, nextProps) => {
-        console.log(JSON.stringify(nextProps), '<<----next props')
+        // console.log(JSON.stringify(nextProps), '<<----next props')
         return nextProps.item.data[0].email === prevProps.item.data[0].email
       })
     
@@ -747,8 +747,6 @@ export const StatusObject = ({navigation}) => {
           }
         }
         return createViewDataday
-      }, (prevProps, nextProps) => {
-        console.log(nextProps, 'nextProps')
       })
 
       const [monthRange, setMonthRange] = useState('year')
@@ -789,7 +787,7 @@ export const StatusObject = ({navigation}) => {
             }
             
             item.data = getFilledArray(fullFillArray)
-            console.log(item.data, 'REKET')
+            // console.log(item.data, 'REKET')
           }
           if (monthRange === 'month_range') {
 
@@ -810,7 +808,7 @@ export const StatusObject = ({navigation}) => {
           if (period === 'year' && monthRange === 'year') {
             for (let i = 12; i >= 0; i--) {
               let currentDate = new Date(new Date().getFullYear(), new Date().getMonth() - i)
-              console.log(currentDate, 'TEST My DATE', `[${i}]`)
+              // console.log(currentDate, 'TEST My DATE', `[${i}]`)
               fullFillArray.push({date: String(currentDate.getFullYear()).slice(2) + '-' 
               + ((currentDate.getMonth() + 1) / 10 >= 1 ? 
               (currentDate.getMonth() + 1) : 
@@ -819,7 +817,7 @@ export const StatusObject = ({navigation}) => {
             
             item.data = getFilledArray(fullFillArray)
           }
-          console.log(item.data, 'REKET')
+          // console.log(item.data, 'REKET')
           for (let el in item.data) {
             
               let [year, month, day] = item.data[el].date.split('-')
@@ -949,7 +947,7 @@ export const StatusObject = ({navigation}) => {
       }
       const ItemUsersDetailsModal = React.memo(({item, index}) => {
         let textComponent = createTextComponent(item).textComponent
-        console.log("RENDER itemusersdetailsModal")
+        // console.log("RENDER itemusersdetailsModal")
         const todayBeforeTemplate = (() => {
           return [
             <Text style={styles.beastAndBad}>Обход №</Text>,
@@ -1042,7 +1040,7 @@ export const StatusObject = ({navigation}) => {
          
         })
     const renderItemPosts = useCallback(({ item, index }) => {
-        console.log(item, 'render item posts')
+        // console.log(item, 'render item posts')
       return <><ItemPosts item = {item} index = {index}/>
       { flagArrayPosts.indexOf(item.title) !== -1 ? <Animated.FlatList 
       showsVerticalScrollIndicator = {false} 
@@ -1091,6 +1089,7 @@ export const StatusObject = ({navigation}) => {
         setFlagArrayUsersDetail([])
         dispatch(clearBypassPosts())
         dispatch(clearCyclesListForUserInBuildingDetailAll())
+        dispatch(clearCyclesListForUserInCorpusDetailAll())
         setFlagArrayObjects([])
         setMonthRange('year')
       }
@@ -1247,14 +1246,14 @@ export const StatusObject = ({navigation}) => {
                 dispatch(clearBypassBuildingForCorpus())
                 dispatch(getListUsersStaticWithTbrCorpus(period, corpusId))
                 dispatch(loadPostForCorpus(corpusId))
-                console.log('period:' , period)
+                // console.log('period:' , period)
                 setModalVisibleFilter(!modalVisibleFilter)
               }}
               style={{borderRadius: 20, padding: 10, elevation: 2}, stateChart.employee ? {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: "black"} : {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: '#2196F3'}}
             >
               <Text style={{color: 'white'}}>{i18n.t('employees')}</Text>
             </Pressable>
-            <Pressable
+            {/* <Pressable
               onPress={() => {
                 stateChart.posts = true
                 setModalVisibleFilter(!modalVisibleFilter)
@@ -1262,7 +1261,7 @@ export const StatusObject = ({navigation}) => {
               style={{borderRadius: 20, padding: 10, elevation: 2}, stateChart.posts ? {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: "black"} : {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: '#2196F3'}}
             >
               <Text style={{color: 'white'}}>{i18n.t('posts')}</Text>
-            </Pressable>
+            </Pressable> */}
             <Pressable
               onPress={() => {
                 stateChart.buildings = true

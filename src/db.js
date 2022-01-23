@@ -80,7 +80,7 @@ export class DB {
         })
     }
     static createUser(data) {
-        console.log(data, 'User_New_Create')
+        // console.log(data, 'User_New_Create')
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
@@ -253,11 +253,12 @@ export class DB {
         })
     }
     static createPost({id, building_id, name, description, img, qrcode, qrcode_img}) {
+        console.log('POST ID is: ', id, ' POST NAME IS: ', name)
         return new Promise((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
                     CREATE_NEW_POST,
-                    [id ? id : Date.now(), building_id, name, description, img, qrcode, qrcode_img],
+                    [id, building_id, name, description, img, qrcode, qrcode_img],
                     (_, result) => resolve(result.insertId),
                     (_, error) => reject(error)
                 )
@@ -435,7 +436,7 @@ export class DB {
             db.transaction(tx => {
                 const emptyComponentRank = (5 / (componentLength)).toFixed(2)
                 
-                console.log(componentRank, 'приятно познакомиться');
+                // console.log(componentRank, 'приятно познакомиться');
                 for (let el of componentRank) {
                     if (el.rank !== 5){
                         tx.executeSql(

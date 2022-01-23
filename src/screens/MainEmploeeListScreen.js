@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import { Footer } from '../components/ui/Footer'
-import {View, Text, StyleSheet, FlatList, Alert, Platform, Image, ActivityIndicator} from 'react-native'
+import {Pressable, View, Text, StyleSheet, FlatList, Alert, Platform, Image, ActivityIndicator} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import { getEmploeesList } from '../dataBaseRequests/dataBaseRequests'
 import { EmploeeCard } from '../components/EmploeeCard'
@@ -18,22 +18,26 @@ import { loadComponent } from '../store/actions/component'
 import { getUsersServer } from '../store/actions/empDouble'
 import { BasicStatEmploee } from '../components/BasicStatEmploee'
 import { Cycle, QRIcon, Rank, StepsIcon } from '../components/ui/imageSVG/circle'
-import { getSingleUserStat, getUsersBasicStat } from '../store/actions/bypass'
+import { getSingleUserStat, getUsersBasicStat, getBypassMapCompleteCycle } from '../store/actions/bypass'
 import DateTimePicker from '@react-native-community/datetimepicker'
+import { ModalPostsDone } from '../components/ui/ModalPostsDone'
 // import {loadEmploeeDouble} from '../../store/actions/empDouble'
 
 
 
 export const MainEmploeeListScreen = ( {navigation}) => {
     const loading                   = useSelector(state => state.post.loading)
+    const emploeeAll   = useSelector(state => state.empDouble.empAll)
     let   buildings                 = useSelector(state => state.object.objAll)
     let   components                = useSelector(state => state.component.componentAll)
     let   posts                     = useSelector(state => state.post.postAll)
+    
     let userStat = useSelector(state => state.bypass.userSingleStat)
     let usersBasicStat = useSelector(state => state.bypass.usersBasicStat)
     const [date, setDate] = useState(Platform.OS === 'ios' ? new Date(new Date().getTime() - (new Date().getTime()) % (24 * 60 * 60 * 1000) - (3 * 60 * 60 * 1000)) : new Date(new Date().getTime() - (new Date().getTime()) % (24 * 60 * 60 * 1000)));
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
+    
     const onChange = (event, selectedDate) => {
       const currentDate = selectedDate || date;
       setShow(Platform.OS === 'ios');
@@ -57,13 +61,14 @@ export const MainEmploeeListScreen = ( {navigation}) => {
       showMode('time');
     };
     const isOnline = useSelector(state => state.empDouble.isOnlineEmp)
-    console.log('MYOF', isOnline)
+    // console.log('MYOF', isOnline)
     const [pushToken, setPushToken] = useState()
     const dispatch = useDispatch()
-    console.log('buildings', buildings)
+    // console.log('buildings', buildings)
+    
     useEffect(() => {
         registerForPushNotificationsAsync()
-        console.log("USEEFFECT BUILDINGS INFO", buildings)
+        // console.log("USEEFFECT BUILDINGS INFO", buildings)
         for (el of buildings) {
           
             dispatch(loadPost(el.id)) 
@@ -95,7 +100,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     //     dispatch(loadPostWithComponent(el.id))
     //   }
     // }, [posts])
-    
+   
     registerForPushNotificationsAsync = async () => {
         if (Constants.isDevice) {
           const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -109,7 +114,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
             return;
           }
           const token = (await Notifications.getExpoPushTokenAsync()).data;
-          console.log(token, ' TOKEN');
+          // console.log(token, ' TOKEN');
           setPushToken(token)
         } else {
           alert('Must use physical device for Push Notifications');
@@ -135,13 +140,13 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     // useEffect(() => {
     //     dispatch(loadEmploeeDouble())
     // }, [dispatch])
-    const emploeeAll   = useSelector(state => state.empDouble.empAll)
+    
     let   tempPrivileg = false
-    console.log(emploeeAll, 'Алл сотрудники');
     for (let i of emploeeAll) {
+      console.log(`name: ${i.name} surname: ${i.surname} lastname: ${i.lastname}`)
         if (i.status && i.privileg) {
             tempPrivileg = true
-            
+            console.log(i.name, ' <--- Is name', ' status: ', i.status, ' privileg ', i.privileg)
         }
         if (i.status) {
           serfIdUser = i.id
@@ -185,6 +190,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
       setRefresh(true)
     }
     return <View style = {{flex: 1}}>
+      
       {show && (
         <DateTimePicker
           testID="dateTimePicker"
@@ -275,5 +281,13 @@ const styles = StyleSheet.create({
         borderColor: '#fff',
         width      : '100%',
         // backgroundColor: '#1C1B1B'
+    },
+    button: {
+      borderRadius: 20,
+      padding: 10,
+      elevation: 2
+    },
+    buttonOpen: {
+      backgroundColor: "#F194FF",
     },
 })

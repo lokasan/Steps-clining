@@ -31,7 +31,7 @@ export const PhotoPicker = ({onPick}) => {
                 }],
             {compress: 0.37, format: SaveFormat.JPEG}
         )
-        console.log(manipResult)
+        // console.log(manipResult)
         setImage(manipResult.uri)
         onPick(manipResult.uri)
     }
@@ -48,7 +48,7 @@ export const PhotoPicker = ({onPick}) => {
             aspect: [4, 3]
 
         })
-        console.log(img)
+        // console.log(img)
         await compressedImage(img)
         // setImage(img.uri)
         // onPick(img.uri)

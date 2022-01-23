@@ -14,7 +14,7 @@ const opt = {
 }
 const fetchData = async () => {
   const res = await GoogleFit.getDailyStepCountSamples(opt)
-  console.log(res)
+  // console.log(res)
 }
 export async function signInWithGoogleAsync() {
     try {
@@ -63,7 +63,7 @@ export async function signInWithGoogleAsync() {
                 .catch(err => console.log(JSON.stringify(err)))
           // Alert.alert(JSON.stringify(result.user))
           // Alert.alert(userInfoResponse)
-          console.log(result.accessToken);
+          // console.log(result.accessToken);
           
 
         return result.accessToken;

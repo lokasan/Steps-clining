@@ -1,6 +1,6 @@
 
 import React, {useCallback, useEffect, useState, useRef} from 'react'
-import {View, Text, StyleSheet, Image, Button, ScrollView, SafeAreaView, Alert, FlatList, TouchableOpacity, Animated, StatusBar, ActivityIndicator} from 'react-native'
+import {Pressable, View, Text, StyleSheet, Image, Button, ScrollView, SafeAreaView, Alert, FlatList, TouchableOpacity, Animated, StatusBar, ActivityIndicator} from 'react-native'
 
 import {useDispatch, useSelector} from 'react-redux'
 import { ComponentsBypassCard } from '../components/ComponentsBypassCard'
@@ -12,17 +12,20 @@ import { finishedBypass } from '../store/actions/bypass'
 import { AppLoader } from '../components/ui/AppLoader'
 import { hideLoaderBypassRank, showLoaderBypassRank } from '../store/actions/bypassRank'
 import { Directions, FlingGestureHandler, State } from 'react-native-gesture-handler'
+import { ModalPostsDone } from '../components/ui/ModalPostsDone'
 export const BypassScreen = ({navigation}) => {
     const dispatch = useDispatch()
     const post = navigation.getParam('element')
     const {bypassId} = useSelector(state => state.bypass.bypassNumber)
-    console.log(bypassId, 'BYPASSSCREEN YOU LIVE?')
+    // console.log(bypassId, 'BYPASSSCREEN YOU LIVE?')
     let components = useSelector(state => state.postWithComponent.postWithComponentAll)
     const startedBypassRanks = useSelector(state => state.bypassRank.bypassRankIsStarted)
     let componentsFinished = useSelector(state => state.bypassRank.bypassComponents)
     const loading = useSelector(state => state.bypassRank.loading)
     // console.log(bypassId, 'АЙДИ ОБХОДА');
     
+    const [modalVisibleCompleteCycle, setModalVisibleCompleteCycle] = useState(false)
+
     useEffect(() => {
        (async () => {
         dispatch(loadFinishedBypassComponents(bypassId))
@@ -78,7 +81,7 @@ export const BypassScreen = ({navigation}) => {
         navigation={navigation} 
         post={post}
         startedBypassRanks={startedBypassRanks} 
-        
+        setModalVisibleCompleteCycle={setModalVisibleCompleteCycle}
         target={target}/>
     })
     const loader = <View style = {styles.center}>
@@ -89,7 +92,7 @@ export const BypassScreen = ({navigation}) => {
     
             <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
             {/* <View style={styles.container, styles.centers}> */}
-            
+                <ModalPostsDone navigation={navigation} modalVisible={modalVisibleCompleteCycle} setModalVisible={setModalVisibleCompleteCycle}/>
                 
                 {false ? loader : <FlatList
                 data={componentsValid.length ? [componentsValid[0]] : []}
@@ -106,6 +109,7 @@ export const BypassScreen = ({navigation}) => {
                 />}
                 
                 {/* </View> */}
+                <Pressable onPress={() => setModalVisibleCompleteCycle(true)}><Text>Press me</Text></Pressable>
             </SafeAreaView>)
 }
 const styles = StyleSheet.create({

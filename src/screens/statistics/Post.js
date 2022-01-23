@@ -70,7 +70,7 @@ export const Post = ({user_id, period, monthRange,
         return createdElements
     }
     const CreateViewDataComponentPost = ({item, index}) => {
-        console.log(index, 'index in createViewDataComponentPost')
+        // console.log(index, 'index in createViewDataComponentPost')
         const data = {data: DATA_USER_WITH_TBR_DETAIL.length
             ? DATA_USER_WITH_TBR_DETAIL.filter(el => el.user_id === user_id) 
             : DATA_USERS_TBR_CORPUS_DETAIL.filter(el => el.user_id === user_id)} 
@@ -171,7 +171,7 @@ export const Post = ({user_id, period, monthRange,
                 {ItemPost()}
                </>
     }
-    console.log(DATA_USER_WITH_TBR_DETAIL, 'DATA_USER_WITH_TBR_DETAIL')
+    // console.log(DATA_USER_WITH_TBR_DETAIL, 'DATA_USER_WITH_TBR_DETAIL')
     return (
         <>
         <ScrollView>

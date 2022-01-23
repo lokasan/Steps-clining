@@ -16,7 +16,7 @@ export const MARGIN = 16
 export const HEIGHT = CARD_HEIGHT + MARGIN * 2
 const { height: wHeight } = Dimensions.get("window")
 const height = wHeight - 64
-export const ComponentsBypassCard = ({index, y, item, navigation, post, startedBypassRanks, componentsValid, target, translateYs, opacitys, scales, activeIndex, componentsList}) => {
+export const ComponentsBypassCard = ({index, y, item, navigation, post, startedBypassRanks, componentsValid, target, translateYs, opacitys, scales, activeIndex, componentsList, setModalVisibleCompleteCycle}) => {
 
     startedBypassRanks = useSelector(state => state.bypassRank.bypassRankIsStarted)
     // console.log(startedBypassRanks, 'STATE RANK')
@@ -59,14 +59,14 @@ export const ComponentsBypassCard = ({index, y, item, navigation, post, startedB
                 if (startedBypassRank.length) {
                     dispatch(clearComponentRank())
                     // dispatch(showLoaderComponentRank())
-                    navigation.navigate('ComponentsRankScreen', {item: componentsList[activeIndex], post, componentsValid, target})
+                    navigation.navigate('ComponentsRankScreen', {item: componentsList[activeIndex], post, componentsValid, target, setModalVisibleCompleteCycle})
                 } else { 
                     dispatch(clearComponentRank())
                     // dispatch(showLoaderComponentRank())
 
                     dispatch(createBypassRank(bypassId, componentsList[activeIndex].id))
                     
-                    navigation.navigate('ComponentsRankScreen', {item: componentsList[activeIndex], post, startedBypassRank: startedBypassRank, componentsValid, target})
+                    navigation.navigate('ComponentsRankScreen', {item: componentsList[activeIndex], post, startedBypassRank: startedBypassRank, componentsValid, target, setModalVisibleCompleteCycle})
                 }
                 
                 }}>

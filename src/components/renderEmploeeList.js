@@ -8,8 +8,8 @@ export const RenderEL = ({ emp, emploeeMy, renderChartForEmploee, status, userAc
     const { updateEmploee } = useContext(GraphContext)
     const [myIsCo, setMyIsCo] = useState(false)
     
-    console.log(emp.key_auth, "item ", emp.id);
-    console.log('Количество шагов', emp.steps)
+    // console.log(emp.key_auth, "item ", emp.id);
+    // console.log('Количество шагов', emp.steps)
     return (
         <TouchableOpacity onPress={() => {
             // updateEmploee('1599678906428', 666)

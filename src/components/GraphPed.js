@@ -116,15 +116,15 @@ export const GraphPed = ( {navigation} ) => {
         tempP = new Date(2020, 0, 1, 0, count+=1439)
         tempP = tempP.getFullYear() + '-' + (tempP.getMonth() + 1) + '-' +tempP.getDate() + ' ' + tempP.getHours() + ':' + tempP.getMinutes()
         tmp = tempP.split(/\-|\ |\:/)
-        console.log('tmp_first_cycle: ', tmp)
+        // console.log('tmp_first_cycle: ', tmp)
         for (let j = 1; j < tmp.length; j++) {
           if (tmp[j].length == 1) {
             tmp[j] = '0' + tmp[j]
             tempP = tmp[0] + '-' + tmp[1] + '-' + tmp[2] + ' ' + tmp[3] + ':' + tmp[4]
-            console.log('tempP second Cycle: ', tempP)
+            // console.log('tempP second Cycle: ', tempP)
           }
         }
-        console.log('Out Cycle: ', tempP)
+        // console.log('Out Cycle: ', tempP)
         saveDataReq.push(tempP)
         db.transaction(tx => {
         tx.executeSql("insert into step_time (user_id, count_step, date_time, current_time) values (?, ?, ?, ?);", [6, Math.floor(Math.random() * 4 + 1), saveDataReq[i], Date.now()])
@@ -142,7 +142,7 @@ export const GraphPed = ( {navigation} ) => {
     const emploeeAll   = useSelector(state => state.empDouble.empAll)
     let   tempPrivileg = false
     let serfIdUser = 0
-    console.log(emploeeAll, 'Алл сотрудники');
+    // console.log(emploeeAll, 'Алл сотрудники');
     for (let i of emploeeAll) {
         if (i.status && i.privileg) {
             tempPrivileg = true

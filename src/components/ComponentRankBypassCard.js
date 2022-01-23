@@ -14,6 +14,7 @@ import { PhotoPickerBypass } from './PhotoPickerBypass'
 import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
 import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator'
+import { ModalPostsDone } from './ui/ModalPostsDone'
 
 
 const  { width }                      = Dimensions.get("window");
@@ -24,7 +25,7 @@ export const MARGIN                   = 16
 export const HEIGHT                   = CARD_HEIGHT + MARGIN * 2
 const  { height: wHeight }            = Dimensions.get("window")
 const  height                         = wHeight - 64
-export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypassRankId, componentsValid, target, componentRankAll}) => {
+export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypassRankId, componentsValid, target, componentRankAll, setModalVisibleCompleteCycle}) => {
     const dispatch = useDispatch()
     
     let components         = useSelector(state => state.postWithComponent.postWithComponentAll)
@@ -82,7 +83,7 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
                 }],
             {compress: 0.37, format: SaveFormat.JPEG}
         )
-        console.log(manipResult)
+        // console.log(manipResult)
         setImage([{id: myId, image: manipResult.uri}])
     }
     const takePhoto = async () => {
@@ -105,9 +106,10 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
         
         setModalVisible(true)
         
-        console.log(img)
+        // console.log(img)
     }
     return (<Fragment>
+        
         <PhotoPickerBypass 
             userId={userId} 
             target={target} 
@@ -124,8 +126,8 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
             setModalVisible={setModalVisible} />
         <Animated.View    style         = {[styles.card]} key = {String(item.id)}>
         <TouchableOpacity activeOpacity = {0.5} onPress       = {() => {
-                console.log(item.id, " Я Улетаю в базу", ' ', bypassRankId)
-                console.log(componentReload, 'Component Reload')
+                // console.log(item.id, " Я Улетаю в базу", ' ', bypassRankId)
+                // console.log(componentReload, 'Component Reload')
                 maxElement = componentReload.filter(el => el.rank == Math.max(...componentReload.map(e => e.rank))  ? el : null)
                 minElement = componentReload.filter(el => el.rank == Math.min(...componentReload.map(e => e.rank))  ? el : null)
                 if (maxElement.length) {
@@ -149,7 +151,8 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
                     dispatch(getSingleUserStat(userId[0].id))
                     target()
                     dispatch(clearPostWithComponent())
-                    navigation.navigate('QRCode')
+                    // navigation.navigate('QRCode')
+                    setModalVisibleCompleteCycle(true)
                 } else if(modalVisible) {navigation.navigate('BypassScreen')}
                 
             }}>

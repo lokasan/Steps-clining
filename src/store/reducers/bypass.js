@@ -21,6 +21,7 @@ const initialState = {
     listUsersInBuilding: [],
     listUsersInBuildingDetail: [],
     listUsersInCorpusDetail: [],
+    listPostsInCycleComplete: [],
     error: null
 }
 
@@ -226,6 +227,14 @@ export const bypassReducer = (state = initialState, action) => {
         case 'CLEAR_CYCLES_LIST_FOR_BUILDING_DETAIL_ALL': return {
             ...state,
             listUsersInBuildingDetail: []
+        }
+        case 'CLEAR_CYCLES_LIST_FOR_CORPUS_DETAIL_ALL': return { 
+            ...state,
+            listUsersInCorpusDetail: []
+        }
+        case 'GET_BYPASS_MAP_COMPLETE_CYCLE': return {
+            ...state,
+            listPostsInCycleComplete: action.payload
         }
         default: return state
     }
