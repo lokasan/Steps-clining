@@ -69,14 +69,14 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     useEffect(() => {
         registerForPushNotificationsAsync()
         // console.log("USEEFFECT BUILDINGS INFO", buildings)
-        for (el of buildings) {
+        for (let el of buildings) {
           
             dispatch(loadPost(el.id)) 
           }
-        for (el of components) {
+        for (let el of components) {
           dispatch(loadComponentRank(el.id))
         }
-        for (el of posts) {
+        for (let el of posts) {
 
           dispatch(loadPostWithComponent(el.id))
         }
@@ -101,7 +101,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     //   }
     // }, [posts])
    
-    registerForPushNotificationsAsync = async () => {
+    const registerForPushNotificationsAsync = async () => {
         if (Constants.isDevice) {
           const { status: existingStatus } = await Notifications.getPermissionsAsync();
           let   finalStatus                = existingStatus;

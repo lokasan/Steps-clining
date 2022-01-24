@@ -46,7 +46,8 @@ export const MainScreen = ({navigation}) => {
   
   useEffect(() => {
     dispatch(getUsersServer())
-    loadGetDB()
+    loadGetDB() 
+    // -- load get db will be checking future 
     dispatch(loadObject())
     dispatch(loadComponent())
     
@@ -78,15 +79,11 @@ export const MainScreen = ({navigation}) => {
   //   }
   // }, [buildings])
   const getPADATA = () => {
-    return new Promise(res => {
-      db.transaction(tx => {
-        tx.executeSql('pragma table_info(corpus);', [], (_, {rows}) => {
-          // console.log(JSON.stringify(rows), ' POSTS IN LOCAL DATABASE')
-          // console.log(posts?.length, ' COUNT POSTS IN STATE')
-          res()
-        })
-      })
-    })
+    try {
+      navigation.navigate('Auth')
+    } catch(e) {
+      console.log('Error:', e)
+    }
   }
   async function getAsyncData() {
     await buildQ()

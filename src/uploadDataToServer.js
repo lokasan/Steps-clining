@@ -399,7 +399,7 @@ export async function doCreateAndRemoveLocalStoreAndBase(data, get, create, remo
         }
     }
     if (data['REMOVE_ELEMENTS'].length) {
-        for (el of data['REMOVE_ELEMENTS']) {
+        for (let el of data['REMOVE_ELEMENTS']) {
             const obj = await get(el['id'])
             if (obj.length) {
                 await remove(el['id'])
@@ -420,7 +420,7 @@ export async function doCreateAndRemoveLocalStoreAndBase(data, get, create, remo
     }
     if (data['UPDATE_ELEMENTS'].length) {
         data['UPDATE_ELEMENTS'].map((el, id) => el['path'] = data['CONTENT_UPDATE'][id])
-        for (el of data['UPDATE_ELEMENTS']) {
+        for (let el of data['UPDATE_ELEMENTS']) {
             const obj = await get(el['id'])
             if (obj.length) {
                 const filename = FileSystem.documentDirectory + el['image'].match(/\d+.jpeg$|\d+.jpg$|\d+.gif$/g)

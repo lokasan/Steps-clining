@@ -39,6 +39,8 @@ import { BypassScreen } from '../screens/BypassScreen'
 import { ComponentsRankScreen } from '../screens/ComponentsRankScreen'
 import { BasicStatEmploeeDetail } from '../screens/BasicStatEmploeeDetail'
 import { CreateNewCorpus } from '../screens/profile/CreateNewCorpus'
+
+
 const navigatorOptions = {
     defaultNavigationOptions: {
         headerStyle: {

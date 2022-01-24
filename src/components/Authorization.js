@@ -30,7 +30,7 @@ export const Authorization = ({navigation}) => {
     }, [])
     useEffect(() => {
         // console.log('USEFFECT BUILDINGS!!', JSON.stringify(buildings))
-        for (el of buildings) {
+        for (let el of buildings) {
           dispatch(loadPost(el.id)) 
         }
       }, [buildings])
