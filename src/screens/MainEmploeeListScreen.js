@@ -230,13 +230,13 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     </View>
 }
 
-MainEmploeeListScreen.navigationOptions = ({navigation}) => {
+MainEmploeeListScreen.navigationOptions = ({route, navigation}) => {
     return {headerTitle: '',
-    headerRight: () => navigation.getParam('access') ? <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+    headerRight: () => route.params.access ? <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
     <Item 
     title='Private Account'
     iconName='ios-calendar'
-    onPress={() => navigation.getParam('test')()}
+    onPress={() => route.params.test()}
     />
   </HeaderButtons> : null,
     headerLeft: () => <HeaderButtons HeaderButtonComponent = {AppHeaderIcon}>

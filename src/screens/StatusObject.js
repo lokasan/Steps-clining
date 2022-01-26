@@ -29,8 +29,8 @@ import { DateChanger } from '../components/Analytics/DateChanger';
 // import Shares from 'react-native-share'
 const NORMAL_RANK = 3
 const {width, height} = Dimensions.get("window")
-export const StatusObject = ({navigation}) => {
-  const corpusId = navigation.getParam('corpusId')
+export const StatusObject = ({route, navigation}) => {
+  const {corpusId} = route.params
   
   // console.log()
   const [modalVisibleFilter, setModalVisibleFilter] = useState(false)
@@ -1497,24 +1497,15 @@ export const StatusObject = ({navigation}) => {
           </View>}
         </SafeAreaView>
 }
-StatusObject.navigationOptions = ({navigation}) => ({
-    headerTitle: navigation.getParam('corpusName'),
+StatusObject.navigationOptions = ({route, navigation}) => ({
+    headerTitle: route.params.corpusName,
     headerRight: () => <HeaderButtons HeaderButtonComponent = {AppHeaderIcon}>
       <Item
       title='Filter Object'
       iconName='ios-options'
-      onPress={() => navigation.getParam('openModalFilter')()}
+      onPress={() =>  route.params.openModalFilter()}
       />
-    </HeaderButtons>,
-  //   headerLeft: () => <HeaderButtons HeaderButtonComponent = {AppHeaderIcon}>
-  //   <Item
-  //   title    = 'toogle'
-  //   iconName = 'ios-menu'
-  //   onPress  = {() => navigation.toggleDrawer()}
-  //   />
-  // </HeaderButtons>
-    
-    
+    </HeaderButtons> 
   })
 
   const styles = StyleSheet.create({

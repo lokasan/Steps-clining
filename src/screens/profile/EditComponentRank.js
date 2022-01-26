@@ -11,10 +11,10 @@ import { PhotoPicker } from '../../components/PhotoPicker'
 import { editComponentRank } from '../../store/actions/componentRank'
 import findTrashSymbolsInfo from '../../utils/findTrashSymbolsInfo'
 
-export const EditComponentRank = ({navigation}) => {
+export const EditComponentRank = ({route, navigation}) => {
     const dispatch = useDispatch()
 
-    const componentRank = navigation.getParam('componentRank')
+    const {componentRank} = route.params
 
     const componentRankId = componentRank.id
     const componentRankName = componentRank.name
@@ -44,7 +44,7 @@ export const EditComponentRank = ({navigation}) => {
       
       dispatch(editComponentRank(componentRank))
       
-      navigation.navigate('ComponentInfo')
+      navigation.goBack()
     }
     return <ScrollView style={styles.wrapper}>
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -86,8 +86,8 @@ export const EditComponentRank = ({navigation}) => {
       </TouchableWithoutFeedback>
     </ScrollView>
 }
-EditComponentRank.navigationOptions = ({navigation}) => {
-    const componentRank = navigation.getParam('componentRank')
+EditComponentRank.navigationOptions = ({route, navigation}) => {
+    const {componentRank} = route.params
     const componentRankName = componentRank.name
     const componentRankRank = componentRank.rank
     return {

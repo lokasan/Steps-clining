@@ -38,20 +38,20 @@ const removeHandler = (object, dispatch, navigation) => {
       
 }
 
-export const AttributeSingle = ({navigation}) => {
+export const AttributeSingle = ({route, navigation}) => {
     const openComponentRankHandler = component => {
         navigation.navigate('ComponentRankInfo', {componentRankId: component.id, componentRankName: component.name})
     }
     const dispatch = useDispatch()
   
     const [zoomable, setZoomable] = useState(false)
-    const componentId = navigation.getParam('componentId')
+    const {componentId} = route.params
     const component = useSelector(state => state.component.componentAll.find(e => e.id === componentId))
    
     // console.log(component);
     useEffect(() => {
         dispatch(loadComponentRank(componentId))
-    }, [dispatch])
+    }, [])
     const componentRankAll = useSelector(state => state.componentRank.componentRankAll)
     countComponentRank = componentRankAll.length + 1
     listComponentRank = componentRankAll
@@ -150,16 +150,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#1C1B1B'
     }, 
 })
-AttributeSingle.navigationOptions = ({ navigation }) => {
-    const name = navigation.getParam('componentName')
-    const componentId = navigation.getParam('componentId')
+AttributeSingle.navigationOptions = ({route, navigation }) => {
+    const name = route.params.componentName
+    const {componentId} = get.params
     return {
         headerTitle: name,
         headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
         <Item 
         title='AddNewUser'
         iconName='ios-add-circle-outline'
-        onPress={() => navigation.navigate('CreateComponentRank', {componentId, countComponentRank, listComponentRank})}
+        onPress={() => navigation.navigate('CreateComponentRank', {componentId})}
         />
       </HeaderButtons>
     }

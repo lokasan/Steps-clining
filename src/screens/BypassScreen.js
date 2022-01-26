@@ -13,9 +13,9 @@ import { AppLoader } from '../components/ui/AppLoader'
 import { hideLoaderBypassRank, showLoaderBypassRank } from '../store/actions/bypassRank'
 import { Directions, FlingGestureHandler, State } from 'react-native-gesture-handler'
 import { ModalPostsDone } from '../components/ui/ModalPostsDone'
-export const BypassScreen = ({navigation}) => {
+export const BypassScreen = ({route, navigation}) => {
     const dispatch = useDispatch()
-    const post = navigation.getParam('element')
+    const post = route.params.element
     const {bypassId} = useSelector(state => state.bypass.bypassNumber)
     // console.log(bypassId, 'BYPASSSCREEN YOU LIVE?')
     let components = useSelector(state => state.postWithComponent.postWithComponentAll)
@@ -40,7 +40,7 @@ export const BypassScreen = ({navigation}) => {
         return <AppLoader/>
     }
     let componentsValid = components
-    const target = navigation.getParam('goBackQRScreen')
+    const target = route.params.goBackQRScreen
     if (componentsFinished.length) {
             componentsValid = components.filter(e => componentsFinished.findIndex(i => i.id == e.id) === -1)
         }
@@ -103,13 +103,7 @@ export const BypassScreen = ({navigation}) => {
                     flex: 1,
                     alignItems: 'center',
                     justifyContent: 'center'
-                }}
-                
-                // {...{onScroll}}
-                />}
-                
-                {/* </View> */}
-                <Pressable onPress={() => setModalVisibleCompleteCycle(true)}><Text>Press me</Text></Pressable>
+                }}/>}
             </SafeAreaView>)
 }
 const styles = StyleSheet.create({
@@ -177,9 +171,9 @@ const styles = StyleSheet.create({
     },
 })
 
-BypassScreen.navigationOptions = ({ navigation }) => {
-    const post = navigation.getParam('element')
-    return {
-        headerTitle: post.name
-    }
-}
+// BypassScreen.navigationOptions = ({ route, navigation }) => {
+//     const post = route.params.element
+//     return {
+//         headerTitle: post.name
+//     }
+// }

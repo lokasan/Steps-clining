@@ -14,12 +14,12 @@ import { loadComponent, removeComponent, updateComponent } from '../../store/act
 import { loadPostWithComponent } from '../../store/actions/postWithComponent'
 import { ModalZoomable } from '../../components/ui/ModalZoomable'
 
-export const PostWithComponent = ({navigation}) => {
+export const PostWithComponent = ({route, navigation}) => {
     
     const dispatch = useDispatch()
   
     const [zoomable, setZoomable] = useState(false)
-    const post = navigation.getParam('post')
+    const {post} = route.params
     const postWithComponent = useSelector(state => state.post.postAll.find(e => e.id === post.id))
     const componentAll = useSelector(state => state.component.componentAll)
     const postWithComponentAll = useSelector(state => state.postWithComponent.postWithComponentAll)
@@ -124,8 +124,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#1C1B1B'
     }, 
 })
-PostWithComponent.navigationOptions = ({ navigation }) => {
-    const post = navigation.getParam('post')
+PostWithComponent.navigationOptions = ({route, navigation }) => {
+    const {post} = route.params
     const postId = post.id
     const postName = post.name
     

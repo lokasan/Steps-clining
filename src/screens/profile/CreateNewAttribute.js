@@ -34,7 +34,7 @@ export const CreateNewComponent = ({navigation}) => {
         
       }
       dispatch(addComponent(component))
-      navigation.navigate('Components')
+      navigation.goBack()
     }
     return <ScrollView style={styles.wrapper}>
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>

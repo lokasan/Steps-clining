@@ -8,6 +8,7 @@ import AppLoading from 'expo-app-loading'
 import { bootstrap } from './src/bootstrap'
 import { AppNavigation } from './src/navigation/AppNavigation'
 
+
 export default function App() {
   
   const [isReady, setIsReady] = useState(false)
@@ -24,7 +25,7 @@ export default function App() {
       <ScreenState>
         <EmploeeState>
           <GraphState>
-          <AppNavigation/>
+           <AppNavigation/>
         </GraphState>
         </EmploeeState> 
       </ScreenState>

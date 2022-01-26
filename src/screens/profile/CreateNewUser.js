@@ -122,7 +122,7 @@ export const CreateNewUser = ( {navigation} ) => {
       }
     }
     const navigationReturn = () => {
-      navigation.navigate('Emploees')
+      navigation.goBack()
     }
     
     const generatePassword = () => {

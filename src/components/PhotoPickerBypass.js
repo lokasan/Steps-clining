@@ -10,7 +10,7 @@ import { finishedBypass, getSingleUserStat } from '../store/actions/bypass'
 import { clearPostWithComponent, deleteComponentToPostLink } from '../store/actions/postWithComponent'
 import { MAX_IMAGES_FOR_BYPASS } from './types'
 
-export const PhotoPickerBypass = ({userId, target, componentsFinished, components, dispath, bypassId, bypassRankId, itemComponentRank, navigation, modalVisible, setModalVisible, image, setImage}) => {
+export const PhotoPickerBypass = ({post, userId, target, componentsFinished, components, dispath, bypassId, bypassRankId, itemComponentRank, navigation, setModalVisibleCompleteCycle, modalVisible, setModalVisible, image, setImage}) => {
     
     
 
@@ -157,9 +157,10 @@ export const PhotoPickerBypass = ({userId, target, componentsFinished, component
                         dispatch(getSingleUserStat(userId[0].id))
                         target()
                         dispatch(clearPostWithComponent())
-                        navigation.navigate('QRCode')
+                        navigation.navigate('BypassScreen', {element: post, goBackQRScreen: target})
+                        setModalVisibleCompleteCycle(true)
                     } else {
-                        navigation.navigate('BypassScreen')
+                        navigation.navigate('BypassScreen', {element: post, goBackQRScreen: target})
                     }
                 }}
                       disabled = {!image.length}>

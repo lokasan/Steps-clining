@@ -21,25 +21,16 @@ export const QRCode = ({goBack, navigation}) => {
   // console.log('Hello', bypassId)
   const userId = useSelector(state => state.empDouble.empAll.filter(e => e.status === 1))
   // console.log(userId[0].id, 'HELLO USER NAMERS');
-  let didBlurSubscription = navigation.addListener(
-    'didBlur',
-    payload => {
-      setIsFocused(navigation.isFocused())
-      console.debug('didBlur', payload, isFocused);
+  let didBlurUnSubscription = navigation.addListener('blur', () =>  setIsFocused(navigation.isFocused()));
+  let didFocusUnSubscription = navigation.addListener( 'focus', () => setIsFocused(navigation.isFocused()));
+ 
+  // useEffect(() => {
+  //   navigation.addListener('focus', () => setIsFocused(navigation.isFocused()))
+  // }, [])
 
-
-    }
-  );
-  // console.log(isFocused, 'hiiii');
-  let didFocusSubscription = navigation.addListener(
-    'didFocus',
-    payload => {
-      setIsFocused(navigation.isFocused())
-      // console.debug('didFocus', payload, isFocused);
-
-
-    }
-  );
+  // useEffect(() => {
+  //   navigation.addListener('blur', )
+  // }, [])
  
   // console.log(didBlurSubscription);
   const [hasPermission, setHasPermission] = useState(null);
@@ -64,8 +55,8 @@ export const QRCode = ({goBack, navigation}) => {
   }, [dispatch]);
   useEffect(() => {
     return function cleanup() {
-      didFocusSubscription.remove()
-      didBlurSubscription.remove()
+      didFocusUnSubscription()
+      didBlurUnSubscription()
     } 
   })
   useEffect(() => {

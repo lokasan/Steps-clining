@@ -9,7 +9,7 @@ import { AppLoader } from '../components/ui/AppLoader'
 import { hideLoaderBypassRank, showLoaderBypassRank } from '../store/actions/bypassRank'
 import * as SQLite from 'expo-sqlite'
 const  db                         = SQLite.openDatabase('dbas.db')
-export const ComponentsRankScreen = ({ navigation }) => {
+export const ComponentsRankScreen = ({route, navigation }) => {
     
     dispatch = useDispatch()
     useEffect(() => {
@@ -20,17 +20,17 @@ export const ComponentsRankScreen = ({ navigation }) => {
     }, [dispatch])
     
     //// остановился тут
-    const target            = navigation.getParam('target')
+    const target            = route.params.target
     const createdBypassRank = useSelector(state => state.bypassRank.bypassRankId)
-    const component         = navigation.getParam('item')
+    const component         = route.params.item
     // console.log(createdBypassRank, 'СОЗДАННЫЙ РАНК')
     const {bypassId}       = useSelector(state => state.bypass.bypassNumber)
-    const post           = navigation.getParam('post')
-    const bypassDispatch = navigation.getParam('dispatch')
+    const {post}           = route.params
+    const bypassDispatch = route.params.dispatch
     // const bypassRankId = navigation.getParam('startedBypassRank')
-    const componentSingle    = navigation.getParam('item')
-    const componentsValid    = navigation.getParam('componentsValid')
-    const setModalVisibleCompleteCycle = navigation.getParam('setModalVisibleCompleteCycle')
+    const componentSingle    = route.params.item
+    const componentsValid    = route.params.componentsValid
+    const setModalVisibleCompleteCycle = route.params.setModalVisibleCompleteCycle
     const startedBypassRanks = useSelector(state => state.bypassRank.bypassRankIsStarted)
     const loading            = useSelector(state => state.bypassRank.loading)
     // console.log(loading, 'загрузка')
@@ -130,8 +130,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly'
     },
 })
-ComponentsRankScreen.navigationOptions = ({ navigation }) => {
-    const component = navigation.getParam('item')
+ComponentsRankScreen.navigationOptions = ({route, navigation }) => {
+    const component = route.params.item
     return {
         headerTitle: component.name
     }

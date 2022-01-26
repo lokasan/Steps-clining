@@ -39,11 +39,11 @@ const removeHandler = (emploee, dispatch, navigation) => {
 }
 const width = Dimensions.get('window')
 
-export const EmploeeScreen = ({navigation}) => {
+export const EmploeeScreen = ({route, navigation}) => {
    
     const dispatch = useDispatch()
     const [zoomable, setZoomable] = useState(false)
-    const emploeeId = navigation.getParam('emploeeId')
+    const {emploeeId} = route.params
     const emploee = useSelector(state => state.empDouble.empServer.find(e => e.id === emploeeId))
     const [selectedValue, setSelectedValue] = useState(emploee ? emploee.privileg : 0)
     
@@ -230,8 +230,8 @@ const styles = StyleSheet.create({
           marginTop: 25
       }
 })
-EmploeeScreen.navigationOptions = ({ navigation }) => {
-    const name = navigation.getParam('emploeeName')
+EmploeeScreen.navigationOptions = ({route, navigation }) => {
+    const name = route.params.emploeeName
 
     return {
         headerTitle: name

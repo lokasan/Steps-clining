@@ -4,19 +4,21 @@ import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import {AppHeaderIcon} from '../../components/AppHeaderIcon'
 import { AppCard } from '../../components/ui/AppCard'
 import { HEADER_FOOTER } from '../../theme'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import { addEmploee } from '../../store/actions/empDouble'
 import { addPost } from '../../store/actions/post'
 import { PhotoPicker } from '../../components/PhotoPicker'
 import { addComponentRank, updateComponentRank } from '../../store/actions/componentRank'
 import findTrashSymbolsInfo from '../../utils/findTrashSymbolsInfo'
 
-export const CreateNewComponentRank = ({navigation}) => {
+export const CreateNewComponentRank = ({route, navigation}) => {
     const dispatch = useDispatch()
-    const component_id = navigation.getParam('componentId')
-    const listComponentRank = navigation.getParam('listComponentRank')
+    const component_id = route.params.componentId
+    const {componentName} = route.params
+    const componentRankAll = useSelector(state => state.componentRank.componentRankAll)
+    const countComponentRank = componentRankAll.length + 1
+    const listComponentRank = componentRankAll
     const [name, setName] = useState('')
-    const countComponentRank = navigation.getParam('countComponentRank')
     const [borderBottomColor, setBorderBottomColor] = useState({
       name    : false,
     })
@@ -43,7 +45,7 @@ export const CreateNewComponentRank = ({navigation}) => {
       }
       dispatch(addComponentRank(componentRank))
       
-      navigation.navigate('ComponentInfo')
+      navigation.navigate('ComponentInfo', {componentName, componentId: route.params.componentId})
     }
     return <ScrollView style={styles.wrapper}>
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>

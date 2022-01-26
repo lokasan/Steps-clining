@@ -78,19 +78,13 @@ export const MainScreen = ({navigation}) => {
   //     dispatch(loadPostWithComponent(el.id))
   //   }
   // }, [buildings])
-  const getPADATA = () => {
-    try {
-      navigation.navigate('Auth')
-    } catch(e) {
-      console.log('Error:', e)
-    }
-  }
+  
   async function getAsyncData() {
     await buildQ()
     if (myKey.isStatus) {
       await UploadDataToServer.addActiveUser(myKey.id)
       
-      navigation.navigate('App')
+      // navigation.navigate('App')
       
   
       
@@ -110,23 +104,23 @@ export const MainScreen = ({navigation}) => {
       </View>
       </View>
       {/* <Footer/> */}
-      <TouchableOpacity onPress={getPADATA}><Text>Загрузить из бд</Text></TouchableOpacity>
+     
     </View>
       
       
     )
     
 }
-MainScreen.navigationOptions = {
-  headerTitle: 'Электронный бригадир',
-  headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-    <Item 
-    title='Private Account'
-    iconName='ios-alert'
-    onPress={() => Alert.alert('Сведения о системе')}
-    />
-    </HeaderButtons>
-}
+// MainScreen.navigationOptions = {
+//   headerTitle: 'Электронный бригадир',
+//   headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+//     <Item 
+//     title='Private Account'
+//     iconName='ios-alert'
+//     onPress={() => Alert.alert('Сведения о системе')}
+//     />
+//     </HeaderButtons>
+// }
 const styles = StyleSheet.create({
   center: {
     flex          : 1,

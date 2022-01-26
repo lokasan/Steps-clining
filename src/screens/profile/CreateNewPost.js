@@ -11,9 +11,9 @@ import { PhotoPicker } from '../../components/PhotoPicker'
 import { QRCodePicker } from '../../components/QRCodePicker'
 import findTrashSymbolsInfo from '../../utils/findTrashSymbolsInfo'
 
-export const CreateNewPost = ({navigation}) => {
+export const CreateNewPost = ({route, navigation}) => {
     const dispatch = useDispatch()
-    const building_id = navigation.getParam('objectId')
+    const building_id = route.params.objectId
     const [name, setName] = useState('')
     const [borderBottomColor, setBorderBottomColor] = useState({
       name    : false,
@@ -41,7 +41,7 @@ export const CreateNewPost = ({navigation}) => {
         
       }
       dispatch(addPost(post))
-      navigation.navigate('ObjectInfo')
+      navigation.goBack()
     }
     return <ScrollView style={styles.wrapper}>
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>

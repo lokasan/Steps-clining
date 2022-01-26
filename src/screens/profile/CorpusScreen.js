@@ -6,7 +6,7 @@ import { DATA } from '../../testData'
 import { Footer } from '../../components/ui/Footer'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import { HEADER_FOOTER } from '../../theme'
-import { removeCopus } from '../../store/actions/corpus'
+import { removeCopus, loadCorpus } from '../../store/actions/corpus'
 import {AppHeaderIcon} from '../../components/AppHeaderIcon'
 import { loadPost } from '../../store/actions/post'
 import { ObjectCard } from '../../components/ObjectCard'
@@ -14,11 +14,15 @@ import { ModalZoomable } from '../../components/ui/ModalZoomable'
 import * as SQLite from 'expo-sqlite'
 const db = SQLite.openDatabase('dbas.db')
 
-export const CorpusScreen = ({navigation}) => {
+export const CorpusScreen = ({route, navigation}) => {
     
     const [zoomable, setZoomable] = useState(false)
     const dispatch = useDispatch()
-    const corpusId = navigation.getParam('corpusId')
+    useEffect(() => {
+        dispatch(loadCorpus())
+    }, [])
+    const {corpusId} = route.params
+    
     const corpus = useSelector(state => state.corpus.corpusAll.find(e => e.id === corpusId))
 
     const openObjectsHandler = object => {
@@ -34,7 +38,7 @@ export const CorpusScreen = ({navigation}) => {
     // }, [dispatch, corpus])
     // console.log(loadObjectForCorpus, ' OBJECT FOR CORPUS')
     if (!corpus) {
-      return null
+      return <View><Text>{corpusId}</Text></View>
     }
 
     return <Fragment><ScrollView style={{flex: 1, backgroundColor: '#000'}}>
@@ -139,9 +143,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#1C1B1B'
     }, 
 })
-CorpusScreen.navigationOptions = ({ navigation }) => {
-    const name = navigation.getParam('corpusName')
-    const corpusId = navigation.getParam('corpusId')
+CorpusScreen.navigationOptions = ({route, navigation }) => {
+    const name = route.params.corpusName
+    const {corpusId} = route.params
     return {
         headerTitle: name,
         headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>

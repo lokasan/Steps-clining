@@ -23,8 +23,6 @@ export const AnalyticsCorpus = ({navigation}) => {
         keyExtractor={(item) => item.id}
         numColumns={2}
         horizontal={false}
-        contentContainerStyle={{flexGrow: 1, justifyContent: 'center', alignItems: 'left'}}
-        columnWrapperStyle={{ display: 'flex', justifyContent: "space-around"}}
         />
     </ScrollView>
 }

@@ -10,9 +10,9 @@ import { addObject } from '../../store/actions/object'
 import { PhotoPicker } from '../../components/PhotoPicker'
 import findTrashSymbolsInfo from '../../utils/findTrashSymbolsInfo'
 
-export const CreateNewObjects = ({navigation}) => {
+export const CreateNewObjects = ({route, navigation}) => {
     const dispatch = useDispatch()
-    const corpus_id = navigation.getParam('corpusId')
+    const {corpusId} = route.params
     const [name, setName]               = useState('')
     const [address, setAddress]         = useState('')
     const [description, setDescription] = useState('')
@@ -28,7 +28,7 @@ export const CreateNewObjects = ({navigation}) => {
     }
     const createObjectHandler = () => {
       const object = {
-        corpus_id,
+        corpus_id: corpusId,
         name,
         address,
         description,
@@ -37,7 +37,7 @@ export const CreateNewObjects = ({navigation}) => {
         
       }
       dispatch(addObject(object))
-      navigation.navigate('CorpusInfo')
+      navigation.goBack()
     }
     return                    <ScrollView style = {styles.wrapper}>
     <TouchableWithoutFeedback onPress           = {() => Keyboard.dismiss()}>

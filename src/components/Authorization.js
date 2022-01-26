@@ -61,7 +61,8 @@ export const Authorization = ({navigation}) => {
             dispatch(clearIsAccess())
         }
         else if (isAccess == 1) {
-            navigation.navigate('App')
+            // navigation.navigate('App')
+            dispatch({type: 'SIGN_IN', paylad: {isLogin: true}})
             dispatch(clearIsAccess())
         }
     }, [isAccessMemo])

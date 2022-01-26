@@ -36,7 +36,7 @@ export const MainProfileScreen = ({navigation}) => {
     let   tempPrivileg = false
     // console.log(emploeeAll, 'Алл сотрудники');
     
-        if (result.status && result.privileg && result.privileg > 1) {
+        if (result?.status && result?.privileg && result?.privileg > 1) {
             tempPrivileg = true
         }
     
@@ -95,7 +95,7 @@ export const MainProfileScreen = ({navigation}) => {
                 //   Alert.alert(result)
                 dispatch(updateUser(result))
 
-                  navigation.navigate('Auth')
+                  dispatch({type: 'SIGN_OUT'})
                   
                 } }
             ],

@@ -39,7 +39,7 @@ export const AnalyticsCorpusCard = ({item, index, navigation}) => {
                 <Image 
                     style={styles.tinyLogo}
                     source={{uri: imageSrc}}/>
-                <View style={{position: 'absolute', display: 'inline-flex', alignSelf: 'center', width: '100%', height: '100%', justifyContent: 'space-between'}}>
+                <View style={{position: 'absolute', alignSelf: 'center', width: '100%', height: '100%', justifyContent: 'space-between'}}>
                     <View style={styles.titleAroundTextView}>
                         <Text style={styles.titleCorpus}>{item.name}</Text>
                     </View>

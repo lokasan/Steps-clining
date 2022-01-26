@@ -57,7 +57,7 @@ export const CreateNewCorpus= ({navigation}) => {
         
       }
       dispatch(addCorpus(corpus))
-      navigation.navigate('CorpusesBuilding')
+      navigation.goBack()
     }
     return                    <ScrollView style = {styles.wrapper}>
     <TouchableWithoutFeedback onPress           = {() => Keyboard.dismiss()}>

@@ -13,10 +13,10 @@ import { PostCard } from '../../components/PostCard'
 import { ModalZoomable } from '../../components/ui/ModalZoomable'
 
 
-export const ObjectScreen = ({navigation}) => {
+export const ObjectScreen = ({route, navigation}) => {
     const [zoomable, setZoomable] = useState(false)
     const dispatch = useDispatch()
-    const objectId = navigation.getParam('objectId')
+    const {objectId} = route.params
     const object = useSelector(state => state.object.objectForCorpus.find(e => e.id === objectId))
     
     // useEffect(() => {
@@ -134,9 +134,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#1C1B1B'
     }, 
 })
-ObjectScreen.navigationOptions = ({ navigation }) => {
-    const name = navigation.getParam('objectName')
-    const objectId = navigation.getParam('objectId')
+ObjectScreen.navigationOptions = ({route, navigation }) => {
+    const name = route.params.objectName
+    const objectId = route.params.objectId
     return {
         headerTitle: name,
         headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>

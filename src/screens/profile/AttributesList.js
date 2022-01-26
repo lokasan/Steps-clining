@@ -25,6 +25,7 @@ export const AttributesList = ( {navigation}) => {
     
     const componentAll = useSelector(state => state.component.componentAll)
     const loading = useSelector(state => state.component.loading)
+    
     if (loading) {
         return <View style={styles.center}>
             <ActivityIndicator  color="#0000ff"/>

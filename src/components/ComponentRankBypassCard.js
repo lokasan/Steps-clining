@@ -118,11 +118,13 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
             dispatch={dispatch} 
             bypassId={bypassId} 
             bypassRankId={bypassRankId} 
+            post={post}
             itemComponentRank={item} 
             image={image} 
             setImage={setImage} 
             navigation={navigation} 
-            modalVisible={modalVisible} 
+            modalVisible={modalVisible}
+            setModalVisibleCompleteCycle={setModalVisibleCompleteCycle} 
             setModalVisible={setModalVisible} />
         <Animated.View    style         = {[styles.card]} key = {String(item.id)}>
         <TouchableOpacity activeOpacity = {0.5} onPress       = {() => {
@@ -136,7 +138,7 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
                     } else {
                         dispatch(updateBypassRank(item.id, bypassRankId))
                         dispatch(clearComponentRank())
-                        navigation.navigate('BypassScreen')
+                        navigation.navigate('BypassScreen', {element: post, goBackQRScreen: target})
                     }
                 }
                 
@@ -153,7 +155,7 @@ export const ComponentsRankBypassCard = ({index, y, item, navigation, post, bypa
                     dispatch(clearPostWithComponent())
                     // navigation.navigate('QRCode')
                     setModalVisibleCompleteCycle(true)
-                } else if(modalVisible) {navigation.navigate('BypassScreen')}
+                } else if(modalVisible) {navigation.navigate('BypassScreen', {element: post, goBackQRScreen: target})}
                 
             }}>
             <Image style = {styles.image} source = {{uri: item.img}}/>

@@ -155,7 +155,7 @@ export const GraphPed = ( {navigation} ) => {
       return (
         tempPrivileg ? <AnalyticsCorpus navigation={navigation}/> : <View></View>)
 }
-GraphPed.navigationOptions = ({navigation}) => ({
+GraphPed.navigationOptions = ({route, navigation}) => ({
   headerTitle: 'Состояние объекта',
   headerRight: () => <View style={{display: 'flex', flexDirection: 'row'}}><HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
     <Item 
@@ -168,7 +168,7 @@ GraphPed.navigationOptions = ({navigation}) => ({
       <Item
       title='Filter Object'
       iconName='ios-options'
-      onPress={() => navigation.getParam('openModalFilter')()}
+      onPress={() => route.params.openModalFilter()}
       />
     </HeaderButtons>
   </View>,
