@@ -1,10 +1,12 @@
-import { Platform, Button } from 'react-native'
-import React from 'react'
-import { BottomTabBar, createBottomTabNavigator } from 'react-navigation-tabs'
+import { Platform, Button, View } from 'react-native'
+import React, {useEffect, useState} from 'react'
+import { BottomTabBar, createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import {createAppContainer, createSwitchNavigator} from 'react-navigation'
 import createAnimatedSwitchNavigator from 'react-navigation-animated-switch'
 import { Transition } from 'react-native-reanimated'
-import {createStackNavigator} from 'react-navigation-stack'
+import {createStackNavigator} from '@react-navigation/stack'
+import {AppHeaderIcon} from '../components/AppHeaderIcon'
 import { MainLayout } from '../MainLayout'
 import { MainProfileEdit } from '../screens/profile/MainProfileEdit'
 import { MainProfileScreen } from '../screens/profile/MainProfileScreen'
@@ -21,7 +23,7 @@ import { GraphPed } from '../components/GraphPed'
 import { EmploeeCard } from '../components/EmploeeCard'
 import {Ionicons} from '@expo/vector-icons'
 import { EmploeeScreen } from '../screens/profile/EmploeeScreen'
-import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs'
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import {createDrawerNavigator} from 'react-navigation-drawer'
 import { CreateNewUser } from '../screens/profile/CreateNewUser'
 import { CreateNewObjects } from '../screens/profile/CreateNewObjects'
@@ -39,195 +41,229 @@ import { BypassScreen } from '../screens/BypassScreen'
 import { ComponentsRankScreen } from '../screens/ComponentsRankScreen'
 import { BasicStatEmploeeDetail } from '../screens/BasicStatEmploeeDetail'
 import { CreateNewCorpus } from '../screens/profile/CreateNewCorpus'
+import { LoadingScreen } from '../screens/LoadingScreen'
+import {NavigationContainer} from '@react-navigation/native'
+import { Authorization } from '../components/Authorization'
+import { useSelector } from 'react-redux'
+import * as SQLite from 'expo-sqlite'
 
 
-const navigatorOptions = {
-    defaultNavigationOptions: {
-        headerStyle: {
-            backgroundColor: Platform.OS === 'android' ? HEADER_FOOTER.MAIN_COLOR : '#fff'
-        },
-        
-        headerTintColor: Platform.OS === 'android' ? '#fff' : HEADER_FOOTER.MAIN_COLOR
-    }
+const navigatorNewOptions = {
+    headerStyle: {
+        backgroundColor: Platform.OS === 'android' ? HEADER_FOOTER.MAIN_COLOR : '#fff'
+    },
+    headerTintColor: Platform.OS === 'android' ? '#fff' : HEADER_FOOTER.MAIN_COLOR
 }
 
-const PostNavigator = createStackNavigator({
-    MainProfile: {
-        screen: MainEmploeeListScreen,  
-    },
-    StatMainDetail: {
-        screen: BasicStatEmploeeDetail
-    }
-    
-}, navigatorOptions)
 
-const FooterNavigator = createStackNavigator({
-    QRCode,
-    BypassScreen,
-    ComponentsRankScreen
-}, navigatorOptions)
-
-const AnalyticsNavigator = createStackNavigator({
-    Analytics: GraphPed,
-    CorpusDetailAnalytics: {
-        screen: StatusObject
-    },
-    MainProfile: {
-        screen: MainProfileScreen,  
-    },
-    Profile: {
-        screen: MainProfileEdit
-    },
-    CorpusesBuilding: {
-        screen: CorpusesBuilding
-    },
-    ObjectsBuildings: {
-        screen: ObjectsBuilding
-    },
-    Emploees: {
-        screen: EmploeesList
-    },
-    EmploeeInfo: {
-        screen: EmploeeScreen
-    },
-    CreateUser: {
-        screen: CreateNewUser
-    },
-    CreateCorpus: {
-        screen: CreateNewCorpus
-    },
-    CreateObjects: {
-        screen: CreateNewObjects
-    },
-    CorpusInfo: {
-        screen: CorpusScreen
-    },
-    ObjectInfo: {
-        screen: ObjectScreen
-    },
-    CreatePost: {
-        screen: CreateNewPost
-    },
-    CreateComponent: {
-        screen: CreateNewComponent
-    },
-    ComponentInfo: {
-        screen: AttributeSingle
-    },
-    Components: {
-        screen: AttributesList
-    },
-    CreateComponentRank: {
-        screen: CreateNewComponentRank
-    },
-    EditComponentRank: {
-        screen: EditComponentRank
-    },
-    PostWithComponent: {
-        screen: PostWithComponent
-    },
-    
-}, navigatorOptions)
-const bottomTabsConfig = {
-    Main: {
-        screen: PostNavigator,
-        navigationOptions: {
-            tabBarIcon: info => <Ionicons name="ios-home" size={25} color={info.tintColor}/>,
-            tabBarLabel: 'Домой',
-        },
-        
-    },
-    Qrcode: {
-        screen: FooterNavigator,
-        navigationOptions: {
-            tabBarIcon: info => <Ionicons name="ios-qr-code" size={25} color={info.tintColor}/>,
-            tabBarLabel: 'Обход',
-        }
-    },
-    Analytics: {
-        screen: AnalyticsNavigator,
-        navigationOptions: {
-            tabBarIcon: info => <Ionicons name="ios-analytics" size={25} color={info.tintColor}/>,
-            tabBarLabel: 'Аналитика' 
-        }
-    }
+const FooterStack = createStackNavigator()
+const FooterNavigator = () => {
+    return (
+        <FooterStack.Navigator screenOptions={navigatorNewOptions}>
+            <FooterStack.Screen name="QRCode" component={QRCode} options={{title: 'Сканер'}}/>
+            <FooterStack.Screen name="BypassScreen" component={BypassScreen} options={({route}) => ({title: route.params.element.name})}/>
+            <FooterStack.Screen name="ComponentsRankScreen" component={ComponentsRankScreen} options={({route}) => ({title: route.params.item.name})}/>
+        </FooterStack.Navigator>
+    )
 }
 
-const BottomNavigator = Platform.OS === 'android' ? createMaterialBottomTabNavigator(bottomTabsConfig, {
-    activeTintColor: '#fff',
-    shifting: true,
-    barStyle: {
-        backgroundColor: HEADER_FOOTER.MAIN_COLOR
-    }
-}) : createBottomTabNavigator(bottomTabsConfig, {
-    tabBarOptions: {
-        activeTintColor: HEADER_FOOTER.MAIN_COLOR,
-    }
-})
-
-const AboutNavigator = createStackNavigator({
-    About: AboutScreen
-}, navigatorOptions)
-
-const ObjectNavigator = createStackNavigator({
-    
-    StatusObject: StatusObject
-}, navigatorOptions)
-
-const MainNavigator = createDrawerNavigator({
-    MainTabs: {
-        screen: BottomNavigator,
-        navigationOptions: {
-            drawerLabel: 'Главная',
-            drawerIcon: info => <Ionicons name="ios-arrow-back" size={25} color={info.tintColor}/>
-        }
-    },
-    // StatusObject: {
-    //     screen: ObjectNavigator,
-    //     navigationOptions: {
-            
-    //         drawerLabel: 'Состояние объекта',
-            
-    //         drawerIcon: info => <Ionicons name="md-analytics" size={25} color={info.tintColor}/>,
-    //     }
-    // },
-    About: {
-       screen: AboutNavigator,
-       navigationOptions: {
-           drawerLabel: 'О нас',
-           drawerIcon: info => <Ionicons name="md-alert" size={25} color={info.tintColor}/>
-       }
-    },
-    
-    
-}, {
-    contentOptions: {
-        activeTintColor: HEADER_FOOTER.MAIN_COLOR,
-        labelStyle: {
-            fontFamily: 'open-bold'
-        }
-    }
-})
-
-const AuthStack = createStackNavigator({Mainscreen: MainScreen}, navigatorOptions)
-
-export const AppNavigation = createAppContainer(
-    createAnimatedSwitchNavigator({
-        App: MainNavigator,
-        Auth: AuthStack
-    },
-    {
-        initialRouteName: 'Auth',
-        transition: (
-            <Transition.Together>
-              <Transition.Out
-                type="scale"
-                durationMs={750}
-                interpolation="easeIn"
-              />
-              <Transition.In type="scale" durationMs={800} />
-            </Transition.Together>
-          ),
-    }
+const PostStack = createStackNavigator()
+const PostNavigator = () => {
+    return (
+        <PostStack.Navigator screenOptions={navigatorNewOptions}>
+            <PostStack.Screen name="MainProfile" component={MainEmploeeListScreen} options={{title: 'Главная'}}/>
+            <PostStack.Screen name="StatMainDetail" component={BasicStatEmploeeDetail}/>
+        </PostStack.Navigator>
     )
+}
+
+const AnalyticsStack = createStackNavigator()
+const AnalyticsNavigator = () => {
+    return (
+        <AnalyticsStack.Navigator screenOptions={navigatorNewOptions}>
+            <AnalyticsStack.Screen 
+                name="Analytics" 
+                component={GraphPed} 
+                options={({navigation}) => ({title: 'Состояние объекта', headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+                <Item 
+                title='Private Account'
+                iconName='ios-person'
+                onPress={() => navigation.navigate('MainProfile')}
+                />
+            </HeaderButtons>})}/>
+            <AnalyticsStack.Screen 
+                name="CorpusDetailAnalytics" 
+                component={StatusObject} 
+                options={({route, navigation}) => ({title: route.params.corpusName, headerRight: () => 
+                    <View style={{display: 'flex', flexDirection: 'row'}}>
+                        <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+                            <Item 
+                            title='Private Account'
+                            iconName='ios-person'
+                            onPress={() => navigation.navigate('MainProfile')}
+                            />
+                        </HeaderButtons>
+                        <HeaderButtons HeaderButtonComponent = {AppHeaderIcon}>
+                            <Item
+                            title='Filter Object'
+                            iconName='ios-options'
+                            onPress={() => route.params.openModalFilter()}
+                            />
+                        </HeaderButtons>
+                    </View>
+                })}/>
+            <AnalyticsStack.Screen name="MainProfile" component={MainProfileScreen} options={{title: 'Профиль'}}/>
+            <AnalyticsStack.Screen name="Profile" component={MainProfileEdit}/>
+            <AnalyticsStack.Screen 
+                name="CorpusesBuilding" 
+                component={CorpusesBuilding} 
+                options={({navigation}) => ({title: 'Объекты', headerRight: () => 
+                    <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+                        <Item 
+                        title='AddNewUser'
+                        iconName='ios-add-circle-outline'
+                        onPress={() => navigation.navigate('CreateCorpus')}
+                        />
+                    </HeaderButtons>
+                })}/>
+            <AnalyticsStack.Screen name="ObjectsBuildings" component={ObjectsBuilding}/>
+            <AnalyticsStack.Screen name="Emploees" component={EmploeesList} options={({navigation}) => ({title: 'Сотрудники', headerRight: () => 
+                    <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+                        <Item 
+                        title='AddNewUser'
+                        iconName='ios-person-add'
+                        onPress={() => navigation.navigate('CreateUser')}
+                        />
+                    </HeaderButtons>
+                })}/>
+            <AnalyticsStack.Screen name="EmploeeInfo" component={EmploeeScreen} options={({route}) => ({title: route.params.emploeeName})}/>
+            <AnalyticsStack.Screen name="CreateUser" component={CreateNewUser} options={{title: 'Создание пользователя'}}/>
+            <AnalyticsStack.Screen name="CreateCorpus" component={CreateNewCorpus} options={{title: 'Создание объекта'}}/>
+            <AnalyticsStack.Screen name="CreateObjects" component={CreateNewObjects} options={({route}) => ({title: route.params.corpusName})}/>
+            <AnalyticsStack.Screen 
+                name="CorpusInfo" 
+                component={CorpusScreen} 
+                options={({route, navigation}) => ({title: route?.params?.corpusName, headerRight: () => 
+                    <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+                        <Item 
+                        title='AddNewUser'
+                        iconName='ios-add-circle-outline'
+                        onPress={() => navigation.navigate('CreateObjects', {corpusId: 'corpusId' in route.params ? route.params.corpusId : null, corpusName: route?.params?.corpusName})}
+                        />
+                    </HeaderButtons>
+                })}/>
+            <AnalyticsStack.Screen 
+                name="ObjectInfo" 
+                component={ObjectScreen} 
+                options={({route, navigation}) => ({title: route?.params?.objectName, headerRight: () => 
+                    <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+                        <Item 
+                        title='AddNewUser'
+                        iconName='ios-add-circle-outline'
+                        onPress={() => navigation.navigate('CreatePost', {objectId: route.params.objectId, objectName: route.params.objectName})}
+                        />
+                    </HeaderButtons>
+                })}/>
+            <AnalyticsStack.Screen name="CreatePost" component={CreateNewPost} options={({route}) => ({title: route.params.objectName})}/>
+            <AnalyticsStack.Screen name="CreateComponent" component={CreateNewComponent} options={{title: 'Создание компонента'}}/>
+            <AnalyticsStack.Screen 
+                name="ComponentInfo" 
+                component={AttributeSingle} 
+                options={({route, navigation}) => ({title: route.params.componentName, headerRight: () => 
+                    <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+                        <Item 
+                        title='AddNewUser'
+                        iconName='ios-add-circle-outline'
+                        onPress={() => navigation.navigate('CreateComponentRank', {componentName: route.params.componentName, componentId: route.params.componentId})}
+                        />
+                </HeaderButtons>
+            })}/>
+            <AnalyticsStack.Screen 
+                name="Components" 
+                component={AttributesList} 
+                options={({navigation}) => ({title: 'Компоненты', headerRight: () => 
+                    <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+                        <Item 
+                        title='AddNewUser'
+                        iconName='ios-add-circle-outline'
+                        onPress={() => navigation.navigate('CreateComponent')}
+                        />
+                    </HeaderButtons>
+                })}/>
+            <AnalyticsStack.Screen name="CreateComponentRank" component={CreateNewComponentRank} options={({route}) => ({title: route.params.componentName})}/>
+            <AnalyticsStack.Screen name="EditComponentRank" component={EditComponentRank} options={({route}) => ({title: route.params.componentRank.name})}/>
+            <AnalyticsStack.Screen name="PostWithComponent" component={PostWithComponent} options={({route}) => ({title: route.params.post.name})}/>
+        </AnalyticsStack.Navigator>
     )
+}
+
+const BottomTab = Platform.OS === 'android' ? createMaterialBottomTabNavigator() : createBottomTabNavigator()
+
+const BottomNavigator = () => {
+    return (
+        <BottomTab.Navigator screenOptions={{...navigatorNewOptions, tabBarActiveTintColor: HEADER_FOOTER.MAIN_COLOR}}>
+            <BottomTab.Screen name="Main" component={PostNavigator} options={{
+                title: 'Главная',
+                headerShown: false,
+                tabBarLabel: 'Домой',
+                tabBarIcon: info => <Ionicons name="ios-home" size={25} color={info.color}/>
+            }}/>
+            <BottomTab.Screen name="Qrcode" component={FooterNavigator} options={{
+                title: 'Обход',
+                headerShown: false,
+                tabBarLabel: 'Обход',
+                tabBarIcon: info => <Ionicons name="ios-qr-code" size={25} color={info.color}/>
+            }}/>
+            <BottomTab.Screen name="Analytics" component={AnalyticsNavigator} options={{
+                tabBarLabel: 'Аналитика', 
+                headerShown: false, 
+                tabBarIcon: info => <Ionicons name="ios-analytics" size={25} color={info.color}/>
+            }}/>
+        </BottomTab.Navigator>
+    )
+}
+
+
+const AuthorizationStack = createStackNavigator()
+const AuthStack = () => {
+    return (
+        <AuthorizationStack.Navigator screenOptions={navigatorNewOptions}>
+            <AuthorizationStack.Screen name="NSClean Авторизация" component={MainScreen}/>
+        </AuthorizationStack.Navigator>
+    )
+}
+
+export const AppNavigation = () => {
+    const [isLoading, setIsLoading] = useState(true)
+    const db = SQLite.openDatabase('dbas.db')
+    const [user, setUser] = useState({isLogin: false})
+    const isLogin = useSelector(state => state.authentication.isLogin)
+    useEffect(() => {
+        async function buildQ ()  {
+        
+            return new Promise(resolve => {
+            db.transaction((tx) => { 
+                tx.executeSql('select * from user_local where status=1', [], (_, { rows }) => {
+                // console.log(JSON.stringify(rows),'напечатал из бд');
+                // myKey.isStatus = rows.length !== 0 ? JSON.stringify(rows._array[0]['status']) : 0
+                // myKey.id = rows.length !== 0 ? JSON.stringify(rows._array[0]['id']) : 0
+                // console.log(rows['_array'])
+                setUser({isLogin: rows.length !== 0 ? JSON.stringify(rows._array[0]['status']) : 0})
+                resolve()   
+                setIsLoading(false)         
+            }                                
+                )                               
+            })
+            })
+            
+        }
+        buildQ()
+    }, [])
+    // dispatch({type: 'SIGN_IN', paylad: {isLogin: true}})
+    
+    return (
+        <NavigationContainer>
+            {(user.isLogin || isLogin ? <BottomNavigator/> : <AuthStack/>)}
+        </NavigationContainer>
+        )
+}
