@@ -10,7 +10,9 @@ export const AnalyticsCorpus = ({navigation}) => {
         
     }, [])
     useEffect(() => { 
-        dispatch(loadCorpusBypassBase('', 1639342800000))
+        let msToday = new Date().getTime()
+        msToday = msToday - (msToday % (24 * 60 * 60 * 1000))
+        dispatch(loadCorpusBypassBase('', msToday))
     }, [])
     const corpusData = useSelector(state => state.corpus.corpusAll)
     const corpusAnalyticsBase = useSelector(state => state.corpus.corpusAnalyticsBase)

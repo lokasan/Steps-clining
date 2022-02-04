@@ -103,20 +103,16 @@ export const QRCode = ({goBack, navigation}) => {
                 // console.log(Math.round(data.main.temp - 272.1), data.weather[0].description)
                 dispatch(createBypass(id, userId[0].id, element.id, data.weather[0].description, parseInt(Math.round(data.main.temp - 272.1)), data.weather[0].icon))
                 
-                navigation.navigate('BypassScreen', {postsWithComponent, element, goBackQRScreen})
-              }).then(() => {
-                // dispatch(bypassIsCleaner(1, id))
-                setModalVisible(true)
-                
-              }).catch((err) => console.log(err))
+                navigation.navigate('BypassScreen', {postsWithComponent, element, goBackQRScreen, bypassIdRef, modalVis: true})
+              })
             } else {
               if (cleanerStatus === null || cleanerStatus === undefined) {
                 bypassIdRef.current = bypassId
-                setModalVisible(true)
-              }
-              
-              navigation.navigate('BypassScreen', {postsWithComponent, element, goBackQRScreen})
-              
+                
+                navigation.navigate('BypassScreen', {postsWithComponent, element, goBackQRScreen, bypassIdRef, modalVis: true})
+            } else {
+              navigation.navigate('BypassScreen', {postsWithComponent, element, goBackQRScreen, bypassIdRef, modalVis: false})
+            }
             }
               }}>
       <Image style={styles.image} source={{uri: element.img}}/>
@@ -140,41 +136,7 @@ export const QRCode = ({goBack, navigation}) => {
         />
         
       </View>
-      <Modal
-    animationType='fade'
-    transparent={true}
-    visible={modalVisible}
-    >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={styles.modalTitle}>Наличие уборщика</Text>
-          <Text style={styles.modalText}>
-            <Text> Уборщик на месте </Text>
-            <Text> ?</Text>
-            </Text>
-            
-          <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-          <Pressable
-            style={({ pressed }) => [styles.button, pressed ? styles.buttonDelete : styles.buttonClosePressed]}
-            onPress={() => {
-              setModalVisible(!modalVisible)
-              dispatch(bypassIsCleaner(0, bypassIdRef.current))
-              }}>
-              <Text style={styles.textStyle}>Нет</Text>
-          </Pressable>
-          <Pressable
-            style={({ pressed }) => [styles.button, pressed ? styles.buttonDeletePressed : styles.buttonClose]}
-            onPress={() => {
-              setModalVisible(!modalVisible)
-              dispatch(bypassIsCleaner(1, bypassIdRef.current))
-              }}>
-              <Text style={styles.textStyle}>Да</Text>
-          
-          </Pressable>
-          </View>
-        </View>
-      </View>
-  </Modal>
+      
       </Fragment>
       
       
@@ -241,8 +203,8 @@ const styles = StyleSheet.create({
   },
   image: {
     
-    width: 250,
-    height: 250,
+    width: 200,
+    height: 200,
     borderRadius: 25
   },
   title: {

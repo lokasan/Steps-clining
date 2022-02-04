@@ -28,7 +28,7 @@ export const Cycles = ({flagArrayUsersDetail, getCyclesList, period, user_id, it
         })
             
           valueOfKeyComponent.push(...Object.values(uniqueComponent))
-          valueOfKeyComponent.map(el => createdComponent.push(<Text style ={styles.beastAndBad}>{el}</Text>))
+          valueOfKeyComponent.map((el, idx) => createdComponent.push(<Text key={String(idx)} style ={styles.beastAndBad}>{el}</Text>))
            
           existsComponents.current = valueOfKeyComponent
           valueOfKeyComponent = []
@@ -40,15 +40,15 @@ export const Cycles = ({flagArrayUsersDetail, getCyclesList, period, user_id, it
         function getKeyByValue(object, value) {
             return Object.keys(object).find(key => object[key] === value)
         }
-        for (let cmp of existsComponents.current) {
+        for (let [index, cmp] of existsComponents.current.entries()) {
             let keyByValue = getKeyByValue(item, cmp)
             if (keyByValue) {
                 // console.log(keyByValue, 'Value rank')
-                createdElements.push(<TouchableOpacity onPress={() => {setModalVisibleDay(true); dispatch(getBypassListOfPostInCycle(item.cycle_id, keyByValue))}}>
+                createdElements.push(<TouchableOpacity key={String(keyByValue)} onPress={() => {setModalVisibleDay(true); dispatch(getBypassListOfPostInCycle(item.cycle_id, keyByValue))}}>
                 <Text style={{...styles.beastAndBad, color: "black"}}>{`${item[keyByValue + '_rank']}`}
                 </Text></TouchableOpacity>)
             } else {
-                createdElements.push(<Text style = {styles.beastAndBad}>-</Text>)
+                createdElements.push(<Text key={String(index)} style = {styles.beastAndBad}>-</Text>)
             }
             }  
         return createdElements
@@ -103,10 +103,7 @@ export const Cycles = ({flagArrayUsersDetail, getCyclesList, period, user_id, it
 
         
         return (
-            <View style={flagArrayUsersDetail.length && flagArrayUsersDetail.map(el => item
-                .map(elD => el.email === elD.email && el.post === elD.post_name))
-                  .map(res => res.indexOf(true) !== -1? true : false)
-                  .indexOf(true) !== -1 && period !== 'today' ? {display: 'none'} : {...styles.itemUD}}>
+            <View style={DATA_CYCLES_LIST.filter(el => el.user_id == user_id).length === 0   ? {display: 'none'} : {...styles.itemUD}}>
                 {/* {textCmpt(item.data)} */}
                 <View style={styles.wrapperFirstLine}>
                     <View>
@@ -134,11 +131,7 @@ export const Cycles = ({flagArrayUsersDetail, getCyclesList, period, user_id, it
             </View>
         )
     }
-    const renderItem = useCallback(({item, index}) => {
-        return <>
-                    <ItemPost item={item} index={index} />
-               </>
-    })
+
     return (
         <>
             <ScrollView>

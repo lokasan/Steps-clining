@@ -33,53 +33,84 @@ export const User = ({period, corpus_id, building_id, monthRange, showUserDetail
     //   }, [DATA_USERS_TBR_DETAIL])
     
     const ItemUser = ({item, index}) => {
+        const clearWindowWithListOfPostInCorpusForUser = () => {
+            dispatch(clearListUsersStaticWithTbrCorpusDetail(DATA_USERS_TBR_CORPUS_DETAIL, item.id))
+            setOpenedUsersInBuildingArray(openedUsersInBuildingArray.filter(e => e !== item.id))
+            choiseUser.current = null
+        }
+        const clearWindowWithListOfCyclesInCorpusForUser = () => {
+            dispatch(clearCyclesListForUserInCorpusDetail(DATA_CYCLES_LIST_FOR_USER_IN_CORPUS, item?.id))
+            setOpenedCyclesInUsers(openedCyclesInUsers.filter(e => e !== item.id))
+            choiseUserCycle.current = null
+        }
+        const getWindowWithListOfCyclesInCorpusForUser = () => {
+            dispatch(getCyclesListForUserInCorpusDetail(offset=0, item?.id, corpus_id, period))
+            setOpenedCyclesInUsers([...openedCyclesInUsers, item.id])
+            DATA_CYCLES_LIST.current = DATA_CYCLES_LIST_FOR_USER_IN_CORPUS
+            itemIdRef.current = corpus_id
+            choiseUserCycle.current = item.id
+        }
+        const getWindowWithListOfPostInCorpusForUser = () => {
+            dispatch(getListUsersStaticWithTbrCorpusDetail(period, corpus_id, item.id))
+            setOpenedUsersInBuildingArray([...openedUsersInBuildingArray, item.id])
+            choiseUser.current = item.id
+        }
+        const getWindowWithListOfPostListInBuildingForUser = () => {
+            dispatch(getListUsersStaticWithTbrDetail(period, building_id, item.id))
+            setOpenedUsersInBuildingArray([...openedUsersInBuildingArray, item.id])
+            choiseUser.current = item.id
+        }
+        const getWindowWithListOfCyclesInBuildingForUser = () => {
+            dispatch(getCyclesListForUserInBuildingDetail(offset=0, item?.id, building_id, period))
+            setOpenedCyclesInUsers([...openedCyclesInUsers, item.id])
+            choiseUserCycle.current = item.id
+            DATA_CYCLES_LIST.current = DATA_CYCLES_LIST_FOR_USER_IN_BUILDING
+            itemIdRef.current = building_id
+        }
+        const clearWindowWithListOfPostInBuildingForUser = () => {
+            dispatch(clearListUsersStaticWithTbrDetail(DATA_USERS_TBR_DETAIL, item.id))
+            setOpenedUsersInBuildingArray(openedUsersInBuildingArray.filter(e => e !== item.id))
+            choiseUser.current = null
+        }
+        const clearWindowWithListOfCyclesInBuildingForUser = () => {
+            dispatch(clearCyclesListForUserInBuildingDetail(DATA_CYCLES_LIST_FOR_USER_IN_BUILDING, item.id))
+            setOpenedCyclesInUsers(openedCyclesInUsers.filter(e => e !== item.id))
+            choiseUserCycle.current = null
+        }
 
         const updateOpenedUsersInBuilding = () => {
             if (~openedUsersInBuildingArray.indexOf(item.id) && !corpus_id) {
-                dispatch(clearListUsersStaticWithTbrDetail(DATA_USERS_TBR_DETAIL, item.id))
-                setOpenedUsersInBuildingArray(openedUsersInBuildingArray.filter(e => e !== item.id))
-                choiseUser.current = null
+                clearWindowWithListOfPostInBuildingForUser()
+
             } else if (!~openedUsersInBuildingArray.indexOf(item.id) && !corpus_id) {
-                dispatch(getListUsersStaticWithTbrDetail(period, building_id, item.id))
-                setOpenedUsersInBuildingArray([...openedUsersInBuildingArray, item.id])
-                choiseUser.current = item.id
-            } else if (~openedUsersInBuildingArray.indexOf(item.id) && corpus_id) {
-                dispatch(clearListUsersStaticWithTbrCorpusDetail(DATA_USERS_TBR_CORPUS_DETAIL, item.id))
-                setOpenedUsersInBuildingArray(openedUsersInBuildingArray.filter(e => e !== item.id))
-                choiseUser.current = null
-            } else if (!~openedUsersInBuildingArray.indexOf(item.id) && corpus_id) {
-                dispatch(getListUsersStaticWithTbrCorpusDetail(period, corpus_id, item.id))
+                clearWindowWithListOfCyclesInBuildingForUser()
+                getWindowWithListOfPostListInBuildingForUser()
                 
-                setOpenedUsersInBuildingArray([...openedUsersInBuildingArray, item.id])
-                choiseUser.current = item.id
+
+            } else if (~openedUsersInBuildingArray.indexOf(item.id) && corpus_id) {
+                clearWindowWithListOfPostInCorpusForUser()
+
+            } else if (!~openedUsersInBuildingArray.indexOf(item.id) && corpus_id) {
+                clearWindowWithListOfCyclesInCorpusForUser()
+                getWindowWithListOfPostInCorpusForUser()
+                
             }
         }
         
         const updateOpenedCyclesInUser = () => {
             if (~openedCyclesInUsers.indexOf(item.id) && !corpus_id) {
+                clearWindowWithListOfCyclesInBuildingForUser()
                 
-                dispatch(clearCyclesListForUserInBuildingDetail(DATA_CYCLES_LIST_FOR_USER_IN_BUILDING, item.id))
-                setOpenedCyclesInUsers(openedCyclesInUsers.filter(e => e !== item.id))
-                choiseUserCycle.current = null
             } else if (!~openedCyclesInUsers.indexOf(item.id) && !corpus_id) {
-                DATA_CYCLES_LIST.current = DATA_CYCLES_LIST_FOR_USER_IN_BUILDING
-                itemIdRef.current = building_id
-                dispatch(getCyclesListForUserInBuildingDetail(offset=0, item?.id, building_id, period))
+                clearWindowWithListOfPostInBuildingForUser()
+                getWindowWithListOfCyclesInBuildingForUser()
                 
-                setOpenedCyclesInUsers([...openedCyclesInUsers, item.id])
-                choiseUserCycle.current = item.id
             } else if (~openedCyclesInUsers.indexOf(item.id) && corpus_id) {
-                
-                dispatch(clearCyclesListForUserInCorpusDetail(DATA_CYCLES_LIST_FOR_USER_IN_CORPUS, item?.id))
-                setOpenedCyclesInUsers(openedCyclesInUsers.filter(e => e !== item.id))
-                choiseUserCycle.current = null
+                clearWindowWithListOfCyclesInCorpusForUser()
+
             } else if (!~openedCyclesInUsers.indexOf(item.id) && corpus_id) {
-                
-                dispatch(getCyclesListForUserInCorpusDetail(offset=0, item?.id, corpus_id, period))
-                setOpenedCyclesInUsers([...openedCyclesInUsers, item.id])
-                DATA_CYCLES_LIST.current = DATA_CYCLES_LIST_FOR_USER_IN_CORPUS
-                itemIdRef.current = corpus_id
-                choiseUserCycle.current = item.id
+                clearWindowWithListOfPostInCorpusForUser()
+                getWindowWithListOfCyclesInCorpusForUser()
             }
         }
 
@@ -166,7 +197,7 @@ export const User = ({period, corpus_id, building_id, monthRange, showUserDetail
             showsVerticalScrollIndicator = {false}
             data = {DATA_USERS_TBR.length ? DATA_USERS_TBR : DATA_USERS_TBR_CORPUS}
             renderItem={renderItem}
-            keyExtractor={item => item.id}
+            keyExtractor={item => String(item.id)}
             listKey={String(Date.now())}  
         >
             

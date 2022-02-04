@@ -4,7 +4,7 @@ import { Extrapolate } from 'react-native-reanimated'
 const { width } = Dimensions.get("window");
 const CARD_ASPECT_RATIO = 1324 / 863;
 const CARD_WIDTH = 200
-const CARD_HEIGHT = 200
+const CARD_HEIGHT = 150
 export const MARGIN = 16
 export const HEIGHT = CARD_HEIGHT + MARGIN * 2
 const { height: wHeight } = Dimensions.get("window")
@@ -16,8 +16,8 @@ const styles = StyleSheet.create({
     },
     image: {
     
-        width: 200,
-        height:200,
+        width: 150,
+        height:150,
         borderRadius: 25
     },
 })

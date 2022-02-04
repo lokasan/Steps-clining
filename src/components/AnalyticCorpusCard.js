@@ -38,12 +38,12 @@ export const AnalyticsCorpusCard = ({item, index, navigation}) => {
             <View>
                 <Image 
                     style={styles.tinyLogo}
-                    source={{uri: imageSrc}}/>
+                    source={{uri: imageSrc ? imageSrc : null}}/>
                 <View style={{position: 'absolute', alignSelf: 'center', width: '100%', height: '100%', justifyContent: 'space-between'}}>
                     <View style={styles.titleAroundTextView}>
                         <Text style={styles.titleCorpus}>{item.name}</Text>
                     </View>
-                    <View style={{width: '100%', backgroundColor: 'black', flexDirection: 'row', opacity: .5, padding: 10}}>
+                    <View style={{width: '100%', backgroundColor: 'rgba(0, 0, 0, .7)', flexDirection: 'row',  padding: 10}}>
                         <View style={{alignItems: 'center'}}>
                         {Rank()}
                             <Text style={styles.textForPic}>{item.avg_rank}</Text>
@@ -87,8 +87,7 @@ const styles = StyleSheet.create({
         color: 'white'
     },
     titleAroundTextView: {
-        backgroundColor: 'black', 
-        opacity: 0.5, 
+        backgroundColor: 'rgba(0, 0, 0, .7)'
         
     },
     titleCorpus: {

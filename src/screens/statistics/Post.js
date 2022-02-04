@@ -166,11 +166,7 @@ export const Post = ({user_id, period, monthRange,
             </>
         )
     }
-    const renderItem = () => {
-        return <>
-                {ItemPost()}
-               </>
-    }
+    
     // console.log(DATA_USER_WITH_TBR_DETAIL, 'DATA_USER_WITH_TBR_DETAIL')
     return (
         <>

@@ -214,7 +214,7 @@ const BottomNavigator = () => {
                 tabBarLabel: 'Обход',
                 tabBarIcon: info => <Ionicons name="ios-qr-code" size={25} color={info.color}/>
             }}/>
-            <BottomTab.Screen name="Analytics" component={AnalyticsNavigator} options={{
+            <BottomTab.Screen name="Analytics-Nav" component={AnalyticsNavigator} options={{
                 tabBarLabel: 'Аналитика', 
                 headerShown: false, 
                 tabBarIcon: info => <Ionicons name="ios-analytics" size={25} color={info.color}/>

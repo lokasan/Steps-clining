@@ -109,24 +109,24 @@ export const MainProfileScreen = ({navigation}) => {
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
             <View style={styles.userCard}>
                 <View>
-                    <Image style={{height: 150, width: 150}} source={{uri: result.img}}/>
+                    <Image style={{height: 150, width: 150}} source={{uri: result?.img}}/>
                 </View>
                 <View style={styles.privateData}>
                     <View style={styles.textStyle}>
-                        <Text style={styles.textStyleLine}>{`${result.surname} ${result.name} ${result.lastname}`}</Text>
+                        <Text style={styles.textStyleLine}>{`${result?.surname} ${result?.name} ${result?.lastname}`}</Text>
                     </View>
                     <View style={styles.textStyle}>
-                        <Text style={styles.textStyleLine}>{result.email}</Text>
+                        <Text style={styles.textStyleLine}>{result?.email}</Text>
                     </View>
                     <View>
-                        <Text style={{color: '#fff', textAlign:'center'}}>{result.position}</Text>
+                        <Text style={{color: '#fff', textAlign:'center'}}>{result?.position}</Text>
                     </View>
                 
                 </View>
                
             </View>
             </TouchableOpacity>
-        {tempPrivileg && <View style={styles.menuCard}>
+        {tempPrivileg && <ScrollView style={styles.menuCard}>
         <TouchableOpacity onPress={execute}>
             <View style={styles.actionMenu}>
                 <ProfileQRCode/>
@@ -159,7 +159,7 @@ export const MainProfileScreen = ({navigation}) => {
                 <ArrowRight/>
             </View>
             </TouchableOpacity>
-        </View>
+        </ScrollView>
         }
         </View>
         {/* </ScrollView> */}

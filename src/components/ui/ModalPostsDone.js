@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react'
-import {View, Modal, Text, StyleSheet, Pressable} from 'react-native'
+import {View, Modal, Text, StyleSheet, Pressable, Dimensions, SafeAreaView, ScrollView} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import { getBypassMapCompleteCycle } from '../../store/actions/bypass'
-
+const {width, height} = Dimensions.get("window")
 
 export const ModalPostsDone = ({navigation, modalVisible, setModalVisible}) => {
     const postsCompleteCycle = useSelector(state => state.bypass.listPostsInCycleComplete)
     const dispatch = useDispatch()
+    
 
     // useEffect(() => {
     //     dispatch(getBypassMapCompleteCycle(1639420430898, 1639598921334))
@@ -17,6 +18,7 @@ export const ModalPostsDone = ({navigation, modalVisible, setModalVisible}) => {
     })
 
     return (
+      <SafeAreaView>
         <Modal
         animationType="slide"
         transparent={true}
@@ -28,15 +30,15 @@ export const ModalPostsDone = ({navigation, modalVisible, setModalVisible}) => {
         }}
       >
             <View style={styles.centeredView}>
-                <View style={styles.modalView}>
+                <View style={renderPostsCompleteCycle.length ? styles.modalView : [styles.modalView, {justifyContent: 'center'}]}>
                     {renderPostsCompleteCycle.length 
                     ?
-                    <><Text>Вам осталось обойти следующие посты для завершения цикла:</Text>
-                    {renderPostsCompleteCycle}</>
-                    : <Text>Вы завершили цикл</Text>}
+                    <><Text style={{fontSize: 20, marginBottom: 20}}>Вам осталось обойти следующие посты для завершения цикла:</Text>
+                    <View><ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }} showsVerticalScrollIndicator={false}>{renderPostsCompleteCycle}</ScrollView></View></>
+                    : <Text style={{fontSize: 20}}>Вы завершили цикл</Text>}
                     
                     <Pressable
-                    style={[styles.button, styles.buttonClose]}
+                    style={({pressed}) => pressed ? [styles.button, styles.buttonOpen] : [styles.button, styles.buttonClose]}
                     onPress={
                         () => { 
                         setModalVisible(!modalVisible)
@@ -49,6 +51,7 @@ export const ModalPostsDone = ({navigation, modalVisible, setModalVisible}) => {
                 </View>
             </View>
         </Modal>
+      </SafeAreaView>
     )
 }
 
@@ -57,7 +60,7 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      marginTop: 22
+      marginTop: 22,
     },
     modalView: {
       margin: 20,
@@ -72,15 +75,22 @@ const styles = StyleSheet.create({
       },
       shadowOpacity: 0.25,
       shadowRadius: 4,
-      elevation: 5
+      elevation: 5,
+      width: width,
+      height: height,
     },
     button: {
-      borderRadius: 20,
+      width,
       padding: 10,
-      elevation: 2
+      elevation: 2, 
+      position: 'absolute',
+      height: 60,
+      bottom: 0,
+      left: 0,
+      justifyContent: 'center'
     },
     buttonOpen: {
-      backgroundColor: "#F194FF",
+      backgroundColor: "black",
     },
     buttonClose: {
       backgroundColor: "#2196F3",
@@ -88,10 +98,11 @@ const styles = StyleSheet.create({
     textStyle: {
       color: "white",
       fontWeight: "bold",
-      textAlign: "center"
+      textAlign: "center",
+      fontSize: 20
     },
     modalText: {
       marginBottom: 15,
-      textAlign: "center"
+      fontSize: 18,
     }
   });

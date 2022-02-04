@@ -1,6 +1,6 @@
 
 import React, {useCallback, useEffect, useState, useRef} from 'react'
-import {Pressable, View, Text, StyleSheet, Image, Button, ScrollView, SafeAreaView, Alert, FlatList, TouchableOpacity, Animated, StatusBar, ActivityIndicator} from 'react-native'
+import {Pressable, View, Text, Modal, StyleSheet, Image, Button, ScrollView, SafeAreaView, Alert, FlatList, TouchableOpacity, Animated, StatusBar, ActivityIndicator} from 'react-native'
 
 import {useDispatch, useSelector} from 'react-redux'
 import { ComponentsBypassCard } from '../components/ComponentsBypassCard'
@@ -8,6 +8,7 @@ import {ArrowRight} from '../components/ui/imageSVG/circle'
 import { loadPostWithComponent } from '../store/actions/postWithComponent'
 import { loadFinishedBypassComponents } from '../store/actions/bypassRank'
 import { loadStartedBypassRank } from '../store/actions/bypassRank'
+import { bypassIsCleaner } from '../store/actions/bypass'
 import { finishedBypass } from '../store/actions/bypass'
 import { AppLoader } from '../components/ui/AppLoader'
 import { hideLoaderBypassRank, showLoaderBypassRank } from '../store/actions/bypassRank'
@@ -17,7 +18,10 @@ export const BypassScreen = ({route, navigation}) => {
     const dispatch = useDispatch()
     const post = route.params.element
     const {bypassId} = useSelector(state => state.bypass.bypassNumber)
+    const {modalVis} = route.params
+    const {bypassIdRef} = route.params
     // console.log(bypassId, 'BYPASSSCREEN YOU LIVE?')
+    const [modalVisible, setModalVisible] = useState(false)
     let components = useSelector(state => state.postWithComponent.postWithComponentAll)
     const startedBypassRanks = useSelector(state => state.bypassRank.bypassRankIsStarted)
     let componentsFinished = useSelector(state => state.bypassRank.bypassComponents)
@@ -35,7 +39,9 @@ export const BypassScreen = ({route, navigation}) => {
         // dispatch(loadPostWithComponent(post.id))
         
     }, [bypassId])
-   
+    useEffect(() => {
+        setModalVisible(modalVis)
+    }, [])
     if (loading) {
         return <AppLoader/>
     }
@@ -92,6 +98,41 @@ export const BypassScreen = ({route, navigation}) => {
     
             <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
             {/* <View style={styles.container, styles.centers}> */}
+                <Modal
+                animationType='fade'
+                transparent={true}
+                visible={modalVisible}
+                >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                        <Text style={styles.modalTitle}>Наличие уборщика</Text>
+                        <Text style={styles.modalText}>
+                            <Text> Уборщик на месте </Text>
+                            <Text> ?</Text>
+                            </Text>
+                            
+                        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <Pressable
+                            style={({ pressed }) => [styles.button, pressed ? styles.buttonDelete : styles.buttonClosePressed]}
+                            onPress={() => {
+                            setModalVisible(!modalVisible)
+                            dispatch(bypassIsCleaner(0, bypassIdRef.current))
+                            }}>
+                            <Text style={styles.textStyle}>Нет</Text>
+                        </Pressable>
+                        <Pressable
+                            style={({ pressed }) => [styles.button, pressed ? styles.buttonDeletePressed : styles.buttonClose]}
+                            onPress={() => {
+                            setModalVisible(!modalVisible)
+                            dispatch(bypassIsCleaner(1, bypassIdRef.current))
+                            }}>
+                            <Text style={styles.textStyle}>Да</Text>
+                        
+                        </Pressable>
+                        </View>
+                        </View>
+                    </View>
+                </Modal>
                 <ModalPostsDone navigation={navigation} modalVisible={modalVisibleCompleteCycle} setModalVisible={setModalVisibleCompleteCycle}/>
                 
                 {false ? loader : <FlatList
@@ -169,6 +210,59 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'space-evenly'
     },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding:35,
+        paddingBottom: 10,
+    
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+      },
+      button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2
+      },
+      buttonClosePressed: {
+        backgroundColor: '#000'
+      },
+      buttonClose: {
+        backgroundColor: '#303f9f',
+      },
+      buttonDeletePressed: {
+        backgroundColor: 'green',
+      },
+      buttonDelete: {
+        backgroundColor: 'red',
+      },
+      textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center'
+      },
+      modalText: {
+        marginBottom: 15,
+        textAlign: 'center'
+      },
+      modalTitle: {
+        marginBottom: 15,
+        textAlign: 'center',
+        fontWeight: 'bold'
+      },
+      centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22
+      }
 })
 
 // BypassScreen.navigationOptions = ({ route, navigation }) => {

@@ -12,16 +12,9 @@ import { ADD_OBJECT, ACTION, CREATE, MESSAGE, NAME_FILE, NAME, ADDRESS, DESCRIPT
     LOAD_COMPONENT_RANK, UPDATE_COMPONENT_RANK, LOAD_COMPONENT_TO_POST_LINK, GET_COMPONENT_TO_POST_LINK, IMAGE,
     GET_BYPASS_STATUS_OBJECT, LOAD_BYPASS_STATUS_OBJECT, REMOVE_POST, GET_OBJECTS_SYNCHRONIZE, GET_POSTS_SYNCHRONIZE, 
     GET_COMPONENTS_SYNCHRONIZE, GET_COMPONENTS_RANKS_SYNCHRONIZE, FINISHED_BYPASS, GET_BYPASS_STATUS_POSTS, 
-    LOAD_BYPASS_STATUS_POSTS, GET_BYPASS_STATUS_USERS, LOAD_BYPASS_STATUS_USERS, GET_BYPASS_STATUS_USERS_DETAIL, LOAD_BYPASS_STATUS_USERS_DETAIL, UPDATE_EMPLOEE_PRIVILEG, GET_LIST_USERS_AVERAGE_FOR_POST, GET_USERS_BASIC_STAT, GET_SINGLE_USER_STAT, GET_BYPASS_RANK_IMAGE_COUNT, ADD_ACTIVE_USER, GET_ACTIVE_USERS} from './components/types'
+    LOAD_BYPASS_STATUS_POSTS, GET_BYPASS_STATUS_USERS, LOAD_BYPASS_STATUS_USERS, GET_BYPASS_STATUS_USERS_DETAIL, LOAD_BYPASS_STATUS_USERS_DETAIL, UPDATE_EMPLOEE_PRIVILEG, GET_LIST_USERS_AVERAGE_FOR_POST, GET_USERS_BASIC_STAT, GET_SINGLE_USER_STAT, GET_BYPASS_RANK_IMAGE_COUNT, ADD_ACTIVE_USER, GET_ACTIVE_USERS, HIDE_LOADER_BYPASS_RANK, HIDE_LOADER_COMPONENT_RANK, HIDE_LOADER, HIDE_LOADER_ICON, UPDATE_USER_AUTHORIZE} from './components/types'
 import { DB } from './db';
-import { hideLoaderBypass, hideLoaderBypassIcon } from './store/actions/bypass';
-import { hideLoaderComponent } from './store/actions/component';
-import { hideLoaderPost } from './store/actions/post';
-import { hideLoaderComponentRank } from './store/actions/componentRank';
 import { msToTime, timeToFormat } from './utils/msToTime'
-import { updateUser } from './store/actions/empDouble';
-import { hideLoaderBypassRank } from './store/actions/bypassRank';
-import { hideLoaderCorpus } from './store/actions/corpus';
 
 
 let ws            = new WebSocket('ws://192.168.1.11:8760');
@@ -53,21 +46,27 @@ async function socket_onmessage_callback(recv) {
     }
     if (ACTION in data && data[ACTION] === GET_OBJECTS) {
         data[MESSAGE].map((el, id) => el['path'] = data['CONTENT'][id])
-        dispatch(hideLoaderBypass())
+        dispatch({
+            type: HIDE_LOADER
+        })
         dispatch({
             type   : LOAD_OBJECT,
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === GET_POSTS) {
         data[MESSAGE].map((el, id) => el['path'] = data['CONTENT'][id])
-        dispatch(hideLoaderPost())
+        dispatch({
+            type: HIDE_LOADER
+        })
         dispatch({
             type   : LOAD_POST,
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === GET_COMPONENTS) {
         data[MESSAGE].map((el, id) => el['path'] = data['CONTENT'][id])
-        dispatch(hideLoaderComponent())
+        dispatch({
+            type: HIDE_LOADER
+        })
         dispatch({
             type   : LOAD_COMPONENT,
             payload: data[MESSAGE]
@@ -92,13 +91,17 @@ async function socket_onmessage_callback(recv) {
     } else if (ACTION in data && data[ACTION] === GET_BYPASS_STATUS_OBJECT) {
         data[MESSAGE].map((el) => el['countTime'] = timeToFormat(msToTime(el['countTime'])))
         
-        dispatch(hideLoaderBypass())
+        dispatch({
+            type: HIDE_LOADER
+        })
         dispatch({
             type   : LOAD_BYPASS_STATUS_OBJECT,
             payload: data[MESSAGE]
         })
     } else if(ACTION in data && data[ACTION] === 'GET_BYPASS_STATUS_OBJECT_DETAIL') {
-        dispatch(hideLoaderBypassIcon())
+        dispatch({
+            type: HIDE_LOADER_ICON
+        })
         dispatch({
             type: 'LOAD_BYPASS_STATUS_OBJECT_DETAIL',
             payload: data[MESSAGE]
@@ -106,28 +109,36 @@ async function socket_onmessage_callback(recv) {
     }
     else if (ACTION in data && data[ACTION] === GET_BYPASS_STATUS_POSTS) {
         data[MESSAGE].map((el) => el['countTime'] = timeToFormat(msToTime(el['countTime'])))
-        dispatch(hideLoaderBypass())
+        dispatch({
+            type: HIDE_LOADER
+        })
         dispatch({
             type: LOAD_BYPASS_STATUS_POSTS,
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === GET_BYPASS_STATUS_USERS) {
         data[MESSAGE].map((el) => el['countTime'] = timeToFormat(msToTime(el['countTime'])))
-        dispatch(hideLoaderBypassIcon())
+        dispatch({
+            type: HIDE_LOADER_ICON
+        })
         dispatch({
             type: LOAD_BYPASS_STATUS_USERS,
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === GET_BYPASS_STATUS_USERS_DETAIL) {
         data[MESSAGE].map((el) => el['countTime'] = timeToFormat(msToTime(el['end_time'] - el['start_time'])))
-        dispatch(hideLoaderBypassIcon())
+        dispatch({
+            type: HIDE_LOADER_ICON
+        })
         dispatch({
             type: LOAD_BYPASS_STATUS_USERS_DETAIL,
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === 'GET_BYPASS_STATUS_USERS_DETAIL_FOR_DAY') {
         data[MESSAGE].map((el) => el['countTime'] = timeToFormat(msToTime(el['end_time'] - el['start_time'])))
-        dispatch(hideLoaderBypassIcon())
+        dispatch({
+            type: HIDE_LOADER_ICON
+        })
         dispatch({
             type: 'LOAD_BYPASS_STATUS_USERS_DETAIL_FOR_DAY',
             payload: data[MESSAGE]
@@ -135,7 +146,9 @@ async function socket_onmessage_callback(recv) {
     }
     else if (ACTION in data && data[ACTION] === 'GET_CORPUS_SYNCHRONIZE') {
         await doCreateAndRemoveLocalStoreAndBase(data, DB.getCorpusById, DB.createCorpus, DB.removeCorpus)
-        dispatch(hideLoaderCorpus())
+        dispatch({
+            type: HIDE_LOADER
+        })
         dispatch({
             type: 'LOAD_CORPUS',
             payload: await DB.getCorpuses()
@@ -143,7 +156,9 @@ async function socket_onmessage_callback(recv) {
     }
     else if (ACTION in data && data[ACTION] === 'GET_OBJECTS_SYNCHRONIZE_ID') {
         await doCreateAndRemoveLocalStoreAndBase(data, DB.getObjectById, DB.createObject, DB.removeObject)
-        dispatch(hideLoaderBypass())
+        dispatch({
+            type: HIDE_LOADER
+        })
         dispatch({
             type   : 'LOAD_OBJECT_FOR_CORPUS',
             payload: await DB.getObjectsByCorpusId(data['TARGET_ID'])
@@ -151,14 +166,18 @@ async function socket_onmessage_callback(recv) {
     }
     else if (ACTION in data && data[ACTION] === GET_OBJECTS_SYNCHRONIZE) {
         await doCreateAndRemoveLocalStoreAndBase(data, DB.getObjectById, DB.createObject, DB.removeObject)
-        dispatch(hideLoaderBypass())
+        dispatch({
+            type: HIDE_LOADER
+        })
         dispatch({
             type   : LOAD_OBJECT,
             payload: await DB.getObjects()
         })
     } else if (ACTION in data && data[ACTION] === 'GET_ALL_POSTS_FROM_SERVER') {
         await doCreateAndRemoveLocalStoreAndBase(data, DB.getPostById, DB.createPost, DB.removePost)
-        dispatch(hideLoaderPost())
+        dispatch({
+            type: HIDE_LOADER
+        })
         dispatch({
             type   : GET_POSTS_ALL,
             payload: await DB.getPostAll()
@@ -177,14 +196,18 @@ async function socket_onmessage_callback(recv) {
         }
         // data['CREATE_ELEMENTS'].forEach((el) => console.log('POST NAME IS: ', el.name))
         await doCreateAndRemoveLocalStoreAndBase(data, DB.getPostById, DB.createPost, DB.removePost)
-        dispatch(hideLoaderPost())
+        dispatch({
+            type: HIDE_LOADER
+        })
         dispatch({
             type   : LOAD_POST,
             payload: await DB.getPosts(data['TARGET_ID'])  /* target id for elements with included  */
         })
     } else if (ACTION in data && data[ACTION] === 'GET_POSTS_FOR_CORPUS_SYNCHRONIZE') {
         await doCreateAndRemoveLocalStoreAndBase(data, DB.getPostById, DB.createPost, DB.removePost)
-        dispatch(hideLoaderPost())
+        dispatch({
+            type: HIDE_LOADER
+        })
         dispatch({
             type   : LOAD_POST,
             payload: await DB.getPostsForCorpus(data['TARGET_ID'])  /* target id for elements with included  */
@@ -192,7 +215,9 @@ async function socket_onmessage_callback(recv) {
     }
         else if (ACTION in data && data[ACTION] === GET_COMPONENTS_SYNCHRONIZE) {
         await doCreateAndRemoveLocalStoreAndBase(data, DB.getCompoentById, DB.createComponent, DB.removeComponent)
-        dispatch(hideLoaderComponent())
+        dispatch({
+            type: HIDE_LOADER
+        })
         dispatch({
             type   : LOAD_COMPONENT,
             payload: await DB.getComponents()
@@ -205,7 +230,9 @@ async function socket_onmessage_callback(recv) {
             DB.removeComponentRank, 
             DB.editComponentRank,
             DB.updateComponentRank)
-        dispatch(hideLoaderComponentRank())
+        dispatch({
+            type: HIDE_LOADER_COMPONENT_RANK
+        })
         dispatch({
             type   : LOAD_COMPONENT_RANK,
             payload: await DB.getComponentRankId(data['TARGET_ID'])
@@ -242,7 +269,23 @@ async function socket_onmessage_callback(recv) {
         })
     } else if (ACTION in data && data[ACTION] === 'CHECK_AUTHENTICATION') {
         console.log('CHECK_AUTHETICATION ', data['MESSAGE']['email'], data['MESSAGE']['id'])
-        dispatch(updateUser({status: 0, email: data[MESSAGE]['email'], id: data[MESSAGE]['id'], isAccess: data[MESSAGE]['email'] ? 1 : -1}))
+        const user = {
+                        status: 0, 
+                        email: data[MESSAGE]['email'], 
+                        id: data[MESSAGE]['id'], 
+                        isAccess: data[MESSAGE]['email'] ? 1 : -1
+                    }
+
+        await DB.updateUserAuthorize(user.status === 0 ? 1 : 0, user.email)
+        if (user.status) {
+            await UploadDataToServer.userLogout(user)
+        } else if (~user.isAccess) {
+            await UploadDataToServer.addActiveUser(user.id)
+        }
+        dispatch({
+            type   : UPDATE_USER_AUTHORIZE,
+            payload: user
+        })
     } else if (ACTION in data && data[ACTION] === 'UPDATE_EMPLOEE_PRIVILEG') {
         await DB.updateUserPrivileg(data[MESSAGE])
         dispatch({
@@ -272,7 +315,9 @@ async function socket_onmessage_callback(recv) {
             const spreadDataIfExists = data['DATA'] ? data['DATA'][i] : Object.create(null)
             myListBypassRankImage.push({filename, ...spreadDataIfExists})
         }
-        dispatch(hideLoaderBypassRank())
+        dispatch({
+            type: HIDE_LOADER_BYPASS_RANK
+        })
         dispatch({
             type: 'GET_IMAGE_BYPASS_RANK',
             payload: myListBypassRankImage
@@ -294,7 +339,9 @@ async function socket_onmessage_callback(recv) {
             payload: data[MESSAGE]
         })
     } else if (ACTION in data && data[ACTION] === GET_LIST_USERS_AVERAGE_FOR_POST) {
-        dispatch(hideLoaderBypass())
+        dispatch({
+            type: HIDE_LOADER
+        })
         dispatch({
             type: GET_LIST_USERS_AVERAGE_FOR_POST,
             payload: data[MESSAGE]

@@ -1,5 +1,5 @@
 import React, {useState, Fragment} from 'react'
-import { View, StyleSheet, Modal, Pressable, Image, Text, Alert, TouchableOpacity, ScrollView, FlatList, SafeAreaView } from 'react-native'
+import { Platform, View, StyleSheet, Modal, Pressable, Image, Text, Alert, TouchableOpacity, ScrollView, FlatList, SafeAreaView } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
 import * as FileSystem from 'expo-file-system'
@@ -91,7 +91,7 @@ export const PhotoPickerBypass = ({post, userId, target, componentsFinished, com
 
     const Item = ({ item }) => (
         <><TouchableOpacity>
-            <View style = {{display: 'absolute', width: 74, height: 100, top: 10}}>
+            <View style = {{width: 74, height: 100, top: 5}}>
             
             <View             style   = {{zIndex: 1000, marginLeft: 'auto', marginTop: -5, marginRight: -5}}>
             <TouchableOpacity onPress = {() => removeHandler(item)}>
@@ -99,7 +99,7 @@ export const PhotoPickerBypass = ({post, userId, target, componentsFinished, com
             </TouchableOpacity>
             </View>
             
-            <View  style = {{position: 'absolute', height: 74}}>
+            <View  style = {{position: 'absolute', height: 84}}>
             <Image style = {{zIndex: 0, height: 64, width: 64, borderRadius: 15, marginLeft: 10}} source = {{uri: item.image}}/>
             </View>
             </View>
@@ -109,7 +109,7 @@ export const PhotoPickerBypass = ({post, userId, target, componentsFinished, com
             takePhoto()
         }}
         >
-            <View style = {{ marginTop: 10, marginLeft: 10}}>
+            <View style = {{ marginTop: 5, marginLeft: 10}}>
             {image.length < MAX_IMAGES_FOR_BYPASS && <AddNewBypassRankPhoto/>}
             </View>
         </TouchableOpacity>}</>
@@ -141,6 +141,7 @@ export const PhotoPickerBypass = ({post, userId, target, componentsFinished, com
                     <FlatList
                           horizontal                     = {true}
                           vertical                       = {false}
+                          style = {{bottom: 10}}
                           showsHorizontalScrollIndicator = {false}
                           data                           = {image}
                           renderItem                     = {renderItem}

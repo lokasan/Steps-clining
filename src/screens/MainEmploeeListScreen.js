@@ -140,6 +140,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     // useEffect(() => {
     //     dispatch(loadEmploeeDouble())
     // }, [dispatch])
+    let serfIdUser = 0
     
     let   tempPrivileg = false
     for (let i of emploeeAll) {
@@ -162,7 +163,6 @@ export const MainEmploeeListScreen = ( {navigation}) => {
         
     }, [])
   
-  let serfIdUser = 0
   // const [serfIdUser, setSerfIdUser] = useState(0)
   let emplServer = useSelector(state => state.empDouble.empServer)
   

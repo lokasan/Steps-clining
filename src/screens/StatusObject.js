@@ -18,13 +18,13 @@ import CarouselItem from '../components/ui/CarouselItem'
 import { ArrowTrand } from '../components/toolkitComponents/ArrowTrand';
 import { BasicStatEmploee } from '../components/BasicStatEmploee';
 import { FilterStat } from '../components/FilterStat';
-import * as Localization from 'expo-localization';
-import i18n from 'i18n-js';
 import { User } from './statistics/User';
 import { Attribute } from './statistics/Attribute';
 import { BarChart } from '../components/BarChart';
 import { DateChanger } from '../components/Analytics/DateChanger';
-
+import {ModalFilterForCorpusAndBuilding} from '../components/ui/ModalFilterForCorpusAndBuilding'
+import { ModalPhotoOfBypass } from '../components/ui/ModalPhotoOfBypass';
+import { PostInCorpus } from './statistics/PostInCorpus';
 // import { Circle } from 'react-native-svg';
 // import Shares from 'react-native-share'
 const NORMAL_RANK = 3
@@ -106,12 +106,7 @@ export const StatusObject = ({route, navigation}) => {
     components: false,
     employee: false,
   })
-  i18n.translations = {
-    en: {posts: 'posts', building: 'building', employees: 'employees', components: 'components'},
-    ru: {posts: 'Посты', building: 'Участки', employees: 'Сотрудники', components: 'Компоненты'}
-  }
-  i18n.locale = Localization.locale
-  i18n.fallbacks = true
+  
   const handler = {
     set(target, property, value) {
       if (property in target && typeof value === 'boolean') {
@@ -871,17 +866,6 @@ export const StatusObject = ({route, navigation}) => {
        
         let textComponent = createTextComponent(item).textComponent
 
-        const weekMonthBeforeTemplate = (() => {
-          return [
-            <Text style={styles.beastAndBad}>Дата</Text>,
-            <Text style={styles.beastAndBad}>Температура</Text>,
-            <Text style={styles.beastAndBad}>Средний балл</Text>,
-            <Text style={styles.beastAndBad}>Кол-во обходов</Text>,
-            <Text style={styles.beastAndBad}>Время обходов</Text>,
-            <Text style={styles.beastAndBad}>Время между обх.</Text>,
-            <Text style={styles.beastAndBad}>Уборщик</Text>
-          ]
-        })()
         // console.log(item, 'users_detail data item')
         // console.log(choisePost.current)
         // const comparePosts = choisePost.current?.email === item.data[0]?.email && choisePost.current?.post === item.data[0]?.post_name
@@ -920,7 +904,13 @@ export const StatusObject = ({route, navigation}) => {
                     </View>
                     <View style = {styles.wrapperSecondLine}>
                       <View>
-                        {weekMonthBeforeTemplate}
+                      <Text style={styles.beastAndBad}>Дата</Text>
+                      <Text style={styles.beastAndBad}>Температура</Text>
+                      <Text style={styles.beastAndBad}>Средний балл</Text>
+                      <Text style={styles.beastAndBad}>Кол-во обходов</Text>
+                      <Text style={styles.beastAndBad}>Время обходов</Text>
+                      <Text style={styles.beastAndBad}>Время между обх.</Text>
+                      <Text style={styles.beastAndBad}>Уборщик</Text>
                         {textComponent}
                       </View>
                       <ScrollView 
@@ -931,7 +921,7 @@ export const StatusObject = ({route, navigation}) => {
                       {createViewDataComponent(JSON.parse(JSON.stringify(item)))}
                       </ScrollView>
                       <Image 
-                        style = {{...styles.beastAndBad, height: 32, width: 20}} 
+                        style = {{paddingLeft: 22, paddingTop : 11, height: 32, width: 20}} 
                         source={item.data?.length !== 0 ? 
                           {uri: `http://openweathermap.org/img/wn/${item.data[0].icon}@2x.png`} :
                           null}/>
@@ -948,17 +938,6 @@ export const StatusObject = ({route, navigation}) => {
       const ItemUsersDetailsModal = React.memo(({item, index}) => {
         let textComponent = createTextComponent(item).textComponent
         // console.log("RENDER itemusersdetailsModal")
-        const todayBeforeTemplate = (() => {
-          return [
-            <Text style={styles.beastAndBad}>Обход №</Text>,
-            <Text style={styles.beastAndBad}>Погода</Text>,
-            <Text style={styles.beastAndBad}>Температура</Text>,
-            <Text style={styles.beastAndBad}>Вр. нач. обх.</Text>,
-            <Text style={styles.beastAndBad}>Вр. кон. обх.</Text>,
-            <Text style={styles.beastAndBad}>Длительность обх.</Text>,
-            <Text style={styles.beastAndBad}>Уборщик</Text>
-          ]
-        })()
 
         return (
           <Animated.View style = {styles.itemUD}>
@@ -972,7 +951,13 @@ export const StatusObject = ({route, navigation}) => {
                   </View>
                   <View style = {styles.wrapperSecondLine}>
                     <View>
-                      {todayBeforeTemplate}
+                    <Text style={styles.beastAndBad}>Обход №</Text>
+                    <Text style={styles.beastAndBad}>Погода</Text>
+                    <Text style={styles.beastAndBad}>Температура</Text>
+                    <Text style={styles.beastAndBad}>Вр. нач. обх.</Text>
+                    <Text style={styles.beastAndBad}>Вр. кон. обх.</Text>
+                    <Text style={styles.beastAndBad}>Длительность обх.</Text>
+                    <Text style={styles.beastAndBad}>Уборщик</Text>
                       {textComponent}
                     </View>
                     <ScrollView 
@@ -1009,14 +994,28 @@ export const StatusObject = ({route, navigation}) => {
           renderItem={renderItemObjectDetails} 
           keyExtractor={item => item.id}/> : null}
           { flagArrayObjects.indexOf(item.title) !== -1 
-          ? (stateChartInnerRef.posts ? <Animated.FlatList 
-          showsVerticalScrollIndicator = {false}
-          data = {DATA_POSTS} renderItem={renderItemPosts}
-          keyExtractor={keyExtractors} 
-          listKey={String(Date.now())}
-          refreshing={isRefreshing}
-          onRefresh={onRefresh}
-          /> : (stateChartInnerRef.employee 
+          ? (stateChartInnerRef.posts ? 
+          <PostInCorpus 
+            flagArrayPosts={flagArrayPosts} 
+            flagArrayUsersDetail={flagArrayUsersDetail}
+            setFlagArrayUsersDetail={setFlagArrayUsersDetail}
+            setFlagArrayPosts={setFlagArrayPosts} 
+            choisePost={choisePost} 
+            choisePostS={choisePostS}
+            period={period} 
+            corpusId={corpusId}
+            showUserDetailInfoOrUnshow={showUserDetailInfoOrUnshow}
+            setModalVisibleRank={setModalVisibleRank}
+            setModalVisible={setModalVisible}
+            monthRange={monthRange}
+            setMonthRange={setMonthRange}
+            setModalVisibleDay={setModalVisibleDay}
+            bypassKeyByValueRef={bypassKeyByValueRef}
+            bypassPhotoPostIdRef={bypassPhotoPostIdRef}
+            bypassPhotoEmailRef={bypassPhotoEmailRef}
+            DATA_IMAGE_BYPASS_RANK={DATA_IMAGE_BYPASS_RANK}
+            choseDateCurrentRef={choseDateCurrentRef}
+            /> : (stateChartInnerRef.employee 
             ? <User 
             period={period} 
             building_id={activeBuildingRef.current.building_id}
@@ -1207,168 +1206,27 @@ export const StatusObject = ({route, navigation}) => {
         
         // dispatch(getBypassPhoto())
       })
-      const keyExtractorImage = useCallback((_, index) => 'key' + index)
-      const renderItemImage = useCallback( ({item}) => (<CarouselItem item={item} />))
-      const testCallbackForModal = useCallback(() => {
-        setModalVisible(false);
-        dispatch(clearBypassRankImage())
-        dispatch(clearBypassRankImageCount())
-      })
-      const testCallbackForModalRank = useCallback(() => {
-        setModalVisibleRank(false);
-        dispatch(clearBypassRankImage())
-        dispatch(clearBypassRankImageCount())
-      })
-      
       
     return <SafeAreaView style={styles.modalContainer}>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisibleFilter}
-        onRequestClose={() =>{
-          Alert.alert('Modal has been closed.')
-          setModalVisibleFilter(!modalVisibleFilter)
-        }}
-      >
-         <View style={styles.centeredView}>
-        
-            
-            <View style={DATA_POSTS.length === 0  && DATA_USERS_TBR.length === 0  && DATA_COMPONENT.length === 0 ? {display: 'flex', flexDirection: 'row', justifyContent: 'space-between'} : {display: 'none'}}>
-            <Pressable
-              onPress={() => {
-
-                stateChart.employee = true
-                // if (DATA_POSTS.length) {
-                //   dispatch(getListUsersStaticTbr(period, activeBuildingRef.current.building_id))
-
-                // }
-                dispatch(clearBypassBuildingForCorpus())
-                dispatch(getListUsersStaticWithTbrCorpus(period, corpusId))
-                dispatch(loadPostForCorpus(corpusId))
-                // console.log('period:' , period)
-                setModalVisibleFilter(!modalVisibleFilter)
-              }}
-              style={{borderRadius: 20, padding: 10, elevation: 2}, stateChart.employee ? {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: "black"} : {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: '#2196F3'}}
-            >
-              <Text style={{color: 'white'}}>{i18n.t('employees')}</Text>
-            </Pressable>
-            {/* <Pressable
-              onPress={() => {
-                stateChart.posts = true
-                setModalVisibleFilter(!modalVisibleFilter)
-              }}
-              style={{borderRadius: 20, padding: 10, elevation: 2}, stateChart.posts ? {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: "black"} : {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: '#2196F3'}}
-            >
-              <Text style={{color: 'white'}}>{i18n.t('posts')}</Text>
-            </Pressable> */}
-            <Pressable
-              onPress={() => {
-                stateChart.buildings = true
-                dispatch(clearListUsersStaticWithTbrCorpus())
-                dispatch(loadBypassBuildingForCorpus(period, corpusId))
-                setModalVisibleFilter(!modalVisibleFilter)
-              }}
-              style={{borderRadius: 20, padding: 10, elevation: 2}, stateChart.buildings ? {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: "black"} : {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: '#2196F3'}}
-            >
-              <Text style={{color: 'white'}}>{i18n.t('building')}</Text>
-            </Pressable>
-            {/* <Pressable
-              onPress={() => {
-                stateChart.components = true
-                setModalVisibleFilter(!modalVisibleFilter)
-              }}
-              style={{borderRadius: 20, padding: 10, elevation: 2}, stateChart.components ? {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: "black"} : {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: '#2196F3'}}
-            >
-              <Text style={{color: 'white'}}>{i18n.t('components')}</Text>
-            </Pressable> */}
-            </View>
-
-            <View style={DATA_POSTS.length || DATA_USERS_TBR.length || DATA_COMPONENT.length ? {display: 'flex', flexDirection: 'row', justifyContent: 'space-between'} : {display: 'none'}}>
-            <Pressable
-              onPress={() => {
-
-                stateChartInnerRef.employee = true
-                
-                dispatch(getListUsersStaticTbr(period, activeBuildingRef.current.building_id))
-                setFlagArrayPosts([])
-                dispatch(clearBypassUsersAverageAll())
-
-                // temporary solution for restore settings of loader status
-                choisePost.current = null
-
-                // dispatch(clearBypassPosts())
-                
-                setModalVisibleFilter(!modalVisibleFilter)
-              }}
-              style={{borderRadius: 20, padding: 10, elevation: 2}, stateChartInnerRef.employee ? {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: "black"} : {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: '#2196F3'}}
-            >
-              <Text style={{color: 'white'}}>{i18n.t('employees')}</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => {
-                stateChartInnerRef.posts = true
-                dispatch(loadBypassPosts(period, activeBuildingRef.current.title))
-                dispatch(clearListUsersStaticTbr())
-                dispatch(clearListUsersStaticWithTbrDetailAll())
-                setModalVisibleFilter(!modalVisibleFilter)
-              }}
-              style={{borderRadius: 20, padding: 10, elevation: 2}, stateChartInnerRef.posts ? {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: "black"} : {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: '#2196F3'}}
-            >
-              <Text style={{color: 'white'}}>{i18n.t('posts')}</Text>
-            </Pressable>
-            {/* <Pressable
-              onPress={() => {
-                stateChartInnerRef.components = true
-                dispatch(getComponentForBuilding(period, activeBuildingRef.current.building_id))
-                dispatch(clearListUsersStaticTbr())
-                dispatch(clearListUsersStaticWithTbrDetailAll())
-                setFlagArrayPosts([])
-                dispatch(clearBypassUsersAverageAll())
-                setModalVisibleFilter(!modalVisibleFilter)
-              }}
-              style={{borderRadius: 20, padding: 10, elevation: 2}, stateChartInnerRef.components ? {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: "black"} : {borderRadius: 20, padding: 10, elevation: 2, backgroundColor: '#2196F3'}}
-            >
-              <Text style={{color: 'white'}}>{i18n.t('components')}</Text>
-            </Pressable> */}
-            </View>
-            </View>
-      </Modal>
-      <Modal
-        animationType="fade"
-        transparent={false}
-        visible={modalVisibleRank}
-        >
-          <View style={{ backgroundColor: '#000', position: 'relative', paddingTop: 30, paddingLeft: '90%'}}>
-            <TouchableOpacity onPress={testCallbackForModalRank}>
-              <ArrowRight/>
-            </TouchableOpacity>
-          </View>
+      <ModalFilterForCorpusAndBuilding  
+        activeBuildingRef={activeBuildingRef}
+        DATA_POSTS={DATA_POSTS}
+        DATA_USERS_TBR={DATA_USERS_TBR}
+        DATA_COMPONENT={DATA_COMPONENT}
+        modalVisibleFilter={modalVisibleFilter} 
+        setModalVisibleFilter={setModalVisibleFilter} 
+        stateChart={stateChart}
+        stateChartInnerRef={stateChartInnerRef}
+        setFlagArrayPosts={setFlagArrayPosts}
+        choisePost={choisePost}
+        period={period}
+        corpusId={corpusId}
+        />
+      <ModalPhotoOfBypass
+        modalVisible={modalVisibleRank} 
+        setModalVisible={setModalVisibleRank}
+        onEndReached={onREachedEndForAvgRankComponent}/>
     
-          <View style={{backgroundColor: '#000', flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-    
-          {loaderPhotos ? loader : <><FlatList
-            data={DATA_IMAGE_BYPASS_RANK}
-            keyExtractor={keyExtractorImage}
-            horizontal
-            pagingEnabled
-            scrollEnabled
-            snapToAlignment="center"
-            scrollEventThrottle={16}
-            decelerationRate={"fast"}
-            showsHorizontalScrollIndicator={false}
-            renderItem={renderItemImage}
-            onScroll={Animated.event(
-              [{nativeEvent: {contentOffset: {x: scrollXGallery}}}],
-              { useNativeDriver: false}
-            )}
-            onEndReached={onREachedEndForAvgRankComponent}
-            onEndReachedThreshold={0.20}/>
-          <View style={styles.dotView}>
-            {getDotesForImage()}
-            </View></>}
-          </View>
-        </Modal>
       <Modal
         animationType="fade"
         transparent={true}
@@ -1378,45 +1236,15 @@ export const StatusObject = ({route, navigation}) => {
           setModalVisibleDay(!modalVisibleDay)
         }}
       >
-      
-        <Modal
-        animationType="fade"
-        transparent={false}
-        visible={modalVisible}
-        >
-          <View style={{ backgroundColor: '#000', position: 'relative', paddingTop: 30, paddingLeft: '90%'}}>
-            <TouchableOpacity onPress={testCallbackForModal}>
-              <ArrowRight/>
-            </TouchableOpacity>
-          </View>
-    
-          <View style={{backgroundColor: '#000', flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-    
-          {loaderPhotos ? loader : <><FlatList
-            data={DATA_IMAGE_BYPASS_RANK}
-            keyExtractor={keyExtractorImage}
-            horizontal
-            pagingEnabled
-            scrollEnabled
-            snapToAlignment="center"
-            scrollEventThrottle={16}
-            decelerationRate={"fast"}
-            showsHorizontalScrollIndicator={false}
-            renderItem={renderItemImage}
-            onScroll={Animated.event(
-              [{nativeEvent: {contentOffset: {x: scrollXGallery}}}],
-              { useNativeDriver: false}
-            )}
-            onEndReached={onEndReached}
-            onEndReachedThreshold={0.20}/>
-          <View style={styles.dotView}>
-            {getDotesForImage()}
-            </View></>}
-          </View>
-        </Modal>
+        <ModalPhotoOfBypass
+          modalVisible={modalVisible} 
+          setModalVisible={setModalVisible}
+          onEndReached={onEndReached}/>
+        
         <View style={styles.centeredView}>
-          <View style={{alignItems: 'center'}}>
-            <TouchableOpacity style={{zIndex: 10}} onPress={() => {
+          <View style={{alignItems: 'center', zIndex: 10, elevation: 50, shadowColor: '#545454', shadowOffset: { width: 0, height: 0 }, shadowRadius: 1, shadowOpacity: 0.5}}>
+            
+            <TouchableOpacity style={{zIndex: 11, elevation: 51,}}onPress={() => {
               setModalVisibleDay(!modalVisibleDay)
               if (period === 'today') {
                 setFlagArrayUsersDetail(flagArrayUsersDetail
@@ -1431,15 +1259,12 @@ export const StatusObject = ({route, navigation}) => {
               
               
             }}><Image 
-            style={{height: 50, width: 50, backgroundColor: 'black', borderRadius: 50, top: 25}}
-            source={{uri: USERS_LIST.map(els => {
-              if (els.email === DATA_USERS_DETAIL_FOR_DAY[0]?.email) {
-                return els.img
-              }
-              }).join('')}} />
+            style={{height: 50, width: 50, backgroundColor: 'black', borderRadius: 50, top: 25, zIndex: 1000}}
+            source={{uri: USERS_LIST.filter(els => els.email === DATA_USERS_DETAIL_FOR_DAY[0]?.email ? els.img : null)[0]?.img}} />
               </TouchableOpacity>
               
-              <View style={{...styles.modalView, height: '70%'}}>
+          </View>
+          <View style={{...styles.modalView, height: '70%'}}>
               <Text style = {styles.headTitle}>{DATA_USERS_DETAIL_FOR_DAY[0]?.title}</Text>
               <Animated.FlatList 
           showsVerticalScrollIndicator = {false} 
@@ -1449,7 +1274,6 @@ export const StatusObject = ({route, navigation}) => {
           keyExtractor={keyExtractors}
           horizontal={false}/>
               </View>
-          </View>
         </View>
       </Modal>
         {/* <Image source = {{uri: 'https://www.alllessons.ru/wp-content/uploads/files/hello_html_m25c160ca.jpg'}} style = {StyleSheet.absoluteFillObject} blurRadius = {50}/> */}
