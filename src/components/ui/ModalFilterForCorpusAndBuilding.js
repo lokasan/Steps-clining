@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Modal, Pressable, StyleSheet, Text} from 'react-native';
 import {useDispatch} from 'react-redux'
 import i18n from '../../localization/modalFilterForBuildingLocale';
-import {loadBypassPosts, clearBypassBuildingForCorpus, clearBypassUsersAverageAll, clearListUsersStaticTbr, clearListUsersStaticWithTbrCorpus, clearListUsersStaticWithTbrDetailAll, getListUsersStaticTbr, getListUsersStaticWithTbrCorpus, loadBypassBuildingForCorpus} from '../../store/actions/bypass'
+import {loadBypassPosts, clearBypassBuildingForCorpus, clearBypassUsersAverageAll, clearListUsersStaticTbr, clearListUsersStaticWithTbrCorpus, clearListUsersStaticWithTbrDetailAll, getListUsersStaticTbr, getListUsersStaticWithTbrCorpus, loadBypassBuildingForCorpus, clearCyclesListForUserInCorpusDetailAll, clearCyclesListForUserInBuildingDetailAll, clearListUsersStaticWithTbrCorpusDetailAll} from '../../store/actions/bypass'
 import { loadPostForCorpus } from '../../store/actions/post';
 
 export const ModalFilterForCorpusAndBuilding = ({activeBuildingRef, DATA_POSTS, DATA_USERS_TBR, DATA_COMPONENT, modalVisibleFilter, setModalVisibleFilter, stateChart, stateChartInnerRef, period, corpusId, choisePost, setFlagArrayPosts}) => {
@@ -50,6 +50,8 @@ export const ModalFilterForCorpusAndBuilding = ({activeBuildingRef, DATA_POSTS, 
         <Pressable
           onPress={() => {
             stateChart.buildings = true
+            dispatch(clearListUsersStaticWithTbrCorpusDetailAll())
+            dispatch(clearCyclesListForUserInCorpusDetailAll())
             dispatch(clearListUsersStaticWithTbrCorpus())
             dispatch(loadBypassBuildingForCorpus(period, corpusId))
             setModalVisibleFilter(!modalVisibleFilter)

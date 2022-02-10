@@ -22,6 +22,7 @@ const initialState = {
     listUsersInBuildingDetail: [],
     listUsersInCorpusDetail: [],
     listPostsInCycleComplete: [],
+    listUsersInBuildingDetailMWY: [],
     error: null
 }
 
@@ -215,6 +216,13 @@ export const bypassReducer = (state = initialState, action) => {
         case 'CLEAR_CYCLES_LIST_FOR_BUILDING_DETAIL': return {
             ...state,
             listUsersInBuildingDetail: [...action.payload.data.filter(el => el.user_id !== action.payload.user_id)]
+        }
+        case 'GET_CYCLES_LIST_FOR_BUILDING_DETAIL_MWY': return {
+            ...state,
+            listUsersInBuildingDetailMWY: [...state.listUsersInBuildingDetailMWY, ...action.payload]
+        }
+        case 'CLEAR_CYCLES_LIST_FOR_BUILDING_DETAIL_MWY': return {
+            listUsersInBuildingDetailMWY: [...action.payload.data.filter(el => el.user_id !== action.payload.user_id)]
         }
         case 'GET_CYCLES_LIST_FOR_CORPUS_DETAIL': return {
             ...state,

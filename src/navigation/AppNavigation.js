@@ -1,4 +1,4 @@
-import { Platform, Button, View } from 'react-native'
+import { Platform, Button, View, TextInput, TouchableOpacity, Text } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import { BottomTabBar, createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
@@ -40,6 +40,7 @@ import { MainEmploeeListScreen } from '../screens/MainEmploeeListScreen'
 import { BypassScreen } from '../screens/BypassScreen'
 import { ComponentsRankScreen } from '../screens/ComponentsRankScreen'
 import { BasicStatEmploeeDetail } from '../screens/BasicStatEmploeeDetail'
+import { EmployeePersonalScreen } from '../screens/EmployeePersonalScreen'
 import { CreateNewCorpus } from '../screens/profile/CreateNewCorpus'
 import { LoadingScreen } from '../screens/LoadingScreen'
 import {NavigationContainer} from '@react-navigation/native'
@@ -71,7 +72,24 @@ const PostStack = createStackNavigator()
 const PostNavigator = () => {
     return (
         <PostStack.Navigator screenOptions={navigatorNewOptions}>
-            <PostStack.Screen name="MainProfile" component={MainEmploeeListScreen} options={{title: 'Главная'}}/>
+            <PostStack.Screen name="MainProfile" 
+            component={MainEmploeeListScreen} 
+            options={(route) => ({title: '', 
+            // headerLeft: () => (
+            //     <TextInput
+            //       style={{
+            //         height: 40,
+            //         margin: 12,
+            //         width: '180%',
+            //         borderWidth: 1,
+            //         padding: 10,
+            //         borderRadius: 10,
+            //       }}
+            //       onChangeText={route.params.testFuncFor}
+            //       placeholder='Поиск сотрудника'/>
+            //   ),
+            })}/>
+            <PostStack.Screen name="EmployeeScreen" component={EmployeePersonalScreen}/>
             <PostStack.Screen name="StatMainDetail" component={BasicStatEmploeeDetail}/>
         </PostStack.Navigator>
     )

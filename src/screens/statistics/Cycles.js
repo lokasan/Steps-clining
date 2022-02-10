@@ -119,8 +119,8 @@ export const Cycles = ({flagArrayUsersDetail, getCyclesList, period, user_id, it
                                 <Text style={styles.beastAndBad}>Длит. цикла</Text>
                                 <Text style={styles.beastAndBad}>Время между цик.</Text>
                                 <Text style={styles.beastAndBad}>Температура</Text>
-                                <Text style={styles.beastAndBad}>Время нач. цик.</Text>
-                                <Text style={styles.beastAndBad}>Время оконч. цик.</Text>
+                                <Text style={styles.beastAndBad}>Вр. нач. цик.</Text>
+                                <Text style={styles.beastAndBad}>Вр. кон. цик.</Text>
                                 <Text style={styles.beastAndBad}>Уборщик</Text>
                                 {textComponent}
                             </View>
@@ -145,7 +145,6 @@ export const Cycles = ({flagArrayUsersDetail, getCyclesList, period, user_id, it
 const styles = StyleSheet.create({
     itemUD: {
         backgroundColor : 'rgba(220, 220, 220, .2)',
-        // flexGrow: 0,
         marginHorizontal: '5%',
         marginVertical  : 5,
         borderRadius    : 15,

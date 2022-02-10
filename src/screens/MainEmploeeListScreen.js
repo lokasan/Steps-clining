@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {HeaderButtons, Item} from 'react-navigation-header-buttons'
 import { Footer } from '../components/ui/Footer'
-import {Pressable, View, Text, StyleSheet, FlatList, Alert, Platform, Image, ActivityIndicator} from 'react-native'
+import {Pressable, View, Text, Switch, StyleSheet, FlatList, Alert, TextInput, Platform, Image, ActivityIndicator} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import { getEmploeesList } from '../dataBaseRequests/dataBaseRequests'
 import { EmploeeCard } from '../components/EmploeeCard'
@@ -34,6 +34,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
     
     let userStat = useSelector(state => state.bypass.userSingleStat)
     let usersBasicStat = useSelector(state => state.bypass.usersBasicStat)
+    
     const [date, setDate] = useState(Platform.OS === 'ios' ? new Date(new Date().getTime() - (new Date().getTime()) % (24 * 60 * 60 * 1000) - (3 * 60 * 60 * 1000)) : new Date(new Date().getTime() - (new Date().getTime()) % (24 * 60 * 60 * 1000)));
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
@@ -130,7 +131,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
         }
         };
     const openEmploeeHandler = emploee => {
-        navigation.navigate('EmploeeInfo', {emploeeId: emploee.id, emploeeName: emploee.name})
+        navigation.navigate('EmployeeScreen', {emploeeId: emploee.id, emploeeName: emploee.name})
     }
     // let result = getEmploeesList().then()
     
@@ -153,29 +154,130 @@ export const MainEmploeeListScreen = ( {navigation}) => {
           serfIdUser = i.id
         }
     }
+    const [searchUser, onChangeSearchUser] = useState('')
     useEffect(() => {
       dispatch(getUsersServer())
       dispatch(getPostAll())
       dispatch(getUsersBasicStat())
-      navigation.setParams({test: showDatepicker, access: true})
+      navigation.setParams({test: showDatepicker, access: true, searchUser, onChangeSearchUser: onChangeSearchUser, testFuncFor: testFuncFor})
         // dispatch(loadObject()),
         // dispatch(loadComponent())
         
     }, [])
   
   // const [serfIdUser, setSerfIdUser] = useState(0)
+  const [isEnabled, setIsEnabled] = React.useState(false);
+  const isOnlineRef = useRef([])
   let emplServer = useSelector(state => state.empDouble.empServer)
-  
-  if (emplServer.length && usersBasicStat.length) {
-    emplServer = emplServer.map(el => {
-      if (usersBasicStat.find(els => els.id === el.id)) {
-          return ({...el, ...usersBasicStat.find(els => els.id === el.id)})
-      } else {
-          return el
-      }
-  })
-  }
+  // if (emplServer.length && usersBasicStat.length) {
+  //   emplServer = emplServer.map(el => {
+  //     if (usersBasicStat.find(els => els.id === el.id)) {
+  //         return ({...el, ...usersBasicStat.find(els => els.id === el.id)})
+  //     } else {
+  //         return el
+  //     }
+  // })
+  // }
+  const [employee, setEmployee] = useState([])
+  useEffect(() => {
+    isOnlineRef.current = isOnline
+    if (isEnabled) {
+      setEmployee(emplServer.filter(({id}) => isOnlineRef.current.includes(id)).map(el => {
+        if (usersBasicStat.find(els => els.id === el.id)) {
+            return ({...el, ...usersBasicStat.find(els => els.id === el.id)})
+        } else {
+            return el
+        }
+    }))
+    } else {
+      setEmployee(emplServer.map(el => {
+        if (usersBasicStat.find(els => els.id === el.id)) {
+            return ({...el, ...usersBasicStat.find(els => els.id === el.id)})
+        } else {
+            return el
+        }
+    }))
+    }
     
+  }, [emplServer, setEmployee, isOnline, usersBasicStat])
+  
+  
+  const toggleSwitch = () => {
+    refreshEl()
+    setIsEnabled(previousState => !previousState)
+    if (!isEnabled) {
+      setEmployee(emplServer.filter(({id}) => isOnlineRef.current.includes(id)).map(el => {
+        if (usersBasicStat.find(els => els.id === el.id)) {
+            return ({...el, ...usersBasicStat.find(els => els.id === el.id)})
+        } else {
+            return el
+        }
+    }))
+    } else {
+      setEmployee(emplServer.map(el => {
+        if (usersBasicStat.find(els => els.id === el.id)) {
+            return ({...el, ...usersBasicStat.find(els => els.id === el.id)})
+        } else {
+            return el
+        }
+    }))
+    }
+  };
+  const inputTxt = text => {
+    if (isEnabled) {
+      setEmployee(emplServer.filter(({id}) => isOnlineRef.current.includes(id)).map(el => {
+        if (usersBasicStat.find(els => els.id === el.id)) {
+            return ({...el, ...usersBasicStat.find(els => els.id === el.id)})
+        } else {
+            return el
+        }
+    }).filter(el => el.name.toLowerCase().indexOf(text.toLowerCase()) === 0 || 
+    el.lastname.toLowerCase().indexOf(text.toLowerCase()) === 0 || 
+    el.surname.toLowerCase().indexOf(text.toLowerCase()) === 0))
+    } else {
+      setEmployee(emplServer.map(el => {
+        if (usersBasicStat.find(els => els.id === el.id)) {
+            return ({...el, ...usersBasicStat.find(els => els.id === el.id)})
+        } else {
+            return el
+        }
+    }).filter(el => el.name.toLowerCase().indexOf(text.toLowerCase()) === 0 || 
+      el.lastname.toLowerCase().indexOf(text.toLowerCase()) === 0 || 
+      el.surname.toLowerCase().indexOf(text.toLowerCase()) === 0))
+    }
+
+    
+    return onChangeSearchUser(text)}
+  function testFuncFor(text) {
+    console.log(text)
+  }
+  const myText = useRef()
+    useEffect(() => {
+      navigation.setOptions({
+        headerLeft: () => (
+          <TextInput
+            style={{
+              height: 40,
+              margin: 12,
+              width: '180%',
+              borderWidth: 1,
+              padding: 10,
+              borderRadius: 10,
+            }}
+            onChangeText={inputTxt}
+            value={searchUser}
+            placeholder='Поиск сотрудника'/>
+        ),
+        headerRight: () => (
+          <Switch
+          trackColor={{ false: "#767577", true: "#81b0ff" }}
+          thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
+          value={isEnabled}/>
+        ),
+      });
+    }, [navigation, isEnabled, emplServer, searchUser]);
     useEffect(() => {
       if (serfIdUser) {
         dispatch(getSingleUserStat(serfIdUser))
@@ -209,7 +311,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
         </View>: null }
     {tempPrivileg ?
         <FlatList 
-        data         = {emplServer}
+        data         = {employee}
         keyExtractor = {emploee => emploee.id.toString()}
         renderItem   = {({item}) => <EmploeeCard emploee={item} onOpen={openEmploeeHandler} isOnline={isOnline}/>}
         refreshing={false}
@@ -249,6 +351,14 @@ MainEmploeeListScreen.navigationOptions = ({route, navigation}) => {
 }
 
 const styles = StyleSheet.create({
+  input: {
+    height: 40,
+    margin: 12,
+    width: '180%',
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 10,
+  },
   textDate: {
     fontSize: 24,
     fontWeight: 'bold',

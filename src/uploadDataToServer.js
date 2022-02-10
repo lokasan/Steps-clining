@@ -406,6 +406,11 @@ async function socket_onmessage_callback(recv) {
             type: 'GET_BYPASS_MAP_COMPLETE_CYCLE',
             payload: data[MESSAGE]
         })
+    } else if (ACTION in data && data[ACTION] === 'GET_CYCLES_LIST_FOR_BUILDING_DETAIL_MONTH_WEEK_YEAR') {
+        dispatch({
+            type: 'GET_CYCLES_LIST_FOR_BUILDING_DETAIL_MWY',
+            payload: data[MESSAGE]
+        })
     }
     // `data:image/jpeg;base64,${object.path}
     

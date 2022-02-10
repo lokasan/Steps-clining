@@ -102,9 +102,9 @@ export const StatusObject = ({route, navigation}) => {
     buildings: true
   })
   let stateChartInnerRef = useRef({
-    posts: true,
+    posts: false,
     components: false,
-    employee: false,
+    employee: true,
   })
   
   const handler = {
@@ -244,7 +244,7 @@ export const StatusObject = ({route, navigation}) => {
                   </View>
                   <View style = {styles.alignElementsCenter}>
                   {Clock()}
-                  <Text style = {styles.textStyleInToolkit}>{item.countTime}</Text>
+                  <Text style = {styles.textStyleInToolkit}>{stateChartInnerRef.employee ? timeToFormat(msToTime(item.time_bypass_cycle)) : item.countTime}</Text>
                   </View>
                   {/* <View style = {styles.alignElementsCenter}>
                   {StepsIcon()}
