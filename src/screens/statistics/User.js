@@ -7,6 +7,7 @@ import { loadPostForCorpus } from '../../store/actions/post';
 
 import { msToTime, timeToFormat, countFormat } from '../../utils/msToTime';
 import { Cycles } from './Cycles';
+import { CyclesDetail } from './CyclesDetail';
 import { Post } from './Post';
 
 export const User = ({period, corpus_id, building_id, monthRange, showUserDetailInfoOrUnshow, 
@@ -21,6 +22,7 @@ export const User = ({period, corpus_id, building_id, monthRange, showUserDetail
     const DATA_USERS_TBR_CORPUS_DETAIL = useSelector(state => state.bypass.userWithTbrCorpusDetail)
     const DATA_CYCLES_LIST_FOR_USER_IN_BUILDING = useSelector(state => state.bypass.listUsersInBuildingDetail)
     const DATA_CYCLES_LIST_FOR_USER_IN_CORPUS = useSelector(state => state.bypass.listUsersInCorpusDetail)
+    const DATA_CYCLES_LIST_FOR_USER_IN_BUILIDING_MWY = useSelector(state => state.bypass.listUsersInBuildingDetailMWY)
     // console.log(DATA_CYCLES_LIST_FOR_USER_IN_BUILDING, 'cycles list for user in building')
     const [openedUsersInBuildingArray, setOpenedUsersInBuildingArray] = useState([])
     const [openedCyclesInUsers, setOpenedCyclesInUsers] = useState([])
@@ -181,7 +183,19 @@ export const User = ({period, corpus_id, building_id, monthRange, showUserDetail
                     bypassPhotoPostIdRef={bypassPhotoPostIdRef}
                     bypassPhotoEmailRef={bypassPhotoEmailRef}
                     DATA_IMAGE_BYPASS_RANK={DATA_IMAGE_BYPASS_RANK}
-                    /> : ~openedCyclesInUsers.indexOf(item.id) ? 
+                    /> : ~openedCyclesInUsers.indexOf(item.id) && period !== 'today' ? 
+                    <CyclesDetail
+                    period={period}
+                    monthRange={monthRange}
+                    user_id={item.id} 
+                    item_id={itemIdRef.current}
+                    setMontRage={setMonthRange}
+                    choseDateCurrentRef={choseDateCurrentRef}
+                    flagArrayUsersDetail={flagArrayUsersDetail}
+                    DATA_CYCLES_LIST_MAIN={corpus_id ? DATA_CYCLES_LIST_FOR_USER_IN_CORPUS : DATA_CYCLES_LIST_FOR_USER_IN_BUILDING}
+                    getCyclesListDetail={corpus_id ? getCyclesListForUserInCorpusDetail : getCyclesListForUserInBuildingDetail}
+                    DATA_CYCLES_LIST={corpus_id ? [] : DATA_CYCLES_LIST_FOR_USER_IN_BUILIDING_MWY}
+                    /> : ~openedCyclesInUsers.indexOf(item.id) && period === 'today' ?
                     <Cycles 
                     period={period} 
                     user_id={item.id} 
