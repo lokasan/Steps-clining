@@ -246,3 +246,41 @@ export function TimeBetweenBypass(color='#000', width=25, height=24) {
     </Svg>
   );
 }
+export function ArLeft(color='#303F9F', width=35, height=35) {
+  return (
+    <Svg
+      width={width}
+      height={height}
+      viewBox="0 0 16 16"
+      fill="none"
+    >
+      <G clipPath="url(#clip0_3090_11738)">
+        <Path
+          d="M8 0a8 8 0 100 16A8 8 0 008 0zm3.5 7.5a.5.5 0 010 1H5.707l2.147 2.146a.501.501 0 01-.708.708l-3-3a.5.5 0 010-.708l3-3a.5.5 0 11.708.708L5.707 7.5H11.5z"
+          fill={color}
+        />
+      </G>
+      <Defs>
+        <ClipPath id="clip0_3090_11738">
+          <Path fill="#fff" d="M0 0H16V16H0z" />
+        </ClipPath>
+      </Defs>
+    </Svg>
+  )
+}
+
+export function ArRight(color='#303F9F', width=35, height=35) {
+  return (
+    <Svg
+    width={width}
+    height={height}
+    viewBox="0 0 16 16"
+    fill="none"
+  >
+    <Path
+      d="M8 0a8 8 0 110 16A8 8 0 018 0zM4.5 7.5a.5.5 0 100 1h5.793l-2.147 2.146a.501.501 0 00.708.708l3-3a.5.5 0 000-.708l-3-3a.5.5 0 00-.708.708L10.293 7.5H4.5z"
+      fill={color}
+    />
+  </Svg>
+  )
+}

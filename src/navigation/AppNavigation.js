@@ -89,7 +89,13 @@ const PostNavigator = () => {
             //       placeholder='Поиск сотрудника'/>
             //   ),
             })}/>
-            <PostStack.Screen name="EmployeeScreen" component={EmployeePersonalScreen}/>
+            <PostStack.Screen 
+                name="EmployeeScreen" 
+                component={EmployeePersonalScreen} 
+                options={
+                    ({route}) => (
+                        {title: 
+                            `${route.params.surname} ${route.params.emploeeName.slice(0, 1)}. ${route.params.lastname.slice(0, 1)}.`})}/>
             <PostStack.Screen name="StatMainDetail" component={BasicStatEmploeeDetail}/>
         </PostStack.Navigator>
     )

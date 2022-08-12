@@ -258,6 +258,12 @@ export const clearCyclesListForUserInBuildingDetail = (data, user_id) => async()
         payload: {data, user_id}
     })
 }
+export const clearCyclesListForUserInBuildingDetailMWY = (data, user_id) => async() => {
+    dispatch({
+        type: 'CLEAR_CYCLES_LIST_FOR_BUILDING_DETAIL_MWY',
+        payload: {data, user_id}
+    })
+}
 export const getCyclesListForUserInCorpusDetail = (offset, user_id, corpus_id, period=null, start_time=null, end_time=null) => async() => {
     await UploadDataToServer.getCyclesListForUserInCorpusDetail(offset, user_id, corpus_id, period, start_time, end_time)
 }

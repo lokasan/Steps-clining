@@ -85,7 +85,7 @@ export const EmploeeScreen = ({route, navigation}) => {
     
     return <React.Fragment><View style={{flex: 1, backgroundColor: '#000'}}>
         <ScrollView>
-        <View style={styles.container, styles.center}>
+        <View style={[styles.container, styles.center]}>
     <View style={styles.userCard}>
     <View>
         <TouchableOpacity onPress={() => setZoomable(true)}>

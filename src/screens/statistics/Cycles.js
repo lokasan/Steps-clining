@@ -5,7 +5,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import {msToTime, timeToFormat, countFormat} from '../../utils/msToTime';
 import {getBypassListOfPostInCycle, getCyclesListForUserInBuildingDetail, getCyclesListForUserInCorpusDetail} from '../../store/actions/bypass'
 import { CyclesComponent } from './CyclesComponent';
-export const Cycles = ({flagArrayUsersDetail, getCyclesList, period, user_id, item_id, DATA_CYCLES_LIST, setModalVisibleDay}) => {
+export const Cycles = ({flagArrayUsersDetail, setFlagArrayUsersDetail, start_time, clearCyclesList, choiseDate, getCyclesList, period, user_id, item_id, DATA_CYCLES_LIST, setModalVisibleDay}) => {
     const DATA_CYCLES_LIST_FOR_USER_IN_BUILDING = useSelector(state => state.bypass.listUsersInBuildingDetail)
     const DATA_CYCLES_LIST_FOR_USER_IN_CORPUS = useSelector(state => state.bypass.listUsersInCorpusDetail)
     const existsComponents = useRef([])
@@ -45,7 +45,8 @@ export const Cycles = ({flagArrayUsersDetail, getCyclesList, period, user_id, it
             if (keyByValue) {
                 // console.log(keyByValue, 'Value rank')
                 createdElements.push(<TouchableOpacity key={String(keyByValue)} onPress={() => {setModalVisibleDay(true); dispatch(getBypassListOfPostInCycle(item.cycle_id, keyByValue))}}>
-                <Text style={{...styles.beastAndBad, color: "black"}}>{`${item[keyByValue + '_rank']}`}
+               <Text style={+item[keyByValue + '_is_image'] ? {...styles.beastAndBad, color: '#e4a010'} : 
+                {...styles.beastAndBad, color: "black"}}>{`${item[keyByValue + '_rank']}`}
                 </Text></TouchableOpacity>)
             } else {
                 createdElements.push(<Text key={String(index)} style = {styles.beastAndBad}>-</Text>)
@@ -78,14 +79,14 @@ export const Cycles = ({flagArrayUsersDetail, getCyclesList, period, user_id, it
         
     })
     const onReached = useCallback(() => {
-        dispatch(getCyclesList(DATA_CYCLES_LIST.filter(el => el.user_id == user_id).length, user_id, item_id, period))
+        dispatch(getCyclesList(DATA_CYCLES_LIST.filter(el => el.user_id == user_id).length, user_id, item_id, period, start_time ? start_time : null))
     })
 
     const MainWindowWithRanking = () => {
         const data = DATA_CYCLES_LIST.filter(el => el.user_id == user_id)
         return (<FlatList
             data={data}
-            keyExtractor={useCallback(item => item.cycle_id.toString())}
+            keyExtractor={useCallback(item => item?.cycle_id?.toString())}
             
             renderItem={CreateViewDataComponentPost}
             horizontal
@@ -108,10 +109,16 @@ export const Cycles = ({flagArrayUsersDetail, getCyclesList, period, user_id, it
                 <View style={styles.wrapperFirstLine}>
                     <View>
                         <View style={styles.wrapperFirstLine}>
+                            {choiseDate && 
                             <View>
-                            </View>
+                                <TouchableOpacity onPress={() => dispatch(clearCyclesList(DATA_CYCLES_LIST, user_id))}>
+                                    <Text style={styles.headTitle}>{choiseDate}</Text>
+                                </TouchableOpacity>
+                            </View>}
                         </View>
+                        
                         <View style={styles.wrapperSecondLine}>
+                        
                             <View>
                                 <Text style={styles.beastAndBad}>Цикл №</Text>
                                 <Text style={styles.beastAndBad}>Средний балл</Text>
@@ -169,5 +176,10 @@ const styles = StyleSheet.create({
     wrapperSecondLine: {
          flexDirection: 'row',
          alignItems   : 'center',
+    },
+    headTitle: {
+        fontSize   : 14,
+        paddingLeft: 22,
+        paddingTop : 11,
     },
 })

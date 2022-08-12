@@ -30,7 +30,7 @@ export const EmploeesList = ( {navigation}) => {
     // console.log(emploeeAll, "ЗЕМЛНЯН")
     // console.log(emploeeAll, 'Алл сотрудники');
     return <View style={{flex: 1, backgroundColor: '#000'}}>
-    <View style={styles.container, styles.centers}>
+    <View style={[styles.container, styles.centers]}>
     <ScrollView style={styles.menuCard}>
         <FlatList 
         data={emplServer} 

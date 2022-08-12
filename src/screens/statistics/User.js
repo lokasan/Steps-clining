@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect} from 'react';
 import {View, TouchableOpacity, Text, FlatList, StyleSheet, Alert} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import { ArrowTrand } from '../../components/toolkitComponents/ArrowTrand';
-import { clearListUsersStaticWithTbrCorpusDetail, clearListUsersStaticWithTbrDetail, getListUsersStaticWithTbrCorpusDetail, getListUsersStaticWithTbrDetail, getCyclesListForUserInBuildingDetail, clearCyclesListForUserInBuildingDetail, clearCyclesListForUserInCorpusDetail, getCyclesListForUserInCorpusDetail } from '../../store/actions/bypass';
+import { clearListUsersStaticWithTbrCorpusDetail, clearListUsersStaticWithTbrDetail, getListUsersStaticWithTbrCorpusDetail, getListUsersStaticWithTbrDetail, getCyclesListForUserInBuildingDetail, clearCyclesListForUserInBuildingDetail, clearCyclesListForUserInCorpusDetail, getCyclesListForUserInCorpusDetail, clearCyclesListForUserInBuildingDetailMWY } from '../../store/actions/bypass';
 import { loadPostForCorpus } from '../../store/actions/post';
 
 import { msToTime, timeToFormat, countFormat } from '../../utils/msToTime';
@@ -10,9 +10,9 @@ import { Cycles } from './Cycles';
 import { CyclesDetail } from './CyclesDetail';
 import { Post } from './Post';
 
-export const User = ({period, corpus_id, building_id, monthRange, showUserDetailInfoOrUnshow, 
+export const User = ({period, corpus_id, building_id, showUserDetailInfoOrUnshow, 
     setModalVisibleDay, flagArrayUsersDetail, setFlagArrayUsersDetail, 
-    setMonthRange, choseDateCurrentRef, setModalVisibleRank, 
+    choseDateCurrentRef, setModalVisibleRank, 
     bypassKeyByValueRef, bypassPhotoPostIdRef, bypassPhotoEmailRef, DATA_IMAGE_BYPASS_RANK}) => {
     const dispatch = useDispatch()
     const DATA_USERS_TBR = useSelector(state => state.bypass.usersWithTbr)
@@ -30,6 +30,7 @@ export const User = ({period, corpus_id, building_id, monthRange, showUserDetail
     const choiseUserCycle = useRef('')
     const DATA_CYCLES_LIST = useRef()
     const itemIdRef = useRef()
+    
     // useEffect(() => {
     //     console.log(DATA_USERS_TBR_DETAIL, 'USER COMPONENT STAT DETAIL USE')
     //   }, [DATA_USERS_TBR_DETAIL])
@@ -42,6 +43,7 @@ export const User = ({period, corpus_id, building_id, monthRange, showUserDetail
         }
         const clearWindowWithListOfCyclesInCorpusForUser = () => {
             dispatch(clearCyclesListForUserInCorpusDetail(DATA_CYCLES_LIST_FOR_USER_IN_CORPUS, item?.id))
+            dispatch(clearCyclesListForUserInBuildingDetailMWY(DATA_CYCLES_LIST_FOR_USER_IN_BUILIDING_MWY, item.id))
             setOpenedCyclesInUsers(openedCyclesInUsers.filter(e => e !== item.id))
             choiseUserCycle.current = null
         }
@@ -76,6 +78,7 @@ export const User = ({period, corpus_id, building_id, monthRange, showUserDetail
         }
         const clearWindowWithListOfCyclesInBuildingForUser = () => {
             dispatch(clearCyclesListForUserInBuildingDetail(DATA_CYCLES_LIST_FOR_USER_IN_BUILDING, item.id))
+            dispatch(clearCyclesListForUserInBuildingDetailMWY(DATA_CYCLES_LIST_FOR_USER_IN_BUILIDING_MWY, item.id))
             setOpenedCyclesInUsers(openedCyclesInUsers.filter(e => e !== item.id))
             choiseUserCycle.current = null
         }
@@ -171,12 +174,10 @@ export const User = ({period, corpus_id, building_id, monthRange, showUserDetail
                     <Post 
                     user_id={item.id}
                     period={period}
-                    monthRange={monthRange}
                     showUserDetailInfoOrUnshow={showUserDetailInfoOrUnshow}
                     setModalVisibleDay={setModalVisibleDay}
                     flagArrayUsersDetail={flagArrayUsersDetail}
                     setFlagArrayUsersDetail={setFlagArrayUsersDetail}
-                    setMonthRange={setMonthRange}
                     choseDateCurrentRef={choseDateCurrentRef}
                     setModalVisibleRank={setModalVisibleRank}
                     bypassKeyByValueRef={bypassKeyByValueRef}
@@ -186,15 +187,16 @@ export const User = ({period, corpus_id, building_id, monthRange, showUserDetail
                     /> : ~openedCyclesInUsers.indexOf(item.id) && period !== 'today' ? 
                     <CyclesDetail
                     period={period}
-                    monthRange={monthRange}
                     user_id={item.id} 
                     item_id={itemIdRef.current}
-                    setMontRage={setMonthRange}
                     choseDateCurrentRef={choseDateCurrentRef}
+                    setFlagArrayUsersDetail={setFlagArrayUsersDetail}
                     flagArrayUsersDetail={flagArrayUsersDetail}
+                    setModalVisibleDay={setModalVisibleDay}
                     DATA_CYCLES_LIST_MAIN={corpus_id ? DATA_CYCLES_LIST_FOR_USER_IN_CORPUS : DATA_CYCLES_LIST_FOR_USER_IN_BUILDING}
                     getCyclesListDetail={corpus_id ? getCyclesListForUserInCorpusDetail : getCyclesListForUserInBuildingDetail}
-                    DATA_CYCLES_LIST={corpus_id ? [] : DATA_CYCLES_LIST_FOR_USER_IN_BUILIDING_MWY}
+                    clearCyclesList={corpus_id ? clearCyclesListForUserInCorpusDetail : clearCyclesListForUserInBuildingDetail}
+                    DATA_CYCLES_LIST={corpus_id ? DATA_CYCLES_LIST_FOR_USER_IN_BUILIDING_MWY : DATA_CYCLES_LIST_FOR_USER_IN_BUILIDING_MWY}
                     /> : ~openedCyclesInUsers.indexOf(item.id) && period === 'today' ?
                     <Cycles 
                     period={period} 
@@ -202,7 +204,8 @@ export const User = ({period, corpus_id, building_id, monthRange, showUserDetail
                     item_id={itemIdRef.current} 
                     flagArrayUsersDetail={flagArrayUsersDetail}
                     getCyclesList={corpus_id ? getCyclesListForUserInCorpusDetail : getCyclesListForUserInBuildingDetail}
-                    DATA_CYCLES_LIST={corpus_id ? DATA_CYCLES_LIST_FOR_USER_IN_CORPUS : DATA_CYCLES_LIST_FOR_USER_IN_BUILDING} setModalVisibleDay={setModalVisibleDay}/> : null}
+                    DATA_CYCLES_LIST={corpus_id ? DATA_CYCLES_LIST_FOR_USER_IN_CORPUS : DATA_CYCLES_LIST_FOR_USER_IN_BUILDING} 
+                    setModalVisibleDay={setModalVisibleDay}/> : null}
                 </>
     }
 

@@ -1019,12 +1019,10 @@ export const StatusObject = ({route, navigation}) => {
             ? <User 
             period={period} 
             building_id={activeBuildingRef.current.building_id}
-            monthRange={monthRange}
             showUserDetailInfoOrUnshow={showUserDetailInfoOrUnshow}
             setModalVisibleDay={setModalVisibleDay}
             flagArrayUsersDetail={flagArrayUsersDetail}
             setFlagArrayUsersDetail={setFlagArrayUsersDetail}
-            setMonthRange={setMonthRange}
             choseDateCurrentRef={choseDateCurrentRef}
             setModalVisibleRank={setModalVisibleRank}
             bypassKeyByValueRef={bypassKeyByValueRef}

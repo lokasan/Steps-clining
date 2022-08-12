@@ -5,14 +5,15 @@ import { clearBypassUsersDetail, getImageBypassUserOfPost, getImageBypassUserOfP
 import { showLoaderBypassRank } from '../../store/actions/bypassRank';
 import {msToTime, timeToFormat, countFormat} from '../../utils/msToTime';
 import { PostDetail } from './PostDetail';
-export const Post = ({user_id, period, monthRange, 
-    showUserDetailInfoOrUnshow, flagArrayUsersDetail, setFlagArrayUsersDetail, setMonthRange, 
+export const Post = ({user_id, period, 
+    showUserDetailInfoOrUnshow, flagArrayUsersDetail, setFlagArrayUsersDetail, 
     setModalVisibleDay, choseDateCurrentRef, setModalVisibleRank, 
     bypassKeyByValueRef, bypassPhotoPostIdRef, bypassPhotoEmailRef, DATA_IMAGE_BYPASS_RANK}) => {
     const existsComponents = useRef([])
     const DATA_USER_WITH_TBR_DETAIL = useSelector(state => state.bypass.userWithTbrDetail)
     const DATA_USERS_TBR_CORPUS_DETAIL = useSelector(state => state.bypass.userWithTbrCorpusDetail)
     const [openedPostInOpenedUserOfBuilding, setOpenedPostInOpenedUserOfBuilding] = useState([])
+    const [monthRange, setMonthRange] = useState('year')
     const POSTS_LIST = useSelector(state => state.post.postAll)
     const DATA_USER_DETAIL = useSelector(state => state.bypass.bypassUsersList)
     const choisePost = useRef('')

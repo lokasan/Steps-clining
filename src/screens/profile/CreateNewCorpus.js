@@ -91,62 +91,7 @@ export const CreateNewCorpus= ({navigation}) => {
         placeholder  = 'Описание'
         value        = {description}
         onChangeText = {setDescription}/>
-        {/* <GooglePlacesAutocomplete
-      placeholder='Search'
-      debounce={400}
-      fetchDetails={true}
-      GooglePlacesSearchQuery={{
-        rankby: "distance"
-      }}
-      onPress={(data, details = null) => {
-        // 'details' is provided when fetchDetails = true
-        console.log(data, details);
-        setRegion({latitude: details.geometry.location.lat, 
-          longitude: details.geometry.location.lng,
-          latitudeDelta: 0.000002,
-          longitudeDelta: 0.0025,})
-      }}
-      query={{
-        key: 'AIzaSyDQ_FLKGSLRDRjTUMGfjYv2Pc2R0rK20mU',
-        language: 'en',
-        components: "country:ru",
-        types: "establishment",
-        location: `${region.latitude}, ${region.longitude}`
-      }
-      }
-      styles={{container: {flex: 0, position: "relative", width: "100%", zIndex: 100},
-    listView: {backgroundColor: "white"}}}
-    /> */}
-        <MapView 
-        initialRegion={initialRegion}
-        style={{height: 300}}
-        provider="google">
-          <Marker 
-          coordinate={{latitude: region.latitude, longitude: region.longitude}}
-          pincolor="red"/>
-          <Marker coordinate={pin}
-            pinColor="black"
-            draggable={true}
-            onDragStart={e => {
-              console.log('Drag Start', e.nativeEvent.coordinates)
-            }}
-            onDragEnd={e => {
-              setPin({
-                latitude: e.nativeEvent.coordinate.latitude,
-                longitude: e.nativeEvent.coordinate.longitude
-              })
-            }}>
-              <Callout><Text>{description}</Text></Callout>
-            </Marker>
-            <Circle 
-            center={pin}
-          radius={25}
-            ></Circle>
-        </MapView>
         </AppCard>
-        {/* <YMaps>
-        <SearchControl options={{ float: 'right' }} />
-        </YMaps> */}
         <PhotoPicker onPick = {photoPickHandler}/>
         
      <Button 

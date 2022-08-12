@@ -12,6 +12,7 @@ import { bypassReducer } from './reducers/bypass'
 import { bypassRankReducer } from './reducers/bypassRank'
 import { photoRankGalleryReducer } from './reducers/photoRankGallery'
 import { authenticationReducer } from './reducers/authentication'
+import { barchartReducer } from './reducers/barchart'
 const rootReducer = combineReducers({
     empList: empListReducer,
     empDouble: empDoubleReducer,
@@ -24,7 +25,8 @@ const rootReducer = combineReducers({
     bypass: bypassReducer,
     bypassRank: bypassRankReducer,
     photoRanGallery: photoRankGalleryReducer,
-    authentication: authenticationReducer
+    authentication: authenticationReducer,
+    barchart: barchartReducer,
 })
 
 export default createStore(rootReducer, applyMiddleware(thunk))

@@ -131,7 +131,7 @@ export const MainEmploeeListScreen = ( {navigation}) => {
         }
         };
     const openEmploeeHandler = emploee => {
-        navigation.navigate('EmployeeScreen', {emploeeId: emploee.id, emploeeName: emploee.name})
+        navigation.navigate('EmployeeScreen', {emploeeId: emploee.id, emploeeName: emploee.name, surname: emploee.surname, lastname: emploee.lastname})
     }
     // let result = getEmploeesList().then()
     

@@ -50,7 +50,7 @@ export const ComponentsRankScreen = ({route, navigation }) => {
    
     return <View style = {{flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center'}}>
        
-                {loader ? <ActivityIndicator size="large" color="#0000ff"/> : <View style = {styles.container, styles.centers}>
+                {loader ? <ActivityIndicator size="large" color="#0000ff"/> : <View style = {[styles.container, styles.centers]}>
                     <AnimatedFlatList 
                     scrollEventThrottle          = {16}
                     vertical                     = {true}

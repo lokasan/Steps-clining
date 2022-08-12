@@ -17,7 +17,7 @@ import { DB } from './db';
 import { msToTime, timeToFormat } from './utils/msToTime'
 
 
-let ws            = new WebSocket('ws://192.168.1.11:8760');
+let ws            = new WebSocket('ws://192.168.1.14:8770');
     ws.binaryType = 'arraybuffer'
     ws.onmessage  = function(event) {
     socket_onmessage_callback(event.data)

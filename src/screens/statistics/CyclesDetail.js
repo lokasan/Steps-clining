@@ -1,13 +1,16 @@
-import React, {useCallback, useRef} from 'react'
-import {View, Text, FlatList, TouchableOpacity, StyleSheet, ScrollView} from 'react-native'
+import React, {useCallback, useRef, useState} from 'react'
+import {View, Text, FlatList, Platform, TouchableOpacity, StyleSheet, ScrollView} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
 import { clearBypassUsersDetail, loadBypassUsersDetail } from '../../store/actions/bypass'
 import { countFormat, msToTime, timeToFormat } from '../../utils/msToTime'
 import { Cycles } from './Cycles'
 
-export const CyclesDetail = ({period, user_id, flagArrayUsersDetail, DATA_CYCLES_LIST_MAIN, item_id, getCyclesListDetail, DATA_CYCLES_LIST, monthRange, setMonthRange, choseDateCurrentRef }) => {
+export const CyclesDetail = ({period, user_id, clearCyclesList, setModalVisibleDay, flagArrayUsersDetail, DATA_CYCLES_LIST_MAIN, item_id, getCyclesListDetail, DATA_CYCLES_LIST, choseDateCurrentRef }) => {
     const dispatch = useDispatch()
     const existsComponents = useRef([])
+    const choiseDateRef = useRef('')
+    const startTimeRef = useRef('')
+    const [monthRange, setMonthRange] = useState('year')
     const DATA_USERS_DETAIL = useSelector(state => state.bypass.bypassUsersListDetail)
     const getArrayComparePostDetailCallback = React.useCallback(getArrayComparePostDetail)
 
@@ -22,7 +25,8 @@ export const CyclesDetail = ({period, user_id, flagArrayUsersDetail, DATA_CYCLES
             let keyByValue = getKeyByValue(item, cmp)
             if (keyByValue) {
               createdElements.push(
-                <Text style={styles.beastAndBad}>{item[keyByValue + '_rank']}
+                <Text style={+item[keyByValue + '_is_image'] ? {...styles.beastAndBad, color: '#e4a010'} : 
+                {...styles.beastAndBad, color: "black"}}>{item[keyByValue + '_rank']}
                 </Text>)
             } else {
               createdElements.push(<Text style = {styles.beastAndBad}>-</Text>)
@@ -104,12 +108,18 @@ export const CyclesDetail = ({period, user_id, flagArrayUsersDetail, DATA_CYCLES
                 choseDateCurrentRef.current = [year.length === 2 ? 20 + year : year, +month]
                 // console.log(choseDateCurrentRef.current, 'SET CHOSE DATE CURRENT')
                 setMonthRange('month_range')
-                dispatch(loadBypassUsersDetail(
-                  'month_range', item?.email, item?.post_name, 
+                dispatch(getCyclesListDetail(0, user_id, item_id, 'month_range', 
                 new Date(year.length === 2 ? 20 + year : year, +month - 1).getTime()))
               } else {
-                dispatch(getCyclesListDetail(0, user_id, item_id, period === 'year' && monthRange === 'year' ? 'month' : 'day', 
-                new Date(year.length === 2 ? 20 + year : year, +month - 1, day ? +day : 1).getTime()))
+                let start_time =  new Date(year.length === 2 ? 20 + year : year, +month - 1, day ? +day : 1).getTime()
+                startTimeRef.current = Platform.OS === 'android' ? start_time : start_time + (3 * 60 * 60 * 1000)
+                choiseDateRef.current = `${day}.${month}`
+                dispatch(getCyclesListDetail(0, 
+                  user_id, 
+                  item_id, 
+                  period === 'year' && monthRange === 'year' ? 'month' : 'day', 
+                  startTimeRef.current
+               ))
               }
               
               if (period !== 'year' || monthRange === 'month_range') {
@@ -198,22 +208,14 @@ export const CyclesDetail = ({period, user_id, flagArrayUsersDetail, DATA_CYCLES
                     <View>
                         <View style={styles.wrapperFirstLine}>
                             <View>
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        if (monthRange === 'month_range') {
-                                            dispatch(loadBypassUsersDetail('year', dataPostDetail[0]?.email, dataPostDetail[0].post_name))
-                                            setMonthRange('year')
-                                        } else {
-                                            setFlagArrayUsersDetail(flagArrayUsersDetail
-                                                .filter(el => !(el.email == dataPostDetail[0]?.email &&
-                                                    el.post === dataPostDetail[0]?.post_name)))
-                                        }
-                                        dispatch(clearBypassUsersDetail(DATA_USERS_DETAIL, dataPostDetail[0]?.email, dataPostDetail[0]?.post_name))
-                                    }}>
-                                    <Text style={styles.headTitle}>{period !== 'today' ? 
-                                    dataPostDetail[0]?.post_name : dataPostDetail[0]?.title}
-                                    </Text>
-                                </TouchableOpacity>
+                               {monthRange === 'month_range' ? <TouchableOpacity onPress={() => {
+                                 
+                                 dispatch(getCyclesListDetail(0, user_id, item_id, 'year'))
+                                 setMonthRange('year')
+                                 dispatch(clearCyclesList(DATA_CYCLES_LIST_MAIN, user_id))
+                               }}>
+                                 <Text style={styles.headTitle}>Назад</Text>
+                               </TouchableOpacity> : null}
                             </View>
                         </View>
                         <View style={styles.wrapperSecondLine}>
@@ -233,10 +235,14 @@ export const CyclesDetail = ({period, user_id, flagArrayUsersDetail, DATA_CYCLES
             </View>
             {DATA_CYCLES_LIST?.filter(el => el.user_id === user_id).length && DATA_CYCLES_LIST_MAIN?.filter(el => el.user_id === user_id).length ?
             <Cycles
-            period={period}
+            period={'day'}
+            start_time={startTimeRef.current}
             user_id={user_id}
             item_id={item_id}
+            choiseDate={choiseDateRef.current}
+            setModalVisibleDay={setModalVisibleDay}
             flagArrayUsersDetail={flagArrayUsersDetail}
+            clearCyclesList={clearCyclesList}
             getCyclesList={getCyclesListDetail}
             DATA_CYCLES_LIST={DATA_CYCLES_LIST_MAIN}/> : null}
             </>

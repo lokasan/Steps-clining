@@ -211,38 +211,40 @@ export const bypassReducer = (state = initialState, action) => {
         }
         case 'GET_CYCLES_LIST_FOR_BUILDING_DETAIL': return {
             ...state,
-            listUsersInBuildingDetail: [...state.listUsersInBuildingDetail, ...action.payload]
+            listUsersInBuildingDetail: [...state.listUsersInBuildingDetail, ...action.payload],
         }
         case 'CLEAR_CYCLES_LIST_FOR_BUILDING_DETAIL': return {
             ...state,
-            listUsersInBuildingDetail: [...action.payload.data.filter(el => el.user_id !== action.payload.user_id)]
+            listUsersInBuildingDetail: [...action.payload.data.filter(el => el.user_id !== action.payload.user_id)],
         }
         case 'GET_CYCLES_LIST_FOR_BUILDING_DETAIL_MWY': return {
             ...state,
-            listUsersInBuildingDetailMWY: [...state.listUsersInBuildingDetailMWY, ...action.payload]
+            listUsersInBuildingDetailMWY: [...state.listUsersInBuildingDetailMWY, ...action.payload],
         }
         case 'CLEAR_CYCLES_LIST_FOR_BUILDING_DETAIL_MWY': return {
-            listUsersInBuildingDetailMWY: [...action.payload.data.filter(el => el.user_id !== action.payload.user_id)]
+            ...state,
+            listUsersInBuildingDetailMWY: [...action.payload.data.filter(el => el.user_id !== action.payload.user_id)],
         }
         case 'GET_CYCLES_LIST_FOR_CORPUS_DETAIL': return {
             ...state,
-            listUsersInCorpusDetail: [...state.listUsersInCorpusDetail, ...action.payload]
+            listUsersInCorpusDetail: [...state.listUsersInCorpusDetail, ...action.payload],
         }
         case 'CLEAR_CYCLES_LIST_FOR_CORPUS_DETAIL': return {
             ...state,
-            listUsersInCorpusDetail: [...action.payload.data.filter(el => el.user_id !== action.payload.user_id)]
+            listUsersInCorpusDetail: [...action.payload.data.filter(el => el.user_id !== action.payload.user_id)],
         }
         case 'CLEAR_CYCLES_LIST_FOR_BUILDING_DETAIL_ALL': return {
             ...state,
-            listUsersInBuildingDetail: []
+            listUsersInBuildingDetail: [],
+            listUsersInBuildingDetailMWY: [],
         }
         case 'CLEAR_CYCLES_LIST_FOR_CORPUS_DETAIL_ALL': return { 
             ...state,
-            listUsersInCorpusDetail: []
+            listUsersInCorpusDetail: [],
         }
         case 'GET_BYPASS_MAP_COMPLETE_CYCLE': return {
             ...state,
-            listPostsInCycleComplete: action.payload
+            listPostsInCycleComplete: action.payload,
         }
         default: return state
     }
